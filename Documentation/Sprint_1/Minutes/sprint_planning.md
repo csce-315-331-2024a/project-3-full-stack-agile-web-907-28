@@ -5,7 +5,7 @@ Discussed the plan:
     - One feature per user type  
     - User authentication  
 
-## Tech Stack  
+Tech Stack: 
 - Next.js  
 
 Go over design and management documentation
