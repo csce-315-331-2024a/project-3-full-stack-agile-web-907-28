@@ -48,25 +48,25 @@ export default function Menu() {
     
 
     return (
-        <div>
-<Navbar onLoginClick={toggleLoginModal} />
-      <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
-            <nav className={`${Styles.navbar} ${isSticky ? Styles.sticky : ''}`}>
-                <ul>
-                  {categories.map(category => (
-                    <a href={`#${category.name}`} key={category.id}>{category.name}</a>
-                  ))}
-                </ul>
-            </nav>
+      <div>
+          <Navbar onLoginClick={toggleLoginModal} />
+          <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
+          <nav className={`${Styles.navbar} ${isSticky ? Styles.sticky : ''}`}>
+              <ul>
+                {categories.map(category => (
+                  <a href={`#${category.name}`} key={category.id}>{category.name}</a>
+                ))}
+              </ul>
+          </nav>
 
-            {categories.map(category => (
-              <MenuSection
-                key={category.id}
-                menuItems={menuItems}
-                category={category.id}
-                categoryName={category.name} // Pass the name for display
-              />
-            ))}
-        </div>
+          {categories.map(category => (
+            <MenuSection
+              key={category.id}
+              menuItems={menuItems}
+              category={category.id}
+              categoryName={category.name} // Pass the name for display
+            />
+          ))}
+      </div>
     );
 }

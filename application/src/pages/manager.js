@@ -33,40 +33,12 @@ export default function Menu() {
             });
     }, []);
 
-    useEffect(() => {
-        const handleScroll = () => {
-            // Adjust "150" to the initial navbar offset if it's different
-            setIsSticky(window.scrollY > 150);
-        };
-    
-        window.addEventListener('scroll', handleScroll);
-    
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, []);
-    
 
     return (
       <div>
           <Navbar onLoginClick={toggleLoginModal} />
           <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
-          <nav className={`${Styles.navbar} ${isSticky ? Styles.sticky : ''}`}>
-              <ul>
-                {categories.map(category => (
-                  <a href={`#${category.name}`} key={category.id}>{category.name}</a>
-                ))}
-              </ul>
-          </nav>
 
-          {categories.map(category => (
-            <MenuSection
-              key={category.id}
-              menuItems={menuItems}
-              category={category.id}
-              categoryName={category.name} // Pass the name for display
-            />
-          ))}
       </div>
     );
 }

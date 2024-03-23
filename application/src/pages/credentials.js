@@ -31,7 +31,13 @@ const Credentials = () => {
     });
 
     session.user.isNewUser = false; // Update the session to indicate the user is no longer new
-    router.push('/menu'); // Redirect to the menu page
+    if (role === 'Manager') {
+      router.push('/manager');
+    } else if (role === 'Customer') {
+      router.push('/customer');
+    } else if (role === 'Cashier') {
+      router.push('/cashier');
+    }
   };
 
 
