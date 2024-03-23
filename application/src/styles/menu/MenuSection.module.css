@@ -1,0 +1,17 @@
+.menuSection {
+    display: flex;
+    flex-wrap: wrap; /* This allows items to wrap onto the next line */
+    justify-content: flex-start; /* Align items at the start of the container */
+    gap: 10%; /* Adjust the gap between items as needed */
+    align-items: flex-start; /* Align items at the start of their line */
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
+
+.title {
+    font-size: 40px;
+    padding: 20px;
+    margin-left: 10%;
+    margin-right: 10%;
+}

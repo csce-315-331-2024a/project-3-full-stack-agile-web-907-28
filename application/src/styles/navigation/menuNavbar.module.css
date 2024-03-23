@@ -1,0 +1,43 @@
+.navbar {
+    background-color: #4b0909; /* Dark red color */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+  }
+  
+  .loginAndCart {
+    /* Align login text and shopping cart icon */
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .loginAndCart a {
+    color: white;
+    font-family: 'Cursive';
+    font-size: 1.2rem;
+    position: relative;
+  }
+  
+  /* Example for adding a specific style for the shopping cart icon */
+  .loginAndCart svg {
+    color: white;
+    font-size: 2rem;
+    transition: color 0s ease;
+  }
+
+  /*add hover effect to logic icon and shopping cart icon*/
+  .loginAndCart svg:hover {
+    color: #999494;
+    transform: scale(1.3);
+    cursor: pointer;
+  }
+
+  .userInfo {
+    color: white;
+    font-size: 20px;
+  }
+
+
+  
