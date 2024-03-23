@@ -3,6 +3,7 @@ import { signIn, signOut, useSession } from 'next-auth/react'; // Import signOut
 import { useRouter } from 'next/router';
 import Modal from './Modal'; 
 import styles from '../../styles/onboarding/LoginModal.module.css';
+import { FaGoogle } from 'react-icons/fa';
 
 const LoginModal = ({ isOpen, onClose }) => {
   const { data: session, status } = useSession();
@@ -35,7 +36,7 @@ const LoginModal = ({ isOpen, onClose }) => {
           </>
         ) : (
           <button onClick={() => signIn("google")} className={styles.loginButton}>
-            Sign in with Google
+            <FaGoogle /> Sign in with Google
           </button>
         )}
       </div>

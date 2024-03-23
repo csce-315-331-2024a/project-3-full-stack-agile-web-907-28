@@ -37,6 +37,11 @@
   .userInfo {
     color: white;
     font-size: 20px;
+    cursor: pointer;
+  }
+
+  .userInfo:hover {
+    color: #999494;
   }
 
 
