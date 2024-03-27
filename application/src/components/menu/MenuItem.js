@@ -1,30 +1,27 @@
-import Image from 'next/image';
-import Burger from '../../../public/burger.jpg';
-import Basket from '../../../public/basket.png';
-import ChickenSandwich from '../../../public/chicken_sandwich.jpg';
-import Fries from '../../../public/fries.jpg';
-import Coke from '../../../public/coke.jpg';
-import Sprite from '../../../public/sprite.jpg';
-import GrilledCheese from '../../../public/grilled_cheese.jpg';
-import ChoclateShake from '../../../public/shake.jpg';
-import IceCream from '../../../public/ice_cream.jpg';
-import Suace from '../../../public/sauce.png';
-import OnionRings from '../../../public/onion_rings.jpg';
-import Styles from '../../styles/menu/MenuItem.module.css';
+import {
+    Card,
+    CardBody,
+    CardFooter,
+    Image
+} from "@nextui-org/react";
+import Burger from "../../../public/burger.jpg";
+import Basket from "../../../public/basket.png";
+import ChickenSandwich from "../../../public/chicken_sandwich.jpg";
+import Fries from "../../../public/fries.jpg";
+import Coke from "../../../public/coke.jpg";
+import Sprite from "../../../public/sprite.jpg";
+import GrilledCheese from "../../../public/grilled_cheese.jpg";
+import ChoclateShake from "../../../public/shake.jpg";
+import IceCream from "../../../public/ice_cream.jpg";
+import Suace from "../../../public/sauce.png";
+import OnionRings from "../../../public/onion_rings.jpg";
 
 
-/**
- * MenuItem component that displays the image, name, and price of a menu item
- * @param {*} id 
- * @param {*} name
- * @param {*} price
- * @param {*} category
- * @returns 
- */
-export default function MenuItem({ id, name, price, category }) {
+export default function MenuItem({ id, name, price, category, onPress = () => {} }) {
     let imageSrc;
 
-    //Set the image source based on the category or id
+    // Set the image source based on the category or id
+    // TODO: for the love of all that is holy, put this in the DB
     if (category == 0) {
         imageSrc = Burger.src;
     } else if (category == 1) {
@@ -49,11 +46,20 @@ export default function MenuItem({ id, name, price, category }) {
         imageSrc = OnionRings.src;
     }
 
+    console.log(id);
+
     return (
-        <div className={Styles.menuItem}>
-            <Image src={imageSrc} alt={name} width={400} height={400} />
-            <h2>{name}</h2>
-            <p>${price}</p>
-        </div>
-    );
+      <Card key={id} isPressable onPress={onPress}>
+          <Image
+            alt={name}
+            className="object-cover"
+            isZoomed
+            src={imageSrc}
+          />
+          <CardFooter className="justify-between">
+              <b>{name}</b>
+              <p>{price}</p>
+          </CardFooter>
+      </Card>
+    )
 }

@@ -1,10 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import Navbar from '../components/navigation/MenuNavbar'; // Adjust the path as needed
-import Styles from '../styles/menu/Menu.module.css';
-import MenuSection from '../components/menu/MenuSection'; // Adjust the path as needed
-import LoginModal from '../components/onboarding/LoginModal'; // Adjust path as needed
+import { useState, useEffect } from 'react';
+import {
+  Button,
+  Input,
+  Link,
+  Navbar,
+  NavbarContent,
+  NavbarItem,
+  Tabs,
+  Tab
+} from "@nextui-org/react";
+
+import DefaultLayout from "@/layouts/default";
+import MenuSection from "@/components/menu/MenuSection";
+import MenuItem from "@/components/menu/MenuItem";
+
 
 // Assuming you have a mapping of category IDs to names
+// TODO: Move this mapping to the DB
 const categories = [
   { id: 0, name: 'Burgers' },
   { id: 1, name: 'Baskets' },
@@ -16,57 +28,49 @@ const categories = [
 ];
 
 export default function Menu() {
-    const [menuItems, setMenuItems] = useState([]);
-    const [isSticky, setIsSticky] = useState(false);
-    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-
-  const toggleLoginModal = () => setIsLoginModalOpen(!isLoginModalOpen);
+  const [menuItems, setMenuItems] = useState([]);
 
 
-    useEffect(() => {
-        // Fetch menu items from your API
-        fetch('/api/menu/menuitems')
-            .then(response => response.json())
-            .then(data => {
-                // Assuming `data` is an array of menu items
-                setMenuItems(data);
-            });
-    }, []);
+  useEffect(() => {
+    // Fetch menu items
+    fetch('/api/menu/menuitems')
+      .then(response => response.json())
+      .then(data => {
+        console.log("Fetched menu items");
+        setMenuItems(data);
+      });
+  }, []);
 
-    useEffect(() => {
-        const handleScroll = () => {
-            // Adjust "150" to the initial navbar offset if it's different
-            setIsSticky(window.scrollY > 150);
-        };
-    
-        window.addEventListener('scroll', handleScroll);
-    
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, []);
-    
+  return (
+    <DefaultLayout>
+      <Navbar>
+        <NavbarContent justify="center">
+          {
+            categories.map(category => (
+              <NavbarItem key={category.id}>
+                <Button
+                  as={Link}
+                  href={`#${category.name}`}
+                  variant="light"
+                >
+                  {category.name}
+                </Button>
+              </NavbarItem>
+            ))
+          }
+        </NavbarContent>
+      </Navbar>
 
-    return (
-      <div>
-          <Navbar onLoginClick={toggleLoginModal} />
-          <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} />
-          <nav className={`${Styles.navbar} ${isSticky ? Styles.sticky : ''}`}>
-              <ul>
-                {categories.map(category => (
-                  <a href={`#${category.name}`} key={category.id}>{category.name}</a>
-                ))}
-              </ul>
-          </nav>
-
-          {categories.map(category => (
-            <MenuSection
-              key={category.id}
-              menuItems={menuItems}
-              category={category.id}
-              categoryName={category.name} // Pass the name for display
-            />
-          ))}
-      </div>
-    );
-}
+      {
+        categories.map(category=> (
+          <MenuSection
+            key={category.id}
+            menuItems={menuItems}
+            category={category.id}
+            categoryName={category.name}
+          />
+        ))
+      }
+    </DefaultLayout>
+  );
+};
