@@ -17,7 +17,7 @@ import Suace from "../../../public/sauce.png";
 import OnionRings from "../../../public/onion_rings.jpg";
 
 
-export default function MenuItem({ id, name, price, category, onPress = () => {} }) {
+export default function MenuItem({ id, name, price, category, ...args }) {
     let imageSrc;
 
     // Set the image source based on the category or id
@@ -49,7 +49,7 @@ export default function MenuItem({ id, name, price, category, onPress = () => {}
     console.log(id);
 
     return (
-      <Card key={id} isPressable onPress={onPress}>
+      <Card key={id} {...args}>
           <Image
             alt={name}
             className="object-cover"

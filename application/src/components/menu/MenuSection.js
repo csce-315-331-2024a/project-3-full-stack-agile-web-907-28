@@ -1,6 +1,6 @@
 import MenuItem from './MenuItem';
 
-export default function MenuSection({menuItems, category, categoryName}) {
+export default function MenuSection({ menuItems, category, categoryName }) {
   // Use categoryName for display if passed, else fallback to category
   const displayCategory = categoryName || category;
 

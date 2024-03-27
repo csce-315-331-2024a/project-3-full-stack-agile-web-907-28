@@ -7,7 +7,7 @@ import {
   NavbarContent,
   NavbarItem,
   Tabs,
-  Tab
+  Tab, Card, CardHeader, CardBody
 } from "@nextui-org/react";
 
 import DefaultLayout from "@/layouts/default";
