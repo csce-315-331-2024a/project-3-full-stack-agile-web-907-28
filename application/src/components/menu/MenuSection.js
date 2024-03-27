@@ -5,7 +5,7 @@ export default function MenuSection({ menuItems, category, categoryName }) {
   const displayCategory = categoryName || category;
 
   return (
-    <div id={categoryName || category.toString()}>
+    <div id={categoryName || category.toString()} className="px-9">
       <h1 className="gap-2 text-xl font-semibold">{displayCategory}</h1>
       <div className="gap-2 grid grid-cols-3 sm:grid-cols-6">
         {menuItems.filter(item => item.categoryId == category).map(item => (
