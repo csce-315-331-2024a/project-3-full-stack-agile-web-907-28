@@ -4,7 +4,6 @@ import { signIn, signOut, useSession } from "next-auth/react";
 
 import {
   Avatar,
-  Button,
   Dropdown,
   DropdownMenu,
   DropdownTrigger,
@@ -53,10 +52,12 @@ export const UserManager = () => {
       {
         session ? (
           <DropdownMenu aria-label="Profile Actions">
+            <DropdownSection showDivider>
             <DropdownItem key="profile" className="gap-2">
               <p className="font-semibold">Signed in as:</p>
               <p className="font-semibold">{session.user.email}</p>
             </DropdownItem>
+            </DropdownSection>
             <DropdownSection>
               <DropdownItem key="logout" color="danger" onClick={handleSignOut}>
                 Sign Out
