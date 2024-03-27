@@ -25,7 +25,9 @@ export default function SiteHeader() {
             </NextLink>
           </NavbarBrand>
         </NavbarContent>
-
+        <NavbarContent justify="center">
+          
+        </NavbarContent>
         <NavbarContent justify="end">
           <UserManager />
         </NavbarContent>
