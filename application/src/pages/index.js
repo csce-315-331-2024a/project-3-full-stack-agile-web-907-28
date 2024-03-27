@@ -25,7 +25,7 @@ const Home = () => {
 								router.push('/customer');
 								break;
 							case 'Cashier':
-								router.push('/customer'); // Assuming you meant to redirect cashiers here as well
+								router.push('/cashier'); // Assuming you meant to redirect cashiers here as well
 								break;
 							default:
 								// Handle unknown credentials, perhaps redirect to a default or error page
