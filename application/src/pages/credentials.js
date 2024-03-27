@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useSession } from 'next-auth/react';
-import styles from '../styles/onboarding/Credentials.module.css';
 import { useRouter } from 'next/router';
+import {Button, Card, CardBody, CardFooter, CardHeader, Radio, RadioGroup} from "@nextui-org/react";
+
+import DefaultLayout from "@/layouts/default";
 
 const Credentials = () => {
   const [role, setRole] = useState('');
@@ -42,39 +44,26 @@ const Credentials = () => {
 
 
   return (
-    <div className={styles.container}>
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <h2>Select Your Credentials</h2>
-        <label>
-          <input
-            type="radio"
-            value="Manager"
-            checked={role === 'Manager'}
-            onChange={(e) => setRole(e.target.value)}
-          />
-          Manager
-        </label>
-        <label>
-          <input
-            type="radio"
-            value="Customer"
-            checked={role === 'Customer'}
-            onChange={(e) => setRole(e.target.value)}
-          />
-          Customer
-        </label>
-        <label>
-          <input
-            type="radio"
-            value="Cashier"
-            checked={role === 'Cashier'}
-            onChange={(e) => setRole(e.target.value)}
-          />
-          Cashier
-        </label>
-        <button type="submit" className={styles.submitButton}>Submit</button>
-      </form>
-    </div>
+    <DefaultLayout>
+      <div className="flex justify-center">
+        <Card className="flex justify-center max-w-sm">
+          <CardHeader><h1 className="text-xl font-semibold">Choose your role</h1></CardHeader>
+          <CardBody className="justify-between">
+            <form onSubmit={handleSubmit}>
+              <RadioGroup orientation="vertical" onChange={(e) => setRole(e.target.value)}>
+                <Radio value="Customer">Customer</Radio>
+                <Radio value="Cashier">Cashier</Radio>
+                <Radio value="Manager">Manager</Radio>
+              </RadioGroup>
+            </form>
+          </CardBody>
+          <CardFooter className="justify-between">
+            <div />
+            <Button onClick={handleSubmit}>Submit</Button>
+          </CardFooter>
+        </Card>
+      </div>
+    </DefaultLayout>
   );
 };
 
