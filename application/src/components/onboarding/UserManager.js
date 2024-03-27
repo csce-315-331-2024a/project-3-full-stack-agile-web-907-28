@@ -59,6 +59,9 @@ export const UserManager = () => {
             </DropdownItem>
             </DropdownSection>
             <DropdownSection>
+              <DropdownItem key="Settings" href="/credentials">
+                Settings
+              </DropdownItem>
               <DropdownItem key="logout" color="danger" onClick={handleSignOut}>
                 Sign Out
               </DropdownItem>
