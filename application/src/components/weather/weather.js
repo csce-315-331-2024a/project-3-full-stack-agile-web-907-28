@@ -1,60 +1,47 @@
-// components/Weather.js
+// components/WeatherComponent.js
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 
-const Weather = () => {
-  const [city, setCity] = useState('');
+const WeatherComponent = () => {
   const [weatherData, setWeatherData] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchWeatherData = async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await fetch(`/api/weather?city=${city}`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch weather data');
+  useEffect(() => {
+    const fetchWeatherData = async () => {
+      try {
+        const response = await axios.get('/api/weather');
+        if (response.status !== 200) {
+          throw new Error('Failed to fetch weather data');
+        }
+        const data = response.data;
+        setWeatherData(data);
+      } catch (error) {
+        setError('Failed to fetch weather data');
+      } finally {
+        setLoading(false);
       }
-      const data = await response.json();
-      setWeatherData(data);
-    } catch (error) {
-      setError('Failed to fetch weather data');
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
     fetchWeatherData();
-  };
+  }, []);
 
   return (
     <div>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
-          placeholder="Enter city name"
-        />
-        <button type="submit">Get Weather</button>
-      </form>
+      <h2>Today's Weather in College Station, Texas</h2>
       {loading && <p>Loading...</p>}
       {error && <p>{error}</p>}
       {weatherData && (
         <div>
-          <h2>Weather Information for {city}</h2>
-          <p>Temperature: {weatherData.temperature}</p>
+          <p>Temperature: {weatherData.temperature} °C</p>
           <p>Description: {weatherData.description}</p>
-          <p>Humidity: {weatherData.humidity}</p>
-          <p>Wind Speed: {weatherData.windSpeed}</p>
+          <p>Humidity: {weatherData.humidity}%</p>
+          <p>Wind Speed: {weatherData.windSpeed} m/s</p>
         </div>
       )}
     </div>
   );
 };
 
-export default Weather;
+export default WeatherComponent;
