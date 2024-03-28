@@ -5,7 +5,7 @@ import axios from 'axios';
 export default async function handler(req, res) {
   try {
     // Fetch weather data from WeatherAPI service for College Station, Texas
-    const response = await axios.get(`https://api.weatherapi.com/v1/current.json?key=3283f9228f64468f879230930242803 &q=College%20Station`);
+    const response = await axios.get(`https://api.weatherapi.com/v1/current.json?key=3283f9228f64468f879230930242803&q=College%20Station`);
     
     if (response.status !== 200) {
       throw new Error('Failed to fetch weather data');

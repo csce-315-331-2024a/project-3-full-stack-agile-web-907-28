@@ -11,7 +11,7 @@ const WeatherComponent = () => {
   useEffect(() => {
     const fetchWeatherData = async () => {
       try {
-        const response = await axios.get('/api/weather');
+        const response = await axios.get('@/pages/api/weather');
         if (response.status !== 200) {
           throw new Error('Failed to fetch weather data');
         }

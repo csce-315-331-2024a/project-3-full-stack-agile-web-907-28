@@ -5,6 +5,8 @@ import {
 } from "@nextui-org/react";
 import NextLink from "next/link";
 import { UserManager } from "@/components/onboarding/UserManager";
+import { WeatherComponent } from "@/components/weather/weather";
+
 
 
 export default function SiteHeader() {
@@ -26,7 +28,7 @@ export default function SiteHeader() {
           </NavbarBrand>
         </NavbarContent>
         <NavbarContent justify="center">
-          
+          <WeatherComponent />
         </NavbarContent>
         <NavbarContent justify="end">
           <UserManager />
