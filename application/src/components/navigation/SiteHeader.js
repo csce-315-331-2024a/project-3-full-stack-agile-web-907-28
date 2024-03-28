@@ -1,13 +1,12 @@
 import {
   Navbar,
   NavbarContent,
-  NavbarBrand, Image,
+  NavbarBrand,
+  Image,
 } from "@nextui-org/react";
 import NextLink from "next/link";
 import { UserManager } from "@/components/onboarding/UserManager";
-import { WeatherComponent } from "@/components/weather/weather";
-
-
+import WeatherComponent from "@/components/weather/weather"; 
 
 export default function SiteHeader() {
   return (
@@ -35,5 +34,5 @@ export default function SiteHeader() {
         </NavbarContent>
       </Navbar>
     </div>
-  )
+  );
 }
