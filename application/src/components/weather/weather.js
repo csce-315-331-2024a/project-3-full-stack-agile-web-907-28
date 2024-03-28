@@ -34,10 +34,8 @@ const WeatherComponent = () => {
       {error && <p>{error}</p>}
       {weatherData && (
         <div>
-          <p>Temperature: {weatherData.temperature} °C</p>
-          <p>Description: {weatherData.description}</p>
-          <p>Humidity: {weatherData.humidity}%</p>
-          <p>Wind Speed: {weatherData.windSpeed} m/s</p>
+          <p>Temperature: {weatherData.temperature} °C  Description: {weatherData.description}</p>
+          <p>Humidity: {weatherData.humidity}%  Wind Speed: {weatherData.windSpeed} km/s</p>
         </div>
       )}
     </div>

@@ -14,7 +14,7 @@ export default async function handler(req, res) {
       temperature: data.current.temp_c,
       description: data.current.condition.text,
       humidity: data.current.humidity,
-      windSpeed: data.current.wind_kph / 3.6, // Convert km/h to m/s
+      windSpeed: data.current.wind_kph, // Convert km/h to m/s
     };
 
     res.status(200).json(weatherData);
