@@ -2,7 +2,9 @@ import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import {Card, Spinner} from "@nextui-org/react";
 
-import useUserCredentials from "@/components/security/useUserCredentials"
+import getUserCredentials from "@/components/security/getUserCredentials"
+import {useSession} from "next-auth/react";
+import UserCredentials from "@/models/UserCredentials";
 
 /**
  * Wrapper element for something that should only be able to be accessed by certain users.
@@ -14,16 +16,17 @@ import useUserCredentials from "@/components/security/useUserCredentials"
  * @constructor
  */
 export default function RestrictedAccess({ isCredentialAuthorized, redirectURL = "/", errorRedirect = "/", children }) {
-  const { is_ready, setIsReady } = useState(false);
-  const { is_allowed, setIsAllowed } = useState(false);
+  const [ is_allowed, setIsAllowed ] = useState(false);
   const router = useRouter();
-  const credentials = useUserCredentials();
+  const { status } = useSession();
 
   useEffect(() => {
     async function redirectIfNotAuthorized() {
+      if (status === "loading") {
+        return;
+      }
       try {
-        const creds = await credentials;
-        setIsReady(true);
+        const creds = (status === "authenticated") ? await getUserCredentials() : UserCredentials.NoCred;
         if (isCredentialAuthorized(creds)) {
           setIsAllowed(true);
         } else {
@@ -40,9 +43,9 @@ export default function RestrictedAccess({ isCredentialAuthorized, redirectURL =
       }
     }
     redirectIfNotAuthorized();
-  }, [credentials, isCredentialAuthorized, errorRedirect, redirectURL, router, setIsReady, setIsAllowed]);
+  }, [isCredentialAuthorized, errorRedirect, redirectURL, router, setIsAllowed, status]);
 
-  return is_ready ? (
+  return status !== "loading" ? (
     is_allowed ? (
       <div>
         {children}
