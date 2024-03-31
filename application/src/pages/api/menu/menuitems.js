@@ -1,6 +1,11 @@
 import { query } from '../../../utils/db';
 import MenuItem from '../../../models/MenuItem';
 
+/**
+ * This function handles the GET request for menu items.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ */
 export default async function handler(req, res) {
   try {
     const { rows } = await query('SELECT * FROM menuitem;');

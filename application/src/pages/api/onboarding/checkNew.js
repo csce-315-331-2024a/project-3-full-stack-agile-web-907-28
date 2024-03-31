@@ -1,6 +1,12 @@
 // pages/api/user/check-new.js
 import { query } from '../../../utils/db'; // Adjust import path as necessary
 
+/**
+ * This function handles the POST request for checking if a user is new.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Object} - The user status.
+ */
 export default async function handler(req, res) {
   const { email } = req.body;
   try {

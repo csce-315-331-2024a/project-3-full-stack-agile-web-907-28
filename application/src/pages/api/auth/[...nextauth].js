@@ -41,5 +41,4 @@ export default NextAuth({
       return url.startsWith(baseUrl) ? url : baseUrl;
     },
   }
-  // Additional NextAuth configuration options...
 });

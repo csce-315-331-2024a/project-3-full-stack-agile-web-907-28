@@ -1,6 +1,12 @@
 import { getSession } from "next-auth/react";
 import { query } from '../../../utils/db'; // Adjust the import path to your database utility
 
+/**
+ * This function handles the GET request for fetching user credentials.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Object} - The user credentials.
+ */
 export default async function handler(req, res) {
   // Only allow GET requests
   if (req.method !== 'GET') {
