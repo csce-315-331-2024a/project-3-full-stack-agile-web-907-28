@@ -13,11 +13,17 @@ import {
 import { FaGoogle } from "react-icons/fa";
 import UserCredentials from "@/models/UserCredentials";
 
+/**
+ * This component is the user manager that displays the user's profile information and sign out button.
+ * @returns {JSX.Element} - The user manager component.
+ */
 export const UserManager = () => {
+  // Get the user session
   const { data: session, status } = useSession();
   const router = useRouter();
   const [ credentials, setCredentials ] = useState("");
 
+  // Redirect to credentials page if user is new
   useEffect(() => {
     if (status === "authenticated" && session?.user?.isNewUser) {
       router.push('/credentials');
@@ -40,10 +46,12 @@ export const UserManager = () => {
   const handleSignOut = async () => {
     const signOutResponse = await signOut({ redirect: false, callbackUrl: "/login" });
     if (signOutResponse.url) {
+      // Redirect to the sign out URL
       await router.push(signOutResponse.url);
     }
   };
 
+  // Return the user manager component
   return (
     <Dropdown>
       <DropdownTrigger>

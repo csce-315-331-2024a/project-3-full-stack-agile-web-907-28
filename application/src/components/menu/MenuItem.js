@@ -16,7 +16,15 @@ import IceCream from "../../../public/ice_cream.jpg";
 import Suace from "../../../public/sauce.png";
 import OnionRings from "../../../public/onion_rings.jpg";
 
-
+/**
+ * This component is a menu item that displays the name, price, and image of the item.
+ * @param {Object} id - The id of the item.
+ * @param {Object} name - The name of the item.
+ * @param {Object} price - The price of the item.
+ * @param {Object} category - The category of the item.
+ * @param {Object} args - The rest of the arguments.
+ * @returns {JSX.Element} - The menu item component.
+ */
 export default function MenuItem({ id, name, price, category, ...args }) {
     let imageSrc;
 
@@ -45,8 +53,6 @@ export default function MenuItem({ id, name, price, category, ...args }) {
     } else if (category == 9) {
         imageSrc = OnionRings.src;
     }
-
-    console.log(id);
 
     return (
       <Card key={id} {...args}>
