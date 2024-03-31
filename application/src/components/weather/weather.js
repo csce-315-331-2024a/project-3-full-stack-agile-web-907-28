@@ -8,6 +8,23 @@ const WeatherComponent = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Mapping between weather conditions and icon names
+  const weatherIcons = {
+    'blizzard': 'blizzard.png',
+    'clear': 'clear.png',
+    'cloudy': 'cloudy.png',
+    'drizzle': 'drizzle.png',
+    'fog': 'fog.png',
+    'haze': 'haze.png',
+    'partly_cloudy': 'partly_cloudy.png',
+    'rain': 'rain.png',
+    'showers': 'showers.png',
+    'snow': 'snow.png',
+    'thunderstorms': 'thunderstorms.png',
+    'tornado': 'tornado.png',
+    'windy': 'windy.png',
+  };
+
   useEffect(() => {
     const fetchWeatherData = async () => {
       try {
