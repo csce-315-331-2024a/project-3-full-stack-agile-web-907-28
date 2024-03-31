@@ -2,7 +2,10 @@ import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { query } from '../../../utils/db';
 
-
+/**
+ * This function is the NextAuth configuration for the application.
+ * @returns {Object} - The NextAuth configuration.
+ */
 export default NextAuth({
   providers: [
     GoogleProvider({
@@ -13,7 +16,6 @@ export default NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async signIn({ user, account, profile }) {
-      // console.log('signIn callback');
       const email = user.email;
       const result = await query('SELECT * FROM users WHERE email = $1;', [email]);
       if (result.rows.length === 0) {
@@ -32,11 +34,9 @@ export default NextAuth({
     async redirect({ url, baseUrl, session }) {
       // Check if the user was flagged as new in the session callback
       if (session?.user?.isNewUser) {
-        // console.log('redirecting new user');
         // Redirect new users to the credentials page
         return `${baseUrl}/credentials`; // Adjust the path as necessary
       }
-      // console.log('redirecting existing user');
       // For existing users, or any other redirects, return the original URL or the base URL
       return url.startsWith(baseUrl) ? url : baseUrl;
     },
