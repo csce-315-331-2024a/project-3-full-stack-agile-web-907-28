@@ -47,7 +47,6 @@ const Home = () => {
 				// If there's no session, redirect to sign-in page or stay on home
 				router.push('/menu');
 			}
-			router.push('/menu');
 			// If session status is still loading, do nothing or show a loader
 		};
 
