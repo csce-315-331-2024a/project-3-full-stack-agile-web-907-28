@@ -1,4 +1,4 @@
-# Sprint Planning Meeting Minutes
+# SCRUM Meeting
 
 What has everyone worked on?
 - Worked on completing initial backlog tasks
