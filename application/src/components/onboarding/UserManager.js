@@ -11,23 +11,32 @@ import {
 } from "@nextui-org/react"
 import { FaGoogle } from "react-icons/fa";
 
+/**
+ * This component is the user manager that displays the user's profile information and sign out button.
+ * @returns {JSX.Element} - The user manager component.
+ */
 export const UserManager = () => {
+  // Get the user session
   const { data: session, status } = useSession();
   const router = useRouter();
 
+  // Redirect to credentials page if user is new
   useEffect(() => {
     if (status === "authenticated" && session?.user?.isNewUser) {
       router.push('/credentials');
     }
   }, [session, status, router]);
 
+  // Handle sign out
   const handleSignOut = async () => {
     const signOutResponse = await signOut({ redirect: false, callbackUrl: "/login" });
     if (signOutResponse.url) {
+      // Redirect to the sign out URL
       await router.push(signOutResponse.url);
     }
   };
 
+  // Return the user manager component
   return (
     <Dropdown>
       <DropdownTrigger>

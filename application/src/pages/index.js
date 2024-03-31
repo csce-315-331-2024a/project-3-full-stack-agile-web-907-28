@@ -11,7 +11,7 @@ const Home = () => {
 	useEffect(() => {
 		// Ensure effect runs only after confirming the session status
 		const fetchCredentialsAndRedirect = async () => {
-			if (status === 'authenticated') {
+			if (status === 'authenticated' || status === 'loading') {
 				try {
 					const res = await fetch('/api/onboarding/getCred');
 					if (res.ok) {

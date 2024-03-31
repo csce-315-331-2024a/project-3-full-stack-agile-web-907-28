@@ -7,6 +7,7 @@ import DefaultLayout from "@/layouts/default";
 import RestrictedAccess from "@/components/security/RestrictedAccess";
 import UserCredentials from "@/models/UserCredentials";
 
+
 export default function Credentials() {
   const [role, setRole] = useState('');
   const { data: session } = useSession(); // Use the session

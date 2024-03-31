@@ -1,3 +1,6 @@
+/**
+ * UserCredentials.js
+ */
 const UserCredentials = Object.freeze({
   Customer: "Customer",
   Cashier: "Cashier",

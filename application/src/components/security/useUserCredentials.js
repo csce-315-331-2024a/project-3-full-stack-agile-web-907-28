@@ -8,7 +8,7 @@ import UserCredentials from "@/models/UserCredentials";
  */
 export default async function useUserCredentials() {
   const { status } = useSession();
-  if (status === "authenticated") {
+  if (status === "authenticated" || status === "loading") {
     return fetch("/api/onboarding/getCred")
       .then(response => {
         if (!response.ok) {

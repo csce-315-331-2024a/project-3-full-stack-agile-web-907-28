@@ -19,7 +19,6 @@ export default async function handler(req, res) {
     // Fetch the user credentials from the database
     const result = await query('SELECT credentials FROM users WHERE email = $1', [userEmail]);
     if (result.rows.length > 0) {
-      // Assuming credentials are stored in a column named 'credentials'
       const credentials = result.rows[0].credentials;
       return res.status(200).json({ credentials });
     } else {
