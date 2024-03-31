@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { signIn, signOut, useSession } from "next-auth/react";
+import getUserCredentials from "@/components/security/getUserCredentials";
 
 import {
   Avatar,
@@ -10,6 +11,7 @@ import {
   DropdownItem, DropdownSection,
 } from "@nextui-org/react"
 import { FaGoogle } from "react-icons/fa";
+import UserCredentials from "@/models/UserCredentials";
 
 /**
  * This component is the user manager that displays the user's profile information and sign out button.
@@ -19,6 +21,7 @@ export const UserManager = () => {
   // Get the user session
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [ credentials, setCredentials ] = useState("");
 
   // Redirect to credentials page if user is new
   useEffect(() => {
@@ -27,7 +30,19 @@ export const UserManager = () => {
     }
   }, [session, status, router]);
 
-  // Handle sign out
+  useEffect(() => {
+    const sc = async () => {
+      if (status === "loading") {
+        return;
+      } else if (status === "authenticated") {
+        setCredentials(await getUserCredentials());
+      } else {
+        setCredentials(UserCredentials.NoCred);
+      }
+    }
+    sc();
+  }, [status, setCredentials]);
+
   const handleSignOut = async () => {
     const signOutResponse = await signOut({ redirect: false, callbackUrl: "/login" });
     if (signOutResponse.url) {
@@ -65,6 +80,7 @@ export const UserManager = () => {
             <DropdownItem key="profile" className="gap-2">
               <p className="font-semibold">Signed in as:</p>
               <p className="font-semibold">{session.user.email}</p>
+              <p className="font-light">{credentials}</p>
             </DropdownItem>
             </DropdownSection>
             <DropdownSection>
