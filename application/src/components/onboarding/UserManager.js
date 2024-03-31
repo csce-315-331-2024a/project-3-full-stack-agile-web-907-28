@@ -43,6 +43,10 @@ export const UserManager = () => {
     sc();
   }, [status, setCredentials]);
 
+  const handleSignIn = async () => {
+    await signIn("google", { callbackUrl: "/" });
+  }
+
   const handleSignOut = async () => {
     const signOutResponse = await signOut({ redirect: false, callbackUrl: "/login" });
     if (signOutResponse.url) {
@@ -103,7 +107,7 @@ export const UserManager = () => {
               <DropdownItem
                 color="success"
                 key="login"
-                onClick={() => signIn("google")}
+                onClick={handleSignIn}
                 startContent={<FaGoogle />}
               >
                 Sign in with Google
