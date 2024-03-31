@@ -51,7 +51,7 @@ const WeatherComponent = () => {
 
   return (
     <div>
-      <h2>Today's Weather at {weatherData.location}</h2>
+      <h2>Today's Weather at {weatherData?.location}</h2>
       {loading && <p>Loading...</p>}
       {error && <p>{error}</p>}
       {weatherData && (
