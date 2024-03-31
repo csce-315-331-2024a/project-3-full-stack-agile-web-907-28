@@ -1,9 +1,13 @@
+// pages/api/weather/weather.js
+
 import axios from 'axios';
 
 export default async function handler(req, res) {
   try {
-    // Fetch weather data from WeatherAPI service for College Station, Texas
-    const response = await axios.get(`https://api.weatherapi.com/v1/current.json?key=3283f9228f64468f879230930242803&q=College%20Station`);
+    const { lat, lon } = req.query;
+    
+    // Fetch weather data from WeatherAPI service based on latitude and longitude
+    const response = await axios.get(`https://api.weatherapi.com/v1/current.json?key=3283f9228f64468f879230930242803&q=${lat},${lon}`);
     
     if (response.status !== 200) {
       throw new Error('Failed to fetch weather data');
@@ -11,6 +15,7 @@ export default async function handler(req, res) {
     
     const data = response.data;
     const weatherData = {
+      location: data.location.name,
       temperature: data.current.temp_c,
       description: data.current.condition.text,
       humidity: data.current.humidity,

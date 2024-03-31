@@ -11,12 +11,17 @@ const WeatherComponent = () => {
   useEffect(() => {
     const fetchWeatherData = async () => {
       try {
-        const response = await axios.get('/api/weather/weather');
-        if (response.status !== 200) {
-          throw new Error('Failed to fetch weather data');
-        }
-        const data = response.data;
-        setWeatherData(data);
+        // Get user's current location
+        navigator.geolocation.getCurrentPosition(async (position) => {
+          const { latitude, longitude } = position.coords;
+          // Fetch weather data based on user's coordinates
+          const response = await axios.get(`/api/weather/weather?lat=${latitude}&lon=${longitude}`);
+          if (response.status !== 200) {
+            throw new Error('Failed to fetch weather data');
+          }
+          const data = response.data;
+          setWeatherData(data);
+        });
       } catch (error) {
         setError('Failed to fetch weather data');
       } finally {
@@ -29,7 +34,7 @@ const WeatherComponent = () => {
 
   return (
     <div>
-      <h2>Today's Weather in College Station, Texas</h2>
+      <h2>Today's Weather at {weatherData.location}</h2>
       {loading && <p>Loading...</p>}
       {error && <p>{error}</p>}
       {weatherData && (
@@ -43,3 +48,4 @@ const WeatherComponent = () => {
 };
 
 export default WeatherComponent;
+
