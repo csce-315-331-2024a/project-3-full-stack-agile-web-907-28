@@ -27,22 +27,29 @@ const categories = [
   { id: 7, name: 'Desserts' },
 ];
 
+/**
+ * This function displays the menu page.
+ * @returns {JSX.Element} - The menu page.
+ */
 export default function Menu() {
+  // Declare state variables
   const [menuItems, setMenuItems] = useState([]);
 
 
+  // Fetch menu items
   useEffect(() => {
-    // Fetch menu items
     fetch('/api/menu/menuitems')
       .then(response => response.json())
       .then(data => {
         console.log("Fetched menu items");
+        // Set the menu items
         setMenuItems(data);
       });
   }, []);
 
   return (
     <DefaultLayout>
+      {/* Navbar with categories */}
       <Navbar>
         <NavbarContent justify="center">
           {
@@ -60,7 +67,7 @@ export default function Menu() {
           }
         </NavbarContent>
       </Navbar>
-
+      {/* Maps the categories to menu sections */}
       {
         categories.map(category=> (
           <MenuSection

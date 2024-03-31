@@ -7,7 +7,10 @@ import DefaultLayout from "@/layouts/default";
 import RestrictedAccess from "@/components/security/RestrictedAccess";
 import UserCredentials from "@/models/UserCredentials";
 
-
+/**
+ * This function displays the credentials page. It allows the user to choose their role.
+ * @returns {JSX.Element} - The credentials page.
+ */
 export default function Credentials() {
   const [role, setRole] = useState('');
   const { data: session } = useSession(); // Use the session
