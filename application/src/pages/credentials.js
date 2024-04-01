@@ -55,7 +55,6 @@ export default function Credentials() {
 
   return (
     <DefaultLayout>
-      <RestrictedAccess isCredentialAuthorized={isCredentialAuthorized}>
         <div className="flex justify-center">
           <Card className="flex justify-center max-w-sm">
             <CardHeader><h1 className="text-xl font-semibold">Choose your role</h1></CardHeader>
@@ -72,7 +71,6 @@ export default function Credentials() {
             </CardFooter>
           </Card>
         </div>
-      </RestrictedAccess>
     </DefaultLayout>
   );
 };
