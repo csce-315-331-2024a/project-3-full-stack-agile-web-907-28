@@ -16,7 +16,7 @@ const WeatherComponent = () => {
     'Drizzle': 'drizzle.png',
     'Fog': 'fog.png',
     'Haze': 'haze.png',
-    'Partly_cloudy': 'partly_cloudy.png',
+    'Partly cloudy': 'partly_cloudy.png',
     'Rain': 'rain.png',
     'Showers': 'showers.png',
     'Snow': 'snow.png',
