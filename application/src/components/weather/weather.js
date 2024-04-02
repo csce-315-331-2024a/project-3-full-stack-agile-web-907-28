@@ -1,5 +1,3 @@
-// components/WeatherComponent.js
-
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -10,20 +8,27 @@ const WeatherComponent = () => {
 
   // Mapping between weather conditions and icon names
   const weatherIcons = {
-    'Blizzard': 'blizzard.png',
-    'Clear': 'clear.png',
-    'Cloudy': 'cloudy.png',
-    'Drizzle': 'drizzle.png',
-    'Fog': 'fog.png',
-    'Haze': 'haze.png',
-    'Partly cloudy': 'partly_cloudy.png',
-    'Rain': 'rain.png',
-    'Showers': 'showers.png',
-    'Snow': 'snow.png',
-    'Thunderstorms': 'thunderstorms.png',
-    'Tornado': 'tornado.png',
-    'Windy': 'windy.png',
-    'Overcast': 'cloudy.png'
+    'blizzard': 'blizzard.png',
+    'clear sky': 'clear.png',
+    'cloudy': 'cloudy.png',
+    'drizzle': 'drizzle.png',
+    'fog': 'fog.png',
+    'haze': 'haze.png',
+    'mist': 'fog.png',
+    'partly cloudy': 'partly_cloudy.png',
+    'rain': 'rain.png',
+    'showers': 'showers.png',
+    'snow': 'snow.png',
+    'thunderstorm': 'thunderstorm.png',
+    'tornado': 'tornado.png',
+    'windy': 'windy.png',
+    'overcast': 'cloudy.png',
+    'sunny': 'clear.png'
+  };
+
+  // Function to capitalize the first letter of each word
+  const capitalizeFirstLetter = (str) => {
+    return str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   };
 
   useEffect(() => {
@@ -32,7 +37,7 @@ const WeatherComponent = () => {
         // Get user's current location
         navigator.geolocation.getCurrentPosition(async (position) => {
           const { latitude, longitude } = position.coords;
-          // Fetch weather data based on user's coordinates
+          // Fetch weather data based on user's coordinates from the new OpenWeatherMap API
           const response = await axios.get(`/api/weather/weather?lat=${latitude}&lon=${longitude}`);
           if (response.status !== 200) {
             throw new Error('Failed to fetch weather data');
@@ -51,29 +56,27 @@ const WeatherComponent = () => {
   }, []);
 
   return (
-    <div>
-      <h2>Today's Weather at {weatherData?.location}</h2>
-      {loading && <p>Loading...</p>}
-      {error && <p>{error}</p>}
-      {weatherData && (
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-        <span style={{ marginRight: '10px' }}>
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      <div style={{ flex: '0 0 auto', marginRight: '10px' }}>
         <img
-          style={{ height: '25px' }}
-          src={`/weather_icons/${weatherIcons[weatherData.description]}`}
-          alt={weatherData.description}
+          style={{ height: '50px' }}
+          src={`/weather_icons/${weatherIcons[weatherData?.description]}`}
+          alt={weatherData?.description}
         />
-        </span>
-        <p>
-          {weatherData.temperature} °C&nbsp;
-          Humidity: {weatherData.humidity}%&nbsp;
-          Wind Speed: {weatherData.windSpeed} m/s
-        </p>
       </div>
-      )}
+      <div>
+        <h2>{weatherData ? `Today's Weather at ${weatherData.location}, ${capitalizeFirstLetter(weatherData.description)}` : 'Loading...'}</h2>
+        {error && <p>{error}</p>}
+        {weatherData && (
+          <p>
+            {weatherData.temperature} °C&nbsp;
+            Humidity: {weatherData.humidity}%&nbsp;
+            Wind Speed: {weatherData.windSpeed} m/s
+          </p>
+        )}
+      </div>
     </div>
   );
 };
 
 export default WeatherComponent;
-
