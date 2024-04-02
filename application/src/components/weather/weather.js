@@ -10,19 +10,20 @@ const WeatherComponent = () => {
 
   // Mapping between weather conditions and icon names
   const weatherIcons = {
-    'blizzard': 'blizzard.png',
-    'clear': 'clear.png',
-    'cloudy': 'cloudy.png',
-    'drizzle': 'drizzle.png',
-    'fog': 'fog.png',
-    'haze': 'haze.png',
-    'partly_cloudy': 'partly_cloudy.png',
-    'rain': 'rain.png',
-    'showers': 'showers.png',
-    'snow': 'snow.png',
-    'thunderstorms': 'thunderstorms.png',
-    'tornado': 'tornado.png',
-    'windy': 'windy.png',
+    'Blizzard': 'blizzard.png',
+    'Clear': 'clear.png',
+    'Cloudy': 'cloudy.png',
+    'Drizzle': 'drizzle.png',
+    'Fog': 'fog.png',
+    'Haze': 'haze.png',
+    'Partly_cloudy': 'partly_cloudy.png',
+    'Rain': 'rain.png',
+    'Showers': 'showers.png',
+    'Snow': 'snow.png',
+    'Thunderstorms': 'thunderstorms.png',
+    'Tornado': 'tornado.png',
+    'Windy': 'windy.png',
+    'Overcast': 'cloudy.png'
   };
 
   useEffect(() => {
@@ -55,10 +56,21 @@ const WeatherComponent = () => {
       {loading && <p>Loading...</p>}
       {error && <p>{error}</p>}
       {weatherData && (
-        <div>
           <p>Temperature: {weatherData.temperature} °C  Description: {weatherData.description}</p>
-          <p>Humidity: {weatherData.humidity}%  Wind Speed: {weatherData.windSpeed} km/s</p>
-        </div>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <span style={{ marginRight: '10px' }}>
+        <img
+          style={{ height: '25px' }}
+          src={`/weather_icons/${weatherIcons[weatherData.description]}`}
+          alt={weatherData.description}
+        />
+        </span>
+        <p>
+          {weatherData.temperature} °C&nbsp;
+          Humidity: {weatherData.humidity}%&nbsp;
+          Wind Speed: {weatherData.windSpeed} m/s
+        </p>
+      </div>
       )}
     </div>
   );
