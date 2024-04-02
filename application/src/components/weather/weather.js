@@ -56,7 +56,6 @@ const WeatherComponent = () => {
       {loading && <p>Loading...</p>}
       {error && <p>{error}</p>}
       {weatherData && (
-          <p>Temperature: {weatherData.temperature} °C  Description: {weatherData.description}</p>
         <div style={{ display: 'flex', alignItems: 'center' }}>
         <span style={{ marginRight: '10px' }}>
         <img
