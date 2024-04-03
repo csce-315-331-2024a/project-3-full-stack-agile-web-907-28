@@ -49,35 +49,35 @@ export default function Menu() {
 
   return (
     <DefaultLayout>
-      {/* Navbar with categories */}
-      <Navbar>
-        <NavbarContent justify="center">
-          {
-            categories.map(category => (
-              <NavbarItem key={category.id}>
-                <Button
-                  as={Link}
-                  href={`#${category.name}`}
-                  variant="light"
-                >
-                  {category.name}
-                </Button>
-              </NavbarItem>
-            ))
-          }
-        </NavbarContent>
-      </Navbar>
-      {/* Maps the categories to menu sections */}
-      {
-        categories.map(category=> (
-          <MenuSection
-            key={category.id}
-            menuItems={menuItems}
-            category={category.id}
-            categoryName={category.name}
-          />
-        ))
-      }
+      <center>
+        <Tabs aria-label="menu sections" size="lg" color="primary" items={
+          categories.map(category => {
+            return {
+              id: category.id,
+              label: category.name,
+              content: (
+                <MenuSection
+                  key={category.id}
+                  menuItems={menuItems}
+                  category={category.id}
+                  categoryName={category.name}
+                />
+              )
+            }
+          })
+        }>
+          {(item) => (
+            <Tab key={item.id} title={item.label}>
+              <Card>
+                <CardBody>
+                  {item.content}
+                </CardBody>
+              </Card>
+            </Tab>
+          )}
+        </Tabs>
+      </center>
+
     </DefaultLayout>
   );
 };
