@@ -6,7 +6,7 @@ import {
 
 import DefaultLayout from "@/layouts/default";
 import MenuItem from "@/components/menu/MenuItem";
-import ItemGrid from "@/components/utils/ItemGrid";
+import MenuItemGrid from "@/components/menu/MenuItemGrid";
 
 
 // Assuming you have a mapping of category IDs to names
@@ -50,7 +50,7 @@ export default function Menu() {
               <Tab key={category.id} title={category.name}>
                 <Card fullWidth="true" radius="none" shadow="none" >
                   <CardBody>
-                    <ItemGrid>
+                    <MenuItemGrid>
                       {
                         menuItems.filter(item => item.categoryId === category.id).map(item => (
                           <MenuItem
@@ -62,7 +62,7 @@ export default function Menu() {
                           />
                         ))
                       }
-                    </ItemGrid>
+                    </MenuItemGrid>
                   </CardBody>
                 </Card>
               </Tab>
