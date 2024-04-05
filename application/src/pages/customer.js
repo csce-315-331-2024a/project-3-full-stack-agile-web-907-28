@@ -8,7 +8,7 @@ import RestrictedAccess from "@/components/security/RestrictedAccess";
  */
 export default function CustomerPage() {
   function isCredentialAuthorized(credential) {
-    return credential === UserCredentials.Customer;
+    return credential === UserCredentials.Customer || credential === UserCredentials.Admin || credential === UserCredentials.Manager || credential === UserCredentials.Cashier;
   }
   return (
     <RestrictedAccess isCredentialAuthorized={isCredentialAuthorized}>

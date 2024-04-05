@@ -31,6 +31,9 @@ const Home = () => {
 							case 'Cashier':
 								router.push('/cashier'); // Assuming you meant to redirect cashiers here as well
 								break;
+							case 'Admin':
+								router.push('/admin');
+								break;
 							default:
 								// Handle unknown credentials, perhaps redirect to a default or error page
 								//router.push('/menu');

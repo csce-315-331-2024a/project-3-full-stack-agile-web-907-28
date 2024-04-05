@@ -55,6 +55,21 @@ export const UserManager = () => {
     }
   };
 
+  const navigationItems = {
+    Admin: ["/admin", "/customer", "/manager", "/cashier"],
+    Manager: ["/manager", "/cashier", "/customer"],
+    Cashier: ["/cashier", "/customer"],
+    Customer: ["/customer"],
+  };
+
+  const capitalizePath = (path) => {
+    return path
+      .slice(1) // Remove the leading slash
+      .split('/') // Split by slashes to handle nested paths
+      .map(part => part.charAt(0).toUpperCase() + part.slice(1)) // Capitalize the first letter of each part
+      .join(' '); // Join the parts back together
+  };
+
   // Return the user manager component
   return (
     <Dropdown>
@@ -88,6 +103,11 @@ export const UserManager = () => {
             </DropdownItem>
             </DropdownSection>
             <DropdownSection>
+            {navigationItems[credentials]?.map((path) => (
+              <DropdownItem key={path} onClick={() => router.push(path)}>
+                {capitalizePath(path)}
+              </DropdownItem>
+            ))}
               <DropdownItem key="Settings" href="/credentials">
                 Settings
               </DropdownItem>

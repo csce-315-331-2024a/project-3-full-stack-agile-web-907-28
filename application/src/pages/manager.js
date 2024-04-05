@@ -8,7 +8,7 @@ import RestrictedAccess from "@/components/security/RestrictedAccess";
  */
 export default function ManagerPage() {
   function isCredentialAuthorized(credential) {
-    return credential === UserCredentials.Manager;
+    return credential === UserCredentials.Manager || credential === UserCredentials.Admin;
   }
   return (
     <RestrictedAccess isCredentialAuthorized={isCredentialAuthorized}>
