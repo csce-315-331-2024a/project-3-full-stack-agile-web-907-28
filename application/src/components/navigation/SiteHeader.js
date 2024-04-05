@@ -8,6 +8,11 @@ import NextLink from "next/link";
 import { UserManager } from "@/components/onboarding/UserManager";
 import WeatherComponent from "@/components/weather/weather"; 
 
+
+/**
+ * This component is the site header that contains the Rev logo and user management.
+ * @returns {JSX.Element} - The site header component.
+ */
 export default function SiteHeader() {
   return (
     <div>

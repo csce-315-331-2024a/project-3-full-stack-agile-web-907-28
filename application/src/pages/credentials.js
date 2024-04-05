@@ -4,11 +4,21 @@ import { useRouter } from 'next/router';
 import {Button, Card, CardBody, CardFooter, CardHeader, Radio, RadioGroup} from "@nextui-org/react";
 
 import DefaultLayout from "@/layouts/default";
+import RestrictedAccess from "@/components/security/RestrictedAccess";
+import UserCredentials from "@/models/UserCredentials";
 
-const Credentials = () => {
+/**
+ * This function displays the credentials page. It allows the user to choose their role.
+ * @returns {JSX.Element} - The credentials page.
+ */
+export default function Credentials() {
   const [role, setRole] = useState('');
   const { data: session } = useSession(); // Use the session
   const router = useRouter();
+
+  function isCredentialAuthorized(credential) {
+    return credential !== UserCredentials.NoCred;
+  }
 
   console.log('Credentials');
 
@@ -45,27 +55,22 @@ const Credentials = () => {
 
   return (
     <DefaultLayout>
-      <div className="flex justify-center">
-        <Card className="flex justify-center max-w-sm">
-          <CardHeader><h1 className="text-xl font-semibold">Choose your role</h1></CardHeader>
-          <CardBody className="justify-between">
-            <form onSubmit={handleSubmit}>
+        <div className="flex justify-center">
+          <Card className="flex justify-center max-w-sm">
+            <CardHeader><h1 className="text-xl font-semibold">Choose your role</h1></CardHeader>
+            <CardBody className="justify-between">
               <RadioGroup orientation="vertical" onChange={(e) => setRole(e.target.value)}>
                 <Radio value="Customer">Customer</Radio>
                 <Radio value="Cashier">Cashier</Radio>
                 <Radio value="Manager">Manager</Radio>
               </RadioGroup>
-            </form>
-          </CardBody>
-          <CardFooter className="justify-between">
-            <div />
-            <Button onClick={handleSubmit}>Submit</Button>
-          </CardFooter>
-        </Card>
-      </div>
+            </CardBody>
+            <CardFooter className="justify-between">
+              <div/>
+              <Button onClick={handleSubmit}>Submit</Button>
+            </CardFooter>
+          </Card>
+        </div>
     </DefaultLayout>
   );
 };
-
-export default Credentials;
-

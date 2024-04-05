@@ -1,18 +1,12 @@
 import { useState, useEffect } from 'react';
 import {
-  Button,
-  Input,
-  Link,
-  Navbar,
-  NavbarContent,
-  NavbarItem,
   Tabs,
-  Tab, Card, CardHeader, CardBody
+  Tab, Card, CardBody
 } from "@nextui-org/react";
 
 import DefaultLayout from "@/layouts/default";
-import MenuSection from "@/components/menu/MenuSection";
 import MenuItem from "@/components/menu/MenuItem";
+import MenuItemGrid from "@/components/menu/MenuItemGrid";
 
 
 // Assuming you have a mapping of category IDs to names
@@ -27,50 +21,55 @@ const categories = [
   { id: 7, name: 'Desserts' },
 ];
 
+/**
+ * This function displays the menu page.
+ * @returns {JSX.Element} - The menu page.
+ */
 export default function Menu() {
+  // Declare state variables
   const [menuItems, setMenuItems] = useState([]);
 
 
+  // Fetch menu items
   useEffect(() => {
-    // Fetch menu items
     fetch('/api/menu/menuitems')
       .then(response => response.json())
       .then(data => {
         console.log("Fetched menu items");
+        // Set the menu items
         setMenuItems(data);
       });
   }, []);
 
   return (
     <DefaultLayout>
-      <Navbar>
-        <NavbarContent justify="center">
+      <center>
+        <Tabs aria-label="menu sections" size="lg" color="primary">
           {
             categories.map(category => (
-              <NavbarItem key={category.id}>
-                <Button
-                  as={Link}
-                  href={`#${category.name}`}
-                  variant="light"
-                >
-                  {category.name}
-                </Button>
-              </NavbarItem>
+              <Tab key={category.id} title={category.name}>
+                <Card fullWidth="true" radius="none" shadow="none" >
+                  <CardBody>
+                    <MenuItemGrid>
+                      {
+                        menuItems.filter(item => item.categoryId === category.id).map(item => (
+                          <MenuItem
+                            key={item.menuItemId}
+                            id={item.menuItemId}
+                            name={item.name}
+                            price={item.price}
+                            category={item.categoryId}
+                          />
+                        ))
+                      }
+                    </MenuItemGrid>
+                  </CardBody>
+                </Card>
+              </Tab>
             ))
           }
-        </NavbarContent>
-      </Navbar>
-
-      {
-        categories.map(category=> (
-          <MenuSection
-            key={category.id}
-            menuItems={menuItems}
-            category={category.id}
-            categoryName={category.name}
-          />
-        ))
-      }
+        </Tabs>
+      </center>
     </DefaultLayout>
   );
 };
