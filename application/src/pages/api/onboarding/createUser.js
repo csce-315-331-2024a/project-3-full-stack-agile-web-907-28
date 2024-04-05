@@ -1,5 +1,11 @@
 import { query } from '../../../utils/db';
 
+/**
+ * This function handles the POST request for creating a new user.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Object} - The user object. 
+ */
 export default async function handler(req, res) {
   const { email, name, credentials } = req.body;
 

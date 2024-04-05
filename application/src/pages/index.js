@@ -4,6 +4,10 @@ import { useRouter } from 'next/router'; // Fix import path
 
 import DefaultLayout from "@/layouts/default";
 
+/**
+ * This function is the home page.
+ * @returns {JSX.Element} - The home page.
+ */
 const Home = () => {
 	const { data: session, status } = useSession(); // Use useSession to check the session
 	const router = useRouter();
@@ -11,7 +15,7 @@ const Home = () => {
 	useEffect(() => {
 		// Ensure effect runs only after confirming the session status
 		const fetchCredentialsAndRedirect = async () => {
-			if (status === 'authenticated') {
+			if (status === 'authenticated' || status === 'loading') {
 				try {
 					const res = await fetch('/api/onboarding/getCred');
 					if (res.ok) {
@@ -43,7 +47,6 @@ const Home = () => {
 				// If there's no session, redirect to sign-in page or stay on home
 				router.push('/menu');
 			}
-			router.push('/menu');
 			// If session status is still loading, do nothing or show a loader
 		};
 
