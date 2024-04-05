@@ -1,10 +1,13 @@
 import {
   Navbar,
   NavbarContent,
-  NavbarBrand, Image,
+  NavbarBrand,
+  Image,
 } from "@nextui-org/react";
 import NextLink from "next/link";
 import { UserManager } from "@/components/onboarding/UserManager";
+import WeatherComponent from "@/components/weather/weather"; 
+
 
 /**
  * This component is the site header that contains the Rev logo and user management.
@@ -28,11 +31,13 @@ export default function SiteHeader() {
             </NextLink>
           </NavbarBrand>
         </NavbarContent>
-
+        <NavbarContent justify="center">
+          <WeatherComponent />
+        </NavbarContent>
         <NavbarContent justify="end">
           <UserManager />
         </NavbarContent>
       </Navbar>
     </div>
-  )
+  );
 }
