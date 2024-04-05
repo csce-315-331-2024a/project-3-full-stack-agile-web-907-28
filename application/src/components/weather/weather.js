@@ -64,7 +64,7 @@ const WeatherComponent = () => {
           alt={weatherData?.description}
         />
       </div>
-      <div>
+      <div style={{color: 'white'}}>
         <h2>{weatherData ? `Today's Weather at ${weatherData.location}, ${capitalizeFirstLetter(weatherData.description)}` : 'Loading...'}</h2>
         {error && <p>{error}</p>}
         {weatherData && (
