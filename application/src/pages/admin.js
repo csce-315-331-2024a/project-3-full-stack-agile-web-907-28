@@ -3,6 +3,7 @@ import UserCredentials from "@/models/UserCredentials";
 import React, { useEffect, useState } from 'react';
 import DefaultLayout from "@/layouts/default";
 import EditModal from "@/components/admin/editModal";
+import CreateUserModal from "@/components/admin/createModal";
 import {
     Table,
     TableHeader,
@@ -41,6 +42,7 @@ export default function Admin() {
     const [selectedEmails, setSelectedEmails] = useState([]);
     const [selectedUsers, setSelectedUsers] = useState([]);
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const { isOpen: isCreateOpen, onOpen: onCreateOpen, onClose: onCreateClose } = useDisclosure();
 
     
 
@@ -132,9 +134,12 @@ export default function Admin() {
             <div className="flex flex-row gap-3 pt-5 pl-1">
                 <Button onClick={handleDeleteSelected}>Delete Selected Users</Button>
                 <Button onClick={handleEditSelected}>Edit Selected Users</Button>
+                <Button onClick={onCreateOpen}>Create User</Button>
             </div>
             </DefaultLayout>
             <EditModal selectedUsers={selectedUsers} isOpen={isOpen} onClose={onClose} />
+            <CreateUserModal isOpen={isCreateOpen} onClose={onCreateClose} />
+
 
         
         </RestrictedAccess>
