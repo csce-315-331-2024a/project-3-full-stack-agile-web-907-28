@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import {
   Tabs,
-  Tab, Card, CardBody
+  Tab, Card, CardBody, useDisclosure
 } from "@nextui-org/react";
 
 import DefaultLayout from "@/layouts/default";
 import MenuItem from "@/components/menu/MenuItem";
 import MenuItemGrid from "@/components/menu/MenuItemGrid";
+import OrderPanel from "@/components/orders/OrderPanel";
 
 
 // Assuming you have a mapping of category IDs to names
@@ -28,6 +29,9 @@ const categories = [
 export default function Menu() {
   // Declare state variables
   const [menuItems, setMenuItems] = useState([]);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [cartItems, setCartItems] = useState([]);
 
 
   // Fetch menu items
@@ -41,10 +45,16 @@ export default function Menu() {
       });
   }, []);
 
+  const handleItemClick = (item) => {
+    setSelectedItem(item);
+    setCartItems(currentCartItems => [...currentCartItems, item]);
+    onOpen();
+  };
+
   return (
     <DefaultLayout>
-      <center>
-        <Tabs aria-label="menu sections" size="lg" color="primary">
+      <center >
+        <Tabs aria-label="menu sections" size="lg" color="primary" >
           {
             categories.map(category => (
               <Tab key={category.id} title={category.name}>
@@ -53,13 +63,14 @@ export default function Menu() {
                     <MenuItemGrid>
                       {
                         menuItems.filter(item => item.categoryId === category.id).map(item => (
-                          <MenuItem
-                            key={item.menuItemId}
-                            id={item.menuItemId}
-                            name={item.name}
-                            price={item.price}
-                            category={item.categoryId}
-                          />
+                          <div onClick={() => handleItemClick(item)} key={item.menuItemId}>
+                            <MenuItem
+                              id={item.menuItemId}
+                              name={item.name}
+                              price={item.price}
+                              category={item.categoryId}
+                            />
+                          </div>
                         ))
                       }
                     </MenuItemGrid>
@@ -70,6 +81,8 @@ export default function Menu() {
           }
         </Tabs>
       </center>
+      <OrderPanel cart={cartItems} setCart={setCartItems} isOpen={isOpen} onClose={onClose} />
     </DefaultLayout>
+
   );
 };
