@@ -1,124 +1,116 @@
-import {
-    Button,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    ModalContent,
-    Dropdown,
-    DropdownTrigger,
-    DropdownMenu,
-    DropdownItem, 
-    Input
-  } from "@nextui-org/react";
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter, ModalContent, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Input } from "@nextui-org/react";
+import axios from 'axios';
 
-//Take the selectedUsers and selectedCredentials from the parent component
 export default function EditModal({selectedUsers, isOpen, onClose}) {
     const [currentUserIndex, setCurrentUserIndex] = useState(0);
-    const [selectedCredentials, setSelectedCredentials] = useState([]);
-    const [selectedUser, setSelectedUser] = useState(selectedUsers[currentUserIndex]);
-    const [newEmail , setNewEmail] = useState(selectedUsers[currentUserIndex].email);
-    const [newName , setNewName] = useState(selectedUsers[currentUserIndex].name);
-
-    //Function to hadnle in the modal when next or previous is clikde, selectedCredentials need to be updated
-    const handleNext = () => {
-        setCurrentUserIndex(prevIndex => Math.min(prevIndex + 1, selectedUsers.length - 1));
-        setSelectedCredentials(selectedUsers[currentUserIndex].credentials);
-    }
-
-    const handlePrevious = () => {
-        setCurrentUserIndex(prevIndex => Math.max(prevIndex - 1, 0));
-        setSelectedCredentials(selectedUsers[currentUserIndex].credentials);
-    }
+    const [selectedCredentials, setSelectedCredentials] = useState("");
+    const [newEmail, setNewEmail] = useState("");
+    const [newName, setNewName] = useState("");
+    const [isModified, setIsModified] = useState(false);
 
     useEffect(() => {
-        // console.log("First user selected creds", selectedUsers[currentUserIndex].credentials);
         if (selectedUsers.length > 0) {
-            setSelectedUser(selectedUsers[currentUserIndex]);
-            setSelectedCredentials(selectedUsers[currentUserIndex].credentials);
-            console.log("Current User to edit is", selectedUser, " and his credentials are", selectedCredentials);
+            const currentUser = selectedUsers[currentUserIndex];
+            setNewEmail(currentUser.email);
+            setNewName(currentUser.name);
+            setSelectedCredentials(currentUser.credentials);
+            setIsModified(false); // Reset modification state when switching users
         }
     }, [currentUserIndex, selectedUsers]);
 
     const handleFieldChange = (field, value) => {
+        setIsModified(true); // Mark as modified
         if (field === 'email') {
             setNewEmail(value);
         } else if (field === 'name') {
             setNewName(value);
+        } else if (field === 'credentials') {
+            setSelectedCredentials(value[Object.keys(value)[0]]);
         }
-    }
+    };
 
-    
+    const handleSubmit = async () => {
+        console.log("Submitting user", selectedUsers[currentUserIndex].email, "with new email", newEmail, "and new name", newName, "and new credentials", selectedCredentials);
+        // Construct the body using the current state
+        const body = {
+            email: selectedUsers[currentUserIndex].email,
+            newName: newName,
+            newEmail: newEmail,
+            newCredentials: selectedCredentials
+        };
 
+        try {
+            const response = await axios.post('/api/admin/editUser', body);
+            console.log('Update response:', response.data);
+            onClose(); // Optionally close the modal on success
+        } catch (error) {
+            console.error('Failed to update user:', error.response?.data || error.message);
+        }
+    };
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
           <ModalContent>
-            {() => (
-              <>
+            <>
                 <ModalHeader>Edit User</ModalHeader>
                 <ModalBody>
                   {selectedUsers.length > 0 && (
                     <>
                       <Input
                         type="text"
-                        value={selectedUsers[currentUserIndex].email}
+                        value={newEmail}
                         onChange={(e) => handleFieldChange('email', e.target.value)}
                         placeholder="Email"
                         label="Email"
                       />
                       <Input
                         type="text"
-                        value={selectedUsers[currentUserIndex].name}
+                        value={newName}
                         onChange={(e) => handleFieldChange('name', e.target.value)}
                         placeholder="Name"
                         label="Name"
                       />
-                    <Dropdown>
+                      <Dropdown>
                         <DropdownTrigger>
-                            <Button 
-                            variant="bordered" 
-                            color="primary"
-                            size="md"
-                            >
-                            Credentials: {selectedCredentials}
+                            <Button variant="bordered" color="primary" size="md">
+                              Credentials: {selectedCredentials}
                             </Button>
                         </DropdownTrigger>
                         <DropdownMenu 
-                            aria-label="Multiple selection example"
+                            aria-label="Credentials selection"
                             variant="flat"
-                            closeOnSelect={false}
-                            disallowEmptySelection
-                            selectionMode="multiple"
-                            selectedKeys={selectedCredentials}
-                            onSelectionChange={setSelectedCredentials}
+                            selectionMode="single"
+                            selectedKeys={[selectedCredentials]}
+                            onSelectionChange={(key) => handleFieldChange('credentials', key)}
                         >
                             <DropdownItem key="Admin">Admin</DropdownItem>
                             <DropdownItem key="Manager">Manager</DropdownItem>
                             <DropdownItem key="Cashier">Cashier</DropdownItem>
                             <DropdownItem key="Customer">Customer</DropdownItem>
                         </DropdownMenu>
-                        </Dropdown>
+                      </Dropdown>
                     </>
                   )}
                 </ModalBody>
                 <ModalFooter>
+                  {isModified && (
+                    <Button auto flat color="success" onClick={handleSubmit}>
+                      Submit
+                    </Button>
+                  )}
                   <Button flat auto color="error" onClick={onClose}>
                     Close
                   </Button>
-                  <Button flat auto onClick={handlePrevious} disabled={currentUserIndex === 0}>
+                  <Button flat auto onClick={() => setCurrentUserIndex(prevIndex => Math.max(prevIndex - 1, 0))} disabled={currentUserIndex === 0}>
                     Previous
                   </Button>
-                  <Button flat auto onClick={handleNext} disabled={currentUserIndex === selectedUsers.length - 1}>
+                  <Button flat auto onClick={() => setCurrentUserIndex(prevIndex => Math.min(prevIndex + 1, selectedUsers.length - 1))} disabled={currentUserIndex === selectedUsers.length - 1}>
                     Next
                   </Button>
                 </ModalFooter>
-              </>
-            )}
+            </>
           </ModalContent>
         </Modal>
-    )
+    );
 }
-
