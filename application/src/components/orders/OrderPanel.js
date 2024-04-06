@@ -66,7 +66,7 @@ const OrderPanel = ({ cart, setCart, isOpen, onClose }) => {
   return (
     <div className={styles.orderPanel}>
     <div className={styles.orderPanelHeader}>
-      <h3>Order Details</h3>
+      <h3>Card</h3>
       <Button auto flat color="error" onClick={onClose}>
         Close
       </Button>
@@ -77,7 +77,7 @@ const OrderPanel = ({ cart, setCart, isOpen, onClose }) => {
           <TableColumn>Quantity</TableColumn>
           <TableColumn>Price Each</TableColumn>
           <TableColumn>Total Price</TableColumn>
-          <TableColumn>Actions</TableColumn> {/* New column for actions */}
+          <TableColumn>Actions</TableColumn>
         </TableHeader>
         <TableBody>
           {Object.values(aggregatedCart).map((item, index) => (

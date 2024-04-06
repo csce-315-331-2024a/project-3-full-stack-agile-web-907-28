@@ -53,8 +53,8 @@ export default function Menu() {
 
   return (
     <DefaultLayout>
-      <center>
-        <Tabs aria-label="menu sections" size="lg" color="primary">
+      <center >
+        <Tabs aria-label="menu sections" size="lg" color="primary" >
           {
             categories.map(category => (
               <Tab key={category.id} title={category.name}>

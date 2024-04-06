@@ -23,7 +23,15 @@ const WeatherComponent = () => {
     'tornado': 'tornado.png',
     'windy': 'windy.png',
     'overcast': 'cloudy.png',
-    'sunny': 'clear.png'
+    'sunny': 'clear.png',
+    'broken clouds': 'cloudy.png',
+    'scattered clouds': 'cloudy.png',
+    'few clouds': 'cloudy.png',
+    'overcast clouds': 'cloudy.png',
+    'mist': 'fog.png',
+    'light rain': 'rain.png',
+    'Heavy Rain': 'rain.png',
+    'Light Rain': 'rain.png',
   };
 
   // Function to capitalize the first letter of each word
