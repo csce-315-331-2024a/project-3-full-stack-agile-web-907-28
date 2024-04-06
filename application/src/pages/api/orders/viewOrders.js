@@ -5,7 +5,7 @@ export default async function handler(req, res) {
   if (req.method === 'GET') {
     try {
       // Fetch all orders from the database
-      const result = await query(`SELECT * FROM orders ORDER BY placed_time DESC;`);
+      const result = await query(`SELECT * FROM orders ORDER BY placed_time DESC LIMIT 1000;`);
       
       // If the fetch is successful, return the orders
       res.status(200).json(result.rows);
