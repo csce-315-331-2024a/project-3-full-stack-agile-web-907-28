@@ -34,4 +34,5 @@ const TranslationComponent = () => {
   );
 };
 
+
 export default TranslationComponent;
