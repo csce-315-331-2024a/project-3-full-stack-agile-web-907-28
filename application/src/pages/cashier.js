@@ -8,7 +8,7 @@ import UserCredentials from "@/models/UserCredentials";
  */
 export default function CashierPage() {
   function isCredentialAuthorized(credential) {
-    return credential === UserCredentials.Cashier;
+    return credential === UserCredentials.Cashier || credential === UserCredentials.Admin || credential === UserCredentials.Manager;
   }
   return (
     <RestrictedAccess isCredentialAuthorized={isCredentialAuthorized}>

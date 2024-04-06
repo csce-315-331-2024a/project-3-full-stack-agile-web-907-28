@@ -49,6 +49,8 @@ export default function Credentials() {
       router.push('/customer');
     } else if (role === 'Cashier') {
       router.push('/cashier');
+    } else if (role === 'Admin') {
+      router.push('/admin');
     }
   };
 
