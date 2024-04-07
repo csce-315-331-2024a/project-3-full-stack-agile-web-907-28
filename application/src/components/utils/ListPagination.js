@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Table, Pagination, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button } from '@nextui-org/react';
+import {
+  Pagination,
+} from '@nextui-org/react';
 
 
-export default function MultiPageList({ numItems, itemsPerPage, setStartIndex }) {
+export default function ListPagination({ numItems, itemsPerPage, setStartIndex }) {
   const totalPages = Math.ceil(numItems / itemsPerPage);
 
   return (

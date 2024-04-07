@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Pagination, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button } from '@nextui-org/react';
+import ListPagination from "@/components/utils/ListPagination";
 
 const ORDERS_PER_PAGE = 20;
 
 const OrderHistory = () => {
   const [orders, setOrders] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [startIndex, setStartIndex] = useState(0);
 
   useEffect(() => {
     fetch('/api/orders/viewOrders')
       .then(response => response.json())
       .then(data => {
         setOrders(data);
-        setTotalPages(Math.ceil(data.length / ORDERS_PER_PAGE));
       })
       .catch(error => console.error("Failed to fetch orders:", error));
   }, []);
@@ -34,7 +33,6 @@ const OrderHistory = () => {
   };
 
   // Calculate the orders to display on the current page
-  const startIndex = (currentPage - 1) * ORDERS_PER_PAGE;
   const currentPageOrders = orders.slice(startIndex, startIndex + ORDERS_PER_PAGE);
 
   return (
@@ -67,11 +65,11 @@ const OrderHistory = () => {
         </TableBody>
       </Table>
       <center>
-      <Pagination
-        total={totalPages}
-        initialPage={1}
-        onChange={(page) => setCurrentPage(page)}
-      />
+        <ListPagination
+          numItems={orders.length}
+          itemsPerPage={ORDERS_PER_PAGE}
+          setStartIndex={setStartIndex}
+        />
       </center>
     </div>
   );
