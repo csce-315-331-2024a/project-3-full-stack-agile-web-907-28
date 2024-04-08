@@ -20,6 +20,7 @@ export default async function handler(req, res) {
       description: data.weather[0].description,
       humidity: data.main.humidity,
       windSpeed: data.wind.speed,
+      icon: data.weather[0].icon,
     };
 
     res.status(200).json(weatherData);

@@ -6,34 +6,6 @@ const WeatherComponent = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Mapping between weather conditions and icon names
-  const weatherIcons = {
-    'blizzard': 'blizzard.png',
-    'clear sky': 'clear.png',
-    'cloudy': 'cloudy.png',
-    'drizzle': 'drizzle.png',
-    'fog': 'fog.png',
-    'haze': 'haze.png',
-    'mist': 'fog.png',
-    'partly cloudy': 'partly_cloudy.png',
-    'rain': 'rain.png',
-    'showers': 'showers.png',
-    'snow': 'snow.png',
-    'thunderstorm': 'thunderstorm.png',
-    'tornado': 'tornado.png',
-    'windy': 'windy.png',
-    'overcast': 'cloudy.png',
-    'sunny': 'clear.png',
-    'broken clouds': 'cloudy.png',
-    'scattered clouds': 'cloudy.png',
-    'few clouds': 'cloudy.png',
-    'overcast clouds': 'cloudy.png',
-    'mist': 'fog.png',
-    'light rain': 'rain.png',
-    'Heavy Rain': 'rain.png',
-    'Light Rain': 'rain.png',
-  };
-
   // Function to capitalize the first letter of each word
   const capitalizeFirstLetter = (str) => {
     return str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
@@ -66,11 +38,11 @@ const WeatherComponent = () => {
   return (
     <div style={{ display: 'flex', alignItems: 'center' }}>
       <div style={{ flex: '0 0 auto', marginRight: '10px' }}>
-        <img
-          style={{ height: '50px' }}
-          src={`/weather_icons/${weatherIcons[weatherData?.description]}`}
-          alt={weatherData?.description}
-        />
+      <img
+            style={{ height: '70px' }}
+            src={`http://openweathermap.org/img/wn/${weatherData?.icon}.png`}
+            alt={weatherData?.description}
+          />
       </div>
       <div style={{color: 'white'}}>
         <h2>{weatherData ? `Today's Weather at ${weatherData.location}, ${capitalizeFirstLetter(weatherData.description)}` : 'Loading...'}</h2>
