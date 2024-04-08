@@ -8,7 +8,6 @@ import {
   ModalHeader,
   useDisclosure
 } from "@nextui-org/react";
-import {useMemo, useState} from "react";
 import InventoryItem from "@/models/InventoryItem";
 import useValidatedState from "@/components/utils/useValidatedState";
 
@@ -24,8 +23,6 @@ import useValidatedState from "@/components/utils/useValidatedState";
 export default function InventoryItemEditor({children, inventoryItem = null, onInventoryItemChange}) {
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
-  const [firstTry, setFirstTry] = useState(true);
-
   const defaultName = inventoryItem == null ? "" : inventoryItem.name.toString();
   const defaultQuantity = inventoryItem == null ? "" : inventoryItem.quantity.toString();
   const defaultPurchaseDate = inventoryItem == null ? "" : inventoryItem.purchaseDate.toString();
@@ -35,10 +32,10 @@ export default function InventoryItemEditor({children, inventoryItem = null, onI
   const isNumber = (value) => !isNaN(value) && !isNaN(parseFloat(value));
 
   const [name, setName, resetName, isNameValid, isNameChanged] = useValidatedState(defaultName, s => s.trim() !== "");
-  const [quantity, setQuantity, resetQuantity, isQuantityValid, isQuantityChanged] = useValidatedState(defaultQuantity, n => isNumber(n));
+  const [quantity, setQuantity, resetQuantity, isQuantityValid, isQuantityChanged] = useValidatedState(defaultQuantity, isNumber);
   const [purchaseDate, setPurchaseDate, resetPurchaseDate, isPurchaseDateValid, isPurchaseDateChanged] = useValidatedState(defaultPurchaseDate, d => d.trim() !== "");
   const [expiryDate, setExpiryDate, resetExpiryDate, isExpiryDateValid, isExpiryDateChanged] = useValidatedState(defaultExpiryDate, d => d.trim() !== "");
-  const [quantityLimit, setQuantityLimit, resetQuantityLimit, isQuantityLimitValid, isQuantityLimitChanged] = useValidatedState(defaultQuantityLimit, n => isNumber);
+  const [quantityLimit, setQuantityLimit, resetQuantityLimit, isQuantityLimitValid, isQuantityLimitChanged] = useValidatedState(defaultQuantityLimit, isNumber);
 
   const handleOpen = () => {
     resetName();
@@ -75,7 +72,13 @@ export default function InventoryItemEditor({children, inventoryItem = null, onI
         <ModalContent>
           {(onClose) => (
             <div>
-              <ModalHeader>Create Inventory Item</ModalHeader>
+              {
+                inventoryItem == null ? (
+                  <ModalHeader>Create Inventory Item</ModalHeader>
+                ) : (
+                  <ModalHeader>Edit Inventory Item</ModalHeader>
+                )
+              }
               <ModalBody>
                 <Input
                   isRequired
@@ -118,6 +121,7 @@ export default function InventoryItemEditor({children, inventoryItem = null, onI
                 />
               </ModalBody>
               <ModalFooter>
+                <Button onPress={onClose}>Cancel</Button>
                 <Button color="primary" onPress={() => handleSubmit(onClose)}>Submit</Button>
               </ModalFooter>
             </div>

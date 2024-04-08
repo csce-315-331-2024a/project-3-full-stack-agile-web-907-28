@@ -10,12 +10,12 @@ export default async function handler(req, res) {
   try {
     const { rows } = await query("SELECT * FROM inventoryitem;");
     const inventoryItems = rows.map(row => new InventoryItem(
-      row.inventoryitem_id,
+      parseInt(row.inventoryitem_id),
       row.name,
-      row.quantity,
-      row.purchase_date,
-      row.expiry_date,
-      row.quantity_limit
+      parseFloat(row.quantity),
+      new Date(row.purchase_date),
+      new Date(row.expiry_date),
+      parseFloat(row.quantity_limit)
     ));
     res.status(200).json(inventoryItems);
   } catch (e) {

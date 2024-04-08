@@ -4,17 +4,16 @@ import {
   Card,
   CardBody,
   CardHeader,
-  Tab,
   Table,
   TableBody,
   TableCell,
   TableColumn,
   TableHeader,
-  TableRow
+  TableRow, Tooltip
 } from "@nextui-org/react";
 import ListPagination from "@/components/utils/ListPagination";
 import InventoryItemEditor from "@/components/manager/InventoryItemEditor";
-import {FaPencil} from "react-icons/fa6";
+import {FaPencil, FaTrashCan} from "react-icons/fa6";
 import {FaPlus} from "react-icons/fa";
 
 const INVENTORY_ITEMS_PER_PAGE = 15;
@@ -66,26 +65,35 @@ export default function InventoryManager() {
                 <TableCell>{item.inventoryItemId}</TableCell>
                 <TableCell>{item.name}</TableCell>
                 <TableCell>{item.quantity}</TableCell>
-                <TableCell>{item.purchaseDate}</TableCell>
-                <TableCell>{item.expiryDate}</TableCell>
+                <TableCell>{item.purchaseDate.toString().slice(0,10)}</TableCell>
+                <TableCell>{item.expiryDate.toString().slice(0,10)}</TableCell>
                 <TableCell>{item.quantityLimit}</TableCell>
                 <TableCell>
-                  <InventoryItemEditor inventoryItem={item}>
-                    {onOpen => (
-                      <Button onClick={onOpen}><FaPencil /></Button>
-                    )}
-                  </InventoryItemEditor>
+                  <div className="relative flex items-center gap-2">
+                    <InventoryItemEditor inventoryItem={item} onInventoryItemChange={(_) => {}}>
+                      {onOpen => (
+                        <Tooltip content="Edit">
+                          <Button isIconOnly onClick={onOpen} size="sm" variant="light"><FaPencil /></Button>
+                        </Tooltip>
+                      )}
+                    </InventoryItemEditor>
+                    <Tooltip content="Delete">
+                      <Button color="danger" isIconOnly size="sm" variant="light"><FaTrashCan /></Button>
+                    </Tooltip>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </CardBody>
-      <ListPagination
-        numItems={inventory_items.length}
-        itemsPerPage={INVENTORY_ITEMS_PER_PAGE}
-        setStartIndex={setStartIndex}
-      />
+      <div className="p-4">
+        <ListPagination
+          numItems={inventory_items.length}
+          itemsPerPage={INVENTORY_ITEMS_PER_PAGE}
+          setStartIndex={setStartIndex}
+        />
+      </div>
     </Card>
   )
 }
