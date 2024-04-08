@@ -34,59 +34,63 @@ export default function InventoryManager() {
   const currentPageInventoryItems = inventory_items.slice(startIndex, startIndex + INVENTORY_ITEMS_PER_PAGE);
 
   return (
-    <Card fullWidth="true" radius="none" shadow="none" className="px-9">
-      <CardHeader className="justify-end">
-        <InventoryItemEditor onInventoryItemChange={(_) => {}}>
-          {onOpen => (
-            <Button
-              color="primary"
-              onClick={onOpen}
-              startContent={<FaPlus />}
-            >
-              Create inventory item
-            </Button>
-          )}
-        </InventoryItemEditor>
-      </CardHeader>
-      <CardBody>
-        <Table isStriped>
-          <TableHeader>
-            <TableColumn>ID</TableColumn>
-            <TableColumn>Name</TableColumn>
-            <TableColumn>Quantity</TableColumn>
-            <TableColumn>Purchase Date</TableColumn>
-            <TableColumn>Expiry Date</TableColumn>
-            <TableColumn>Quantity Limit</TableColumn>
-            <TableColumn>Actions</TableColumn>
-          </TableHeader>
-          <TableBody>
-            {currentPageInventoryItems.map(item => (
-              <TableRow key={item.inventoryItemId}>
-                <TableCell>{item.inventoryItemId}</TableCell>
-                <TableCell>{item.name}</TableCell>
-                <TableCell>{item.quantity}</TableCell>
-                <TableCell>{item.purchaseDate.toString().slice(0,10)}</TableCell>
-                <TableCell>{item.expiryDate.toString().slice(0,10)}</TableCell>
-                <TableCell>{item.quantityLimit}</TableCell>
-                <TableCell>
-                  <div className="relative flex items-center gap-2">
-                    <InventoryItemEditor inventoryItem={item} onInventoryItemChange={(_) => {}}>
-                      {onOpen => (
-                        <Tooltip content="Edit">
-                          <Button isIconOnly onClick={onOpen} size="sm" variant="light"><FaPencil /></Button>
-                        </Tooltip>
-                      )}
-                    </InventoryItemEditor>
-                    <Tooltip content="Delete">
-                      <Button color="danger" isIconOnly size="sm" variant="light"><FaTrashCan /></Button>
-                    </Tooltip>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </CardBody>
+    <>
+      <Card fullWidth="true" radius="none" shadow="none" className="px-9">
+        <CardHeader className="justify-end">
+          <InventoryItemEditor onInventoryItemChange={(_) => {
+          }}>
+            {onOpen => (
+              <Button
+                color="primary"
+                onClick={onOpen}
+                startContent={<FaPlus/>}
+              >
+                Create inventory item
+              </Button>
+            )}
+          </InventoryItemEditor>
+        </CardHeader>
+        <CardBody>
+          <Table isStriped>
+            <TableHeader>
+              <TableColumn>ID</TableColumn>
+              <TableColumn>Name</TableColumn>
+              <TableColumn>Quantity</TableColumn>
+              <TableColumn>Purchase Date</TableColumn>
+              <TableColumn>Expiry Date</TableColumn>
+              <TableColumn>Quantity Limit</TableColumn>
+              <TableColumn>Actions</TableColumn>
+            </TableHeader>
+            <TableBody>
+              {currentPageInventoryItems.map(item => (
+                <TableRow key={item.inventoryItemId}>
+                  <TableCell>{item.inventoryItemId}</TableCell>
+                  <TableCell>{item.name}</TableCell>
+                  <TableCell>{item.quantity}</TableCell>
+                  <TableCell>{item.purchaseDate.toString().slice(0, 10)}</TableCell>
+                  <TableCell>{item.expiryDate.toString().slice(0, 10)}</TableCell>
+                  <TableCell>{item.quantityLimit}</TableCell>
+                  <TableCell>
+                    <div className="relative flex items-center gap-2">
+                      <InventoryItemEditor inventoryItem={item} onInventoryItemChange={(_) => {
+                      }}>
+                        {onOpen => (
+                          <Tooltip content="Edit">
+                            <Button isIconOnly onClick={onOpen} size="sm" variant="light"><FaPencil/></Button>
+                          </Tooltip>
+                        )}
+                      </InventoryItemEditor>
+                      <Tooltip content="Delete">
+                        <Button color="danger" isIconOnly size="sm" variant="light"><FaTrashCan/></Button>
+                      </Tooltip>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardBody>
+      </Card>
       <div className="p-4">
         <ListPagination
           numItems={inventory_items.length}
@@ -94,6 +98,6 @@ export default function InventoryManager() {
           setStartIndex={setStartIndex}
         />
       </div>
-    </Card>
+    </>
   )
 }
