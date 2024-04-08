@@ -25,7 +25,7 @@ import {FaPencil, FaTrashCan} from "react-icons/fa6";
  * @returns {JSX.Element}
  * @constructor
  */
-export default function MenuItemEditor({children, menuItem = null, onMenuItemChange}) {
+export default function MenuItemEditor({children, menuItem = null, onMenuItemChange, inventoryItems = []}) {
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
   const defaultName = menuItem == null ? "" : menuItem.name.toString();
@@ -129,14 +129,20 @@ export default function MenuItemEditor({children, menuItem = null, onMenuItemCha
                   <CardBody>
                     <Table isStriped removeWrapper>
                       <TableHeader>
-                        <TableColumn>Inventory Item ID</TableColumn>
+                        <TableColumn>Inventory Item Name</TableColumn>
                         <TableColumn>Amount</TableColumn>
                         <TableColumn>Actions</TableColumn>
                       </TableHeader>
                       <TableBody>
                         {ingredients.map((ingredient, idx) => (
                           <TableRow key={ingredient.id}>
-                            <TableCell>{ingredient.id}</TableCell>
+                            <TableCell>{
+                              inventoryItems.some(item => item.inventoryItemId === ingredient.id) ? (
+                                inventoryItems.find(item => item.inventoryItemId === ingredient.id).name
+                              ) : (
+                                ingredient.id
+                              )
+                            }</TableCell>
                             <TableCell>{ingredient.amount}</TableCell>
                             <TableCell className="justify-between">
                               <div className="relative flex items-center gap-2">
@@ -170,6 +176,7 @@ export default function MenuItemEditor({children, menuItem = null, onMenuItemCha
                       <Input
                         isRequired
                         label="Start Date"
+                        type="date"
                         value={startDate.slice(0,10)}
                         onValueChange={setStartDate}
                         isInvalid={!isStartDateValid && isStartDateChanged}
@@ -177,6 +184,7 @@ export default function MenuItemEditor({children, menuItem = null, onMenuItemCha
                       <Input
                         isRequired
                         label="End Date"
+                        type="date"
                         value={endDate.slice(0,10)}
                         onValueChange={setEndDate}
                         isInvalid={!isEndDateValid && isEndDateChanged}

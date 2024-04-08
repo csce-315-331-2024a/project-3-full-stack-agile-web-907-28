@@ -15,20 +15,27 @@ import {FaPlus} from "react-icons/fa";
 import {useEffect, useState} from "react";
 import {FaPencil, FaTrashCan} from "react-icons/fa6";
 
+import menuCategories from "@/models/menuCategories";
+
 const MENU_ITEMS_PER_PAGE = 15;
 
 
 export default function MenuManager() {
   const [menuItems, setMenuItems] = useState([]);
+  const [inventoryItems, setInventoryItems] = useState([]);
   const [startIndex, setStartIndex] = useState(0);
 
   useEffect(() => {
     fetch("/api/menu/menuitems")
       .then(res => res.json())
-      .then(data => {
-        setMenuItems(data);
-      })
+      .then(setMenuItems)
       .catch(error => console.error("Failed to fetch menu items:", error));
+  }, []);
+  useEffect(() => {
+    fetch("/api/inventory/getInventoryItems")
+      .then(res => res.json())
+      .then(setInventoryItems)
+      .catch(error => console.error("Failed to fetch inventory items:", error));
   }, []);
 
   const currentPageMenuItems = menuItems.slice(startIndex, startIndex + MENU_ITEMS_PER_PAGE);
@@ -65,7 +72,13 @@ export default function MenuManager() {
                   <TableCell>{menuItem.menuItemId}</TableCell>
                   <TableCell>{menuItem.name}</TableCell>
                   <TableCell>${menuItem.price}</TableCell>
-                  <TableCell>{menuItem.categoryId}</TableCell>
+                  <TableCell>{
+                    menuCategories.some(({id}) => id === menuItem.categoryId) ? (
+                      menuCategories.find(({id}) => id === menuItem.categoryId).name
+                    ) : (
+                      menuItem.categoryId
+                    )
+                  }</TableCell>
                   {
                     menuItem.seasonal ? (
                       <TableCell>{menuItem.startDate.toString().slice(0,10)} - {menuItem.endDate.toString().slice(0,10)}</TableCell>
