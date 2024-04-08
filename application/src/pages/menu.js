@@ -53,7 +53,7 @@ export default function Menu() {
 
   return (
     <DefaultLayout>
-      <center >
+      <center>
         <Tabs aria-label="menu sections" size="lg" color="primary" >
           {
             categories.map(category => (

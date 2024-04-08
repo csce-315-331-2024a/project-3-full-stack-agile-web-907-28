@@ -11,7 +11,7 @@ const pool = new Pool({
  * @param {Array} params 
  * @returns  {Promise}
  */
-export async function query(text, params) {
+export async function query(text, params = []) {
   const client = await pool.connect(); 
   
   try {
