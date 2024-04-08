@@ -51,7 +51,7 @@ export default function RestrictedAccess({ isCredentialAuthorized, redirectURL =
         {children}
       </div>
     ) : (
-      <p class="bg-danger">You are not authorized to view this content.</p>
+      <p className="bg-danger">You are not authorized to view this content.</p>
     )
   ) : (
     <Spinner />

@@ -1,0 +1,33 @@
+.orderPanel {
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 30%; /* Adjust the width as necessary */
+  height: 100%;
+  background-color: white;
+  z-index: 1000; /* Make sure it's above other content */
+  box-shadow: -4px 0 8px rgba(0,0,0,0.1);
+  padding: 20px;
+  box-sizing: border-box;
+  overflow: auto; /* In case of overflow */
+}
+
+.orderPanelHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.orderTotalSubmit {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+}
+
+.orderTotal {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
