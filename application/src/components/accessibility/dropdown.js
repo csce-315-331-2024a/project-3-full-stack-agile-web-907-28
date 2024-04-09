@@ -1,6 +1,5 @@
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem, Button } from '@nextui-org/react';
 import { useState } from 'react';
-import { translate } from './translateComponent'; // import your translation function
 
 export default function App() {
   const [textSize, setTextSize] = useState("normal");
@@ -16,15 +15,10 @@ export default function App() {
     setColorContrast(contrast);
   };
 
-  // Function to handle language change and translation
-  const handleLanguageChange = async (language) => {
+  // Function to handle language change
+  const handleLanguageChange = (language) => {
     // Integrate with translation API here
-    try {
-      const translatedText = await translate(language, 'Your text to translate');
-      console.log(`Translated text in ${language}: ${translatedText}`);
-    } catch (error) {
-      console.error('Translation error:', error);
-    }
+    console.log(`Selected language: ${language}`);
   };
 
   return (
@@ -86,4 +80,5 @@ export default function App() {
     </Dropdown>
   );
 }
+
 
