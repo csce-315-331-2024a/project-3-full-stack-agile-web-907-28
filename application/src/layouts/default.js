@@ -1,5 +1,6 @@
 import Head from "./head";
 import SiteHeader from "@/components/navigation/SiteHeader";
+import GoogleTranslate from "@/components/translation/translationComponent"
 
 
 export default function DefaultLayout({
@@ -10,6 +11,7 @@ export default function DefaultLayout({
 			<Head />
 			<SiteHeader />
 			{children}
+			<GoogleTranslate />
 		</div>
 	);
 }

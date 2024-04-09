@@ -20,14 +20,6 @@ const GoogleTranslate = () => {
 
       document.body.appendChild(script);
     }
-
-    // Cleanup function
-    return () => {
-      const script = document.querySelector('#google-translate-script');
-      if (script) {
-        document.body.removeChild(script);
-      }
-    };
   }, []);
 
   return (
