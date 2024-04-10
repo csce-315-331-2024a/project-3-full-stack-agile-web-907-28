@@ -38,27 +38,26 @@ const OrderHistory = () => {
   const currentPageOrders = orders.slice(startIndex, startIndex + ORDERS_PER_PAGE);
 
   return (
-    <div className="px-10">
-      <Table isStriped>
-        <TableHeader>
-          <TableColumn>Order ID</TableColumn>
-          <TableColumn>Customer ID</TableColumn>
-          <TableColumn>Order Date</TableColumn>
-          <TableColumn>Order Status</TableColumn>
-          <TableColumn>Order Total</TableColumn>
-          <TableColumn>Actions</TableColumn>
-          {/* Add more columns as needed */}
+    <div className="px-10" aria-label="Order History">
+      <Table isStriped aria-label="Order History">
+        <TableHeader aria-label="Order History">
+          <TableColumn aria-label="Order ID">Order ID</TableColumn>
+          <TableColumn aria-label="Customer ID">Customer ID</TableColumn>
+          <TableColumn aria-label="Order Date">Order Date</TableColumn>
+          <TableColumn aria-label="Order Status">Order Status</TableColumn>
+          <TableColumn aria-label="Order Total">Order Total</TableColumn>
+          <TableColumn aria-label="Actions">Actions</TableColumn>
         </TableHeader>
-        <TableBody>
+        <TableBody aria-label="Order History">
           {currentPageOrders.map(order => (
-            <TableRow key={order.order_id}>
-              <TableCell>{order.order_id}</TableCell>
-              <TableCell>{order.customer_id}</TableCell>
-              <TableCell>{order.placed_time}</TableCell>
-              <TableCell>Fulfilled</TableCell>
-              <TableCell>{order.total}</TableCell>
-              <TableCell>
-              <Button auto color="error" ghost onClick={() => handleDelete(order.order_id)}>
+            <TableRow key={order.order_id} aria-label="Order History">
+              <TableCell aria-label="Order ID">{order.order_id}</TableCell>
+              <TableCell aria-label="Customer ID">{order.customer_id}</TableCell>
+              <TableCell aria-label="Order Date">{order.placed_time}</TableCell>
+              <TableCell aria-label="Order Status">Fulfilled</TableCell>
+              <TableCell aria-label="Order Total">{order.total}</TableCell>
+              <TableCell aria-label="Actions">
+              <Button aria-label="Delete Order" auto color="error" ghost onClick={() => handleDelete(order.order_id)}>
                   ❌
               </Button>
               </TableCell>
@@ -71,6 +70,7 @@ const OrderHistory = () => {
         total={totalPages}
         initialPage={1}
         onChange={(page) => setCurrentPage(page)}
+        aria-label="Pagination"
       />
       </center>
     </div>
