@@ -38,6 +38,8 @@ export default function ObjectArraySortButton({prop, sortProps, onSortPropsChang
           <></>
         )
       }
+      variant="light"
+      size="sm"
       {...props}
     >
       {children}

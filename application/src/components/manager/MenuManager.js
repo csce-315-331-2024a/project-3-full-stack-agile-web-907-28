@@ -197,23 +197,25 @@ export default function MenuManager() {
                     )
                   }
                   <TableCell>
-                    <MenuItemEditor
-                      trigger={onOpen => (
-                        <Button aria-label="Edit" isIconOnly onClick={onOpen} size="sm" variant="light"><FaPencil/></Button>
-                      )}
-                      onMenuItemChange={handleEdit}
-                      menuItem={menuItem}
-                      inventoryItems={inventoryItems}
-                    />
-                    <ConfirmationDialog
-                      trigger={onOpen => (
-                        <Button aria-label="Delete" color="danger" isIconOnly onClick={onOpen} size="sm" variant="light"><FaTrashCan/></Button>
-                      )}
-                      onConfirm={() => {
-                        handleDelete(menuItem)
-                      }}
-                      body="Are you sure you want to delete this menu item?"
-                    />
+                    <div className="relative flex items-center gap-2">
+                      <MenuItemEditor
+                        trigger={onOpen => (
+                          <Button aria-label="Edit" isIconOnly onClick={onOpen} size="sm" variant="light"><FaPencil/></Button>
+                        )}
+                        onMenuItemChange={handleEdit}
+                        menuItem={menuItem}
+                        inventoryItems={inventoryItems}
+                      />
+                      <ConfirmationDialog
+                        trigger={onOpen => (
+                          <Button aria-label="Delete" color="danger" isIconOnly onClick={onOpen} size="sm" variant="light"><FaTrashCan/></Button>
+                        )}
+                        onConfirm={() => {
+                          handleDelete(menuItem)
+                        }}
+                        body="Are you sure you want to delete this menu item?"
+                      />
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}

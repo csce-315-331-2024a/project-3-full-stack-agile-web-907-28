@@ -19,8 +19,12 @@ export default function ManagerPage() {
   return (
     <RestrictedAccess isCredentialAuthorized={isCredentialAuthorized}>
       <DefaultLayout>
-        <MenuManager />
-        <InventoryManager />
+        <center>
+          <Tabs aria-label="Management sections" size="lg" color="primary">
+            <Tab key="menu" title="Menu"><MenuManager /></Tab>
+            <Tab key="inventory" title="Inventory"><InventoryManager /></Tab>
+          </Tabs>
+        </center>
       </DefaultLayout>
     </RestrictedAccess>
   );
