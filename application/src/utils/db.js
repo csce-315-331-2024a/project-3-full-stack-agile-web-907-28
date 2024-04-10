@@ -11,12 +11,16 @@ const pool = new Pool({
  * @param {Array} params 
  * @returns  {Promise}
  */
-export async function query(text, params) {
-  const client = await pool.connect(); 
-  
+export async function query(text, params = []) {
+  console.log("Executing query:", text, params);
+
+  const client = await pool.connect();
   try {
     const res = await client.query(text, params);
     return res;
+  } catch (e) {
+    console.error("Error executing query:", e);
+    throw e;
   } finally {
     client.release();
   }
