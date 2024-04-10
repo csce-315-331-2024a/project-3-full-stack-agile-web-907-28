@@ -28,7 +28,7 @@ export default function App() {
       className="p-0 border-small border-divider bg-background"
     >
       <DropdownTrigger>
-        <Button ghost>Open Menu</Button>
+        <Button ghost>Accessibility</Button>
       </DropdownTrigger>
       <DropdownMenu
         aria-label="Custom item styles"
