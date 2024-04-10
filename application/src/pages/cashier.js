@@ -83,14 +83,15 @@ export default function CashierPage() {
                     <MenuItemGrid>
                       {
                         menuItems.filter(item => item.categoryId === category.id).map(item => (
-                          <div onClick={() => handleItemClick(item)} key={item.menuItemId}>
-                            <MenuItem
-                              id={item.menuItemId}
-                              name={item.name}
-                              price={item.price}
-                              category={item.categoryId}
-                            />
-                          </div>
+                          <MenuItem
+                            key={item.menuItemId}
+                            id={item.menuItemId}
+                            name={item.name}
+                            price={item.price}
+                            category={item.categoryId}
+                            onClick={() => handleItemClick(item)}
+                            isPressable
+                          />
                         ))
                       }
                     </MenuItemGrid>
