@@ -1,4 +1,5 @@
 import {
+  Autocomplete, AutocompleteItem,
   Button, Card, CardBody, CardFooter, CardHeader, Checkbox,
   Input,
   Modal,
@@ -15,6 +16,7 @@ import {FaDollarSign} from "react-icons/fa";
 import IngredientEditor from "@/components/manager/IngredientEditor";
 import InventoryItemEditor from "@/components/manager/InventoryItemEditor";
 import {FaPencil, FaTrashCan} from "react-icons/fa6";
+import menuCategories from "@/models/menuCategories";
 
 
 /**
@@ -22,6 +24,7 @@ import {FaPencil, FaTrashCan} from "react-icons/fa6";
  * @param children {(onOpen: () => void) => ReactNode} Trigger to open the Modal.
  * @param menuItem {MenuItem | null} The menu item to edit, or null if creating a new one.
  * @param onMenuItemChange Callback function for submitting the new/modified menu item.
+ * @param inventoryItems {[InventoryItem]} Optional collection of InventoryItems used to map IDs to names.
  * @returns {JSX.Element}
  * @constructor
  */
@@ -33,44 +36,51 @@ export default function MenuItemEditor({children, menuItem = null, onMenuItemCha
   const defaultComponents = menuItem == null ? [] : menuItem.inventoryItemIds.map((id, idx) => {return {id: id, amount: menuItem.inventoryItemAmounts[idx]}});
   const defaultCategoryId = menuItem == null ? "" : menuItem.categoryId.toString();
   const defaultSeasonal = menuItem == null ? false : menuItem.seasonal;
-  const defaultStartDate = menuItem == null || menuItem.startDate == null ? "" : menuItem.startDate.toString();
-  const defaultEndDate = menuItem == null || menuItem.endDate == null ? "" : menuItem.endDate.toString();
+  const defaultStartDate = menuItem == null || !menuItem.seasonal ? "" : menuItem.startDate.toISOString().slice(0,10);
+  const defaultEndDate = menuItem == null || !menuItem.seasonal ? "" : menuItem.endDate.toISOString().slice(0,10);
 
   const isNumber = (value) => !isNaN(value) && !isNaN(parseFloat(value));
 
   const [name, setName, resetName, isNameValid, isNameChanged] = useValidatedState(defaultName, s => s.trim() !== "");
   const [price, setPrice, resetPrice, isPriceValid, isPriceChanged] = useValidatedState(defaultPrice, p => isNumber(p) && parseFloat(p) >= 0);
   const [ingredients, setIngredients] = useState(defaultComponents);
-  const [categoryId, setCategoryId, resetCategoryId, isCategoryIdValid, isCategoryIdChanged] = useValidatedState(defaultCategoryId, isNumber);
+  const [categoryId, setCategoryId] = useState(defaultCategoryId);
   const [seasonal, setSeasonal] = useState(defaultSeasonal);
   const [startDate, setStartDate, resetStartDate, isStartDateValid, isStartDateChanged] = useValidatedState(defaultStartDate, d => d.trim() !== "");
   const [endDate, setEndDate, resetEndDate, isEndDateValid, isEndDateChanged] = useValidatedState(defaultEndDate, d => d.trim() !== "");
+
+  const [error, setError] = useState("");
 
   const handleOpen = () => {
     resetName();
     resetPrice();
     setIngredients(defaultComponents);
-    resetCategoryId();
+    setCategoryId(defaultCategoryId);
     setSeasonal(defaultSeasonal);
     resetStartDate();
     resetEndDate();
     onOpen();
   }
   const handleSubmit = (onClose) => {
-    if (isNameValid && isPriceValid && isCategoryIdValid && isStartDateValid && isEndDateValid) {
-      onMenuItemChange(new MenuItem(
-        menuItem == null ? -1 : menuItem.menuItemId,
-        name,
-        parseFloat(price),
-        ingredients.map(({id}) => id),
-        ingredients.map(({amount}) => amount),
-        categoryId,
-        seasonal,
-        startDate,
-        endDate
-      ));
-      onClose();
-    } else {
+    try {
+      if (isNameValid && isPriceValid && (!seasonal || (isStartDateValid && isEndDateValid))) {
+        onMenuItemChange(new MenuItem(
+          menuItem == null ? -1 : menuItem.menuItemId,
+          name,
+          parseFloat(price),
+          ingredients.map(({id}) => id),
+          ingredients.map(({amount}) => amount),
+          categoryId,
+          seasonal,
+          seasonal ? startDate : new Date().toISOString().slice(0,10),
+          seasonal ? endDate : new Date().toISOString().slice(0,10)
+        ));
+        onClose();
+      }
+      setError("");
+    } catch (e) {
+      setError(e);
+    } finally {
       setName(name);
       setPrice(price);
       setIngredients(ingredients);
@@ -110,13 +120,20 @@ export default function MenuItemEditor({children, menuItem = null, onMenuItemCha
                   placeholder="0.00"
                   startContent={
                     <div className="pointer-events-none flex items-center">
-                      <span className="text-default-400 text-small">$</span>
+                      <span className="body-default-400 body-small">$</span>
                     </div>
                   }
                   value={price}
                   onValueChange={setPrice}
                   isInvalid={!isPriceValid && isPriceChanged}
                 />
+                <Autocomplete label="Category" selectedKey={categoryId} onSelectionChange={setCategoryId}>
+                  {menuCategories.map(category => (
+                    <AutocompleteItem key={category.id}>
+                      {category.name}
+                    </AutocompleteItem>
+                  ))}
+                </Autocomplete>
                 <Card>
                   <CardHeader className="justify-between">
                     <>Ingredients</>
@@ -135,27 +152,23 @@ export default function MenuItemEditor({children, menuItem = null, onMenuItemCha
                       </TableHeader>
                       <TableBody>
                         {ingredients.map((ingredient, idx) => (
-                          <TableRow key={ingredient.id}>
+                          <TableRow key={idx}>
                             <TableCell>{
                               inventoryItems.some(item => item.inventoryItemId === ingredient.id) ? (
                                 inventoryItems.find(item => item.inventoryItemId === ingredient.id).name
                               ) : (
                                 ingredient.id
-                              )
+                              ).toString()
                             }</TableCell>
                             <TableCell>{ingredient.amount}</TableCell>
                             <TableCell className="justify-between">
                               <div className="relative flex items-center gap-2">
                                 <IngredientEditor ingredient={ingredient} onIngredientChange={(_) => {}}>
                                   {onOpen => (
-                                    <Tooltip content="Edit">
-                                      <Button isIconOnly onClick={onOpen} size="sm" variant="light"><FaPencil /></Button>
-                                    </Tooltip>
+                                    <Button isIconOnly onClick={onOpen} size="sm" variant="light"><FaPencil /></Button>
                                   )}
                                 </IngredientEditor>
-                                <Tooltip content="Delete">
-                                  <Button color="danger" isIconOnly size="sm" variant="light"><FaTrashCan /></Button>
-                                </Tooltip>
+                                <Button color="danger" isIconOnly size="sm" variant="light"><FaTrashCan /></Button>
                               </div>
                             </TableCell>
                           </TableRow>
@@ -196,6 +209,13 @@ export default function MenuItemEditor({children, menuItem = null, onMenuItemCha
                 }
               </ModalBody>
               <ModalFooter>
+                {
+                  error === "" ? (
+                    <></>
+                  ) : (
+                    <p className="error">{error}</p>
+                  )
+                }
                 <Button onPress={onClose}>Cancel</Button>
                 <Button color="primary" onPress={() => handleSubmit(onClose)}>Submit</Button>
               </ModalFooter>

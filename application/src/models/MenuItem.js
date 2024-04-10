@@ -25,6 +25,32 @@ class MenuItem {
       this.startDate = startDate;
       this.endDate = endDate;
     }
+  static parseJson(json) {
+    return new MenuItem(
+      parseInt(json.menuItemId),
+      json.name,
+      parseFloat(json.price),
+      json.inventoryItemIds.map(parseInt),
+      json.inventoryItemAmounts.map(parseFloat),
+      parseInt(json.categoryId),
+      json.seasonal,
+      json.seasonal ? new Date(json.startDate) : new Date(),
+      json.seasonal ? new Date(json.endDate) : new Date()
+    );
+  }
+  static parseDatabaseEntry(row) {
+    return MenuItem.parseJson({
+      menuItemId: row.menuitem_id,
+      name: row.name,
+      price: row.price,
+      inventoryItemIds: row.inventoryitem_ids,
+      inventoryItemAmounts: row.inventoryitem_amounts,
+      categoryId: row.category_id,
+      seasonal: row.seasonal,
+      startDate: row.seasonal_start,
+      endDate: row.seasonal_end,
+    });
+  }
   }
   
   export default MenuItem;

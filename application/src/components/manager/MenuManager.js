@@ -16,6 +16,10 @@ import {useEffect, useState} from "react";
 import {FaPencil, FaTrashCan} from "react-icons/fa6";
 
 import menuCategories from "@/models/menuCategories";
+import InventoryItem from "@/models/InventoryItem";
+import axios from "axios";
+import ConfirmationDialog from "@/components/utils/ConfirmationDialog";
+import MenuItem from "@/models/MenuItem";
 
 const MENU_ITEMS_PER_PAGE = 15;
 
@@ -23,28 +27,88 @@ const MENU_ITEMS_PER_PAGE = 15;
 export default function MenuManager() {
   const [menuItems, setMenuItems] = useState([]);
   const [inventoryItems, setInventoryItems] = useState([]);
+  const [databaseChanged, setDatabaseChanged] = useState(false);
   const [startIndex, setStartIndex] = useState(0);
+  const [currentPageMenuItems, setCurrentPageMenuItems] = useState([]);
 
   useEffect(() => {
     fetch("/api/menu/menuitems")
-      .then(res => res.json())
-      .then(setMenuItems)
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw res;
+        }
+      })
+      .then(data => {
+        setMenuItems(data.map(MenuItem.parseJson));
+        setDatabaseChanged(false);
+      })
       .catch(error => console.error("Failed to fetch menu items:", error));
-  }, []);
-  useEffect(() => {
-    fetch("/api/inventory/getInventoryItems")
-      .then(res => res.json())
-      .then(setInventoryItems)
-      .catch(error => console.error("Failed to fetch inventory items:", error));
-  }, []);
+  }, [databaseChanged, setDatabaseChanged]);
 
-  const currentPageMenuItems = menuItems.slice(startIndex, startIndex + MENU_ITEMS_PER_PAGE);
+  useEffect(() => {
+    setCurrentPageMenuItems(menuItems
+      .slice(startIndex, startIndex + MENU_ITEMS_PER_PAGE));
+  }, [menuItems, startIndex, setCurrentPageMenuItems]);
+
+  const handleCreate = (item) => (
+    axios.post("/api/menu/createMenuItem", { menuItem: item })
+      .then(res => {
+        if (200 <= res.status && res.status < 300) {
+          return res.data;
+        } else {
+          throw res;
+        }
+      })
+      .then(data => {
+        console.log("Created menu item:", MenuItem.parseJson(data));
+        setDatabaseChanged(true);
+      })
+      .catch(e => {
+        console.error("Error creating menu item:", e);
+      })
+  );
+  const handleEdit = (item) => (
+    axios.post("/api/menu/updateMenuItem", { menuItem: item })
+      .then(res => {
+        if (200 <= res.status && res.status < 300) {
+          return res.data;
+        } else {
+          throw res;
+        }
+      })
+      .then(data => {
+        console.log("Updated menu item:", MenuItem.parseJson(data));
+        setDatabaseChanged(true);
+      })
+      .catch(e => {
+        console.error("Error updating menu item:", e);
+      })
+  );
+  const handleDelete = (item) => (
+    axios.post("/api/menu/deleteMenuItem", { id: item.menuItemId })
+      .then(res => {
+        if (200 <= res.status && res.status < 300) {
+          return res.data;
+        } else {
+          throw res;
+        }
+      })
+      .then(_ => {
+        console.log("Deleted menu item:", item);
+        setDatabaseChanged(true);
+      })
+      .catch(e => {
+        console.error("Error deleting menu item:", e);
+      })
+  );
 
   return (
     <>
       <Card fullWidth="true" radius="none" shadow="none" className="px-9">
         <CardHeader className="justify-end">
-          <MenuItemEditor onMenuItemChange={(_) => {}}>
+          <MenuItemEditor onMenuItemChange={handleCreate}>
             {onOpen => (
               <Button
                 color="primary"
@@ -87,16 +151,20 @@ export default function MenuManager() {
                     )
                   }
                   <TableCell>
-                    <MenuItemEditor menuItem={menuItem} onMenuItemChange={(_) => {}}>
+                    <MenuItemEditor menuItem={menuItem} onMenuItemChange={handleEdit}>
                       {onOpen => (
-                        <Tooltip content="Edit">
-                          <Button isIconOnly onClick={onOpen} size="sm" variant="light"><FaPencil/></Button>
-                        </Tooltip>
+                        <Button aria-label="Edit" isIconOnly onClick={onOpen} size="sm" variant="light"><FaPencil/></Button>
                       )}
                     </MenuItemEditor>
-                    <Tooltip content="Delete">
-                      <Button color="danger" isIconOnly size="sm" variant="light"><FaTrashCan/></Button>
-                    </Tooltip>
+                    <ConfirmationDialog
+                      trigger={onOpen => (
+                        <Button aria-label="Delete" color="danger" isIconOnly onClick={onOpen} size="sm" variant="light"><FaTrashCan/></Button>
+                      )}
+                      onConfirm={() => {
+                        handleDelete(menuItem)
+                      }}
+                      body="Are you sure you want to delete this menu item?"
+                    />
                   </TableCell>
                 </TableRow>
               ))}

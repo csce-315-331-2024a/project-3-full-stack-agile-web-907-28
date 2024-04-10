@@ -10,6 +10,7 @@ import {
 } from "@nextui-org/react";
 import InventoryItem from "@/models/InventoryItem";
 import useValidatedState from "@/components/utils/useValidatedState";
+import {useState} from "react";
 
 
 /**
@@ -25,8 +26,8 @@ export default function InventoryItemEditor({children, inventoryItem = null, onI
 
   const defaultName = inventoryItem == null ? "" : inventoryItem.name.toString();
   const defaultQuantity = inventoryItem == null ? "" : inventoryItem.quantity.toString();
-  const defaultPurchaseDate = inventoryItem == null ? "" : inventoryItem.purchaseDate.toString();
-  const defaultExpiryDate = inventoryItem == null ? "" : inventoryItem.expiryDate.toString();
+  const defaultPurchaseDate = inventoryItem == null ? "" : inventoryItem.purchaseDate.toISOString().slice(0,10);
+  const defaultExpiryDate = inventoryItem == null ? "" : inventoryItem.expiryDate.toISOString().slice(0,10);
   const defaultQuantityLimit = inventoryItem == null ? "0" : inventoryItem.quantityLimit.toString();
 
   const isNumber = (value) => !isNaN(value) && !isNaN(parseFloat(value));
@@ -37,6 +38,8 @@ export default function InventoryItemEditor({children, inventoryItem = null, onI
   const [expiryDate, setExpiryDate, resetExpiryDate, isExpiryDateValid, isExpiryDateChanged] = useValidatedState(defaultExpiryDate, d => d.trim() !== "");
   const [quantityLimit, setQuantityLimit, resetQuantityLimit, isQuantityLimitValid, isQuantityLimitChanged] = useValidatedState(defaultQuantityLimit, isNumber);
 
+  const [error, setError] = useState("");
+
   const handleOpen = () => {
     resetName();
     resetQuantity();
@@ -46,17 +49,22 @@ export default function InventoryItemEditor({children, inventoryItem = null, onI
     onOpen();
   }
   const handleSubmit = (onClose) => {
-    if (isNameValid && isQuantityValid && isPurchaseDateValid && isExpiryDateValid && isQuantityLimitValid) {
-      onInventoryItemChange(new InventoryItem(
-        inventoryItem == null ? -1 : inventoryItem.inventoryItemId,
-        name,
-        parseFloat(quantity),
-        new Date(purchaseDate),
-        parseFloat(expiryDate),
-        parseFloat(quantityLimit)
-      ));
-      onClose();
-    } else {
+    try {
+      if (isNameValid && isQuantityValid && isPurchaseDateValid && isExpiryDateValid && isQuantityLimitValid) {
+        onInventoryItemChange(new InventoryItem(
+          inventoryItem == null ? -1 : inventoryItem.inventoryItemId,
+          name,
+          parseFloat(quantity),
+          new Date(purchaseDate),
+          new Date(expiryDate),
+          parseFloat(quantityLimit)
+        ));
+        onClose();
+      }
+      setError("");
+    } catch (e) {
+      setError(e);
+    } finally {
       setName(name);
       setQuantity(quantity);
       setPurchaseDate(purchaseDate);
@@ -66,12 +74,12 @@ export default function InventoryItemEditor({children, inventoryItem = null, onI
   };
 
   return (
-    <div>
+    <>
       {children(handleOpen)}
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="top-center">
         <ModalContent>
           {(onClose) => (
-            <div>
+            <>
               {
                 inventoryItem == null ? (
                   <ModalHeader>Create Inventory Item</ModalHeader>
@@ -99,7 +107,7 @@ export default function InventoryItemEditor({children, inventoryItem = null, onI
                   isRequired
                   label="Purchase Date"
                   type="date"
-                  value={purchaseDate.slice(0,10)}
+                  value={purchaseDate}
                   onValueChange={setPurchaseDate}
                   isInvalid={!isPurchaseDateValid && isPurchaseDateChanged}
                 />
@@ -107,7 +115,7 @@ export default function InventoryItemEditor({children, inventoryItem = null, onI
                   isRequired
                   label="Expiry Date"
                   type="date"
-                  value={expiryDate.slice(0,10)}
+                  value={expiryDate}
                   onValueChange={setExpiryDate}
                   isInvalid={!isExpiryDateValid && isExpiryDateChanged}
                 />
@@ -121,13 +129,20 @@ export default function InventoryItemEditor({children, inventoryItem = null, onI
                 />
               </ModalBody>
               <ModalFooter>
+                {
+                  error === "" ? (
+                    <></>
+                  ) : (
+                    <p className="error">{error}</p>
+                  )
+                }
                 <Button onPress={onClose}>Cancel</Button>
                 <Button color="primary" onPress={() => handleSubmit(onClose)}>Submit</Button>
               </ModalFooter>
-            </div>
+            </>
           )}
         </ModalContent>
       </Modal>
-    </div>
+    </>
   )
 }
