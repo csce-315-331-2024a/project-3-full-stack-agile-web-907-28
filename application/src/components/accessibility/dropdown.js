@@ -1,5 +1,6 @@
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem, Button } from '@nextui-org/react';
 import { useState } from 'react';
+import GoogleTranslate from "@/components/translation/translationComponent"
 
 export default function App() {
   const [textSize, setTextSize] = useState("normal");
@@ -62,18 +63,16 @@ export default function App() {
           </DropdownItem>
         </DropdownSection>
 
-        <DropdownSection aria-label="Language" showDivider>
-          <DropdownItem>
+        <DropdownSection aria-label="Preferences" showDivider>
+          <DropdownItem
+            isReadOnly
+            key="theme"
+            className="cursor-default"
+            endContent={
+              <GoogleTranslate /> // Replace with your GoogleTranslate component
+            }
+          >
             Language
-            <DropdownMenu>
-              <DropdownItem onClick={() => handleLanguageChange("english")}>
-                English
-              </DropdownItem>
-              <DropdownItem onClick={() => handleLanguageChange("spanish")}>
-                Spanish
-              </DropdownItem>
-              {/* Add more languages as needed */}
-            </DropdownMenu>
           </DropdownItem>
         </DropdownSection>
       </DropdownMenu>
