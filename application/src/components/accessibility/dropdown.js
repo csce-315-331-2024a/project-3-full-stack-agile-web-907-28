@@ -64,17 +64,17 @@ export default function App() {
         </DropdownSection>
 
         <DropdownSection aria-label="Preferences" showDivider>
-          <DropdownItem
-            isReadOnly
-            key="theme"
-            className="cursor-default"
-            endContent={
-              <GoogleTranslate /> // Replace with your GoogleTranslate component
-            }
-          >
-            Language
-          </DropdownItem>
-        </DropdownSection>
+      <DropdownItem
+        isReadOnly
+        key="theme"
+        className="cursor-default"
+        endContent={
+          <GoogleTranslate /> // Replace with your GoogleTranslate component
+        }
+      >
+        Language {/* Instead of Theme */}
+      </DropdownItem>
+    </DropdownSection>
       </DropdownMenu>
     </Dropdown>
   );
