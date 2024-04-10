@@ -10,8 +10,9 @@ import {
   useDisclosure
 } from "@nextui-org/react";
 import MenuItem from "@/models/MenuItem";
-import useValidatedState from "@/components/utils/useValidatedState";
-import {useState} from "react";
+import useValidatedState from "@/react-hooks/useValidatedState";
+import {useContext, useState} from "react";
+import InventoryContext from "@/contexts/InventoryContext";
 
 
 /**
@@ -23,8 +24,9 @@ import {useState} from "react";
  * @returns {JSX.Element}
  * @constructor
  */
-export default function IngredientEditor({trigger, onIngredientChange, inventoryItems=[], ingredient = null}) {
+export default function IngredientEditor({trigger, onIngredientChange, ingredient = null}) {
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
+  const {inventoryItems} = useContext(InventoryContext);
 
   const defaultId = ingredient == null ? "" : ingredient.id.toString();
   const defaultAmount = ingredient == null ? "" : ingredient.amount.toString();

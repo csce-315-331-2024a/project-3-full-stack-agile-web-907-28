@@ -12,16 +12,17 @@ import {
 } from "@nextui-org/react";
 import ListPagination from "@/components/utils/ListPagination";
 import {FaPlus} from "react-icons/fa";
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {FaPencil, FaTrashCan} from "react-icons/fa6";
 
 import menuCategories from "@/models/menuCategories";
-import InventoryItem from "@/models/InventoryItem";
 import axios from "axios";
 import ConfirmationDialog from "@/components/utils/ConfirmationDialog";
 import MenuItem from "@/models/MenuItem";
-import useObjectArraySorter from "@/components/utils/useObjectArraySorter";
+import useSortedArray, {SortProperties} from "@/react-hooks/useSortedArray";
 import ObjectArraySortButton from "@/components/utils/ObjectArraySortButton";
+import MenuContext from "@/contexts/MenuContext";
+import InventoryContext from "@/contexts/InventoryContext";
 
 const MENU_ITEMS_PER_PAGE = 10;
 
@@ -32,47 +33,22 @@ const MENU_ITEMS_PER_PAGE = 10;
  * @constructor
  */
 export default function MenuManager() {
-  const [menuItems, setMenuItems] = useState([]);
-  const [inventoryItems, setInventoryItems] = useState([]);
-  const [databaseChanged, setDatabaseChanged] = useState(false);
+  const {menuItems, refreshMenuItems} = useContext(MenuContext);
+  const {inventoryItems} = useContext(InventoryContext);
   const [startIndex, setStartIndex] = useState(0);
   const [currentPageMenuItems, setCurrentPageMenuItems] = useState([]);
-  const [sortProps, setSortProps] = useObjectArraySorter(menuItems, setMenuItems, "menuItemId");
+  const [sortedMenuItems, sortProps, setSortProps] = useSortedArray(menuItems, SortProperties.byProperty("menuItemId"));
 
+  // When the array is refreshed or resorted, go back to the first page.
   useEffect(() => {
-    fetch("/api/menu/menuitems")
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          throw res;
-        }
-      })
-      .then(data => {
-        setMenuItems(data.map(MenuItem.parseJson));
-        setDatabaseChanged(false);
-        setSortProps({key: sortProps.key, order: sortProps.order, enable: true});
-      })
-      .catch(error => console.error("Failed to fetch menu items:", error));
-  }, [databaseChanged, setDatabaseChanged, setSortProps, sortProps.key, sortProps.order]);
+    setStartIndex(0);
+  }, [sortedMenuItems]);
 
+  // Only display the menu items on the current page.
   useEffect(() => {
-    fetch("/api/inventory/getInventoryItems")
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          throw res;
-        }
-      })
-      .then(setInventoryItems)
-      .catch(error => console.error("Failed to fetch inventory items:", error));
-  }, [databaseChanged, setDatabaseChanged]);
-
-  useEffect(() => {
-    setCurrentPageMenuItems(menuItems
+    setCurrentPageMenuItems(sortedMenuItems
       .slice(startIndex, startIndex + MENU_ITEMS_PER_PAGE));
-  }, [menuItems, startIndex, setCurrentPageMenuItems]);
+  }, [sortedMenuItems, startIndex, setCurrentPageMenuItems]);
 
   const handleCreate = (item) => (
     axios.post("/api/menu/createMenuItem", { menuItem: item })
@@ -85,7 +61,7 @@ export default function MenuManager() {
       })
       .then(data => {
         console.log("Created menu item:", MenuItem.parseJson(data));
-        setDatabaseChanged(true);
+        refreshMenuItems();
       })
       .catch(e => {
         console.error("Error creating menu item:", e);
@@ -102,7 +78,7 @@ export default function MenuManager() {
       })
       .then(data => {
         console.log("Updated menu item:", MenuItem.parseJson(data));
-        setDatabaseChanged(true);
+        refreshMenuItems();
       })
       .catch(e => {
         console.error("Error updating menu item:", e);
@@ -119,7 +95,7 @@ export default function MenuManager() {
       })
       .then(_ => {
         console.log("Deleted menu item:", item);
-        setDatabaseChanged(true);
+        refreshMenuItems();
       })
       .catch(e => {
         console.error("Error deleting menu item:", e);
@@ -149,7 +125,7 @@ export default function MenuManager() {
             <TableHeader>
               <TableColumn>
                 <ObjectArraySortButton
-                  prop="menuItemId"
+                  sortKey={SortProperties.byProperty("menuItemId")}
                   sortProps={sortProps}
                   onSortPropsChange={setSortProps}
                   type="19"
@@ -159,7 +135,7 @@ export default function MenuManager() {
               </TableColumn>
               <TableColumn>
                 <ObjectArraySortButton
-                  prop="name"
+                  sortKey={SortProperties.byProperty("name")}
                   sortProps={sortProps}
                   onSortPropsChange={setSortProps}
                   type="az"
@@ -169,7 +145,7 @@ export default function MenuManager() {
               </TableColumn>
               <TableColumn>
                 <ObjectArraySortButton
-                  prop="price"
+                  sortKey={SortProperties.byProperty("price")}
                   sortProps={sortProps}
                   onSortPropsChange={setSortProps}
                   type="19"
@@ -179,7 +155,7 @@ export default function MenuManager() {
               </TableColumn>
               <TableColumn>
                 <ObjectArraySortButton
-                  prop="categoryId"
+                  sortKey={SortProperties.byProperty("categoryId")}
                   sortProps={sortProps}
                   onSortPropsChange={setSortProps}
                   type="plain"

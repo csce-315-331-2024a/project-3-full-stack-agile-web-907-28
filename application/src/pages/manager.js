@@ -6,6 +6,8 @@ import {Card, CardFooter, CardHeader, Tab, Tabs} from "@nextui-org/react";
 import DefaultLayout from "@/layouts/default";
 import InventoryManager from "@/components/manager/InventoryManager";
 import MenuManager from "@/components/manager/MenuManager";
+import {MenuContextProvider} from "@/contexts/MenuContext";
+import {InventoryContextProvider} from "@/contexts/InventoryContext";
 
 /**
  * This function displays the manager page.
@@ -19,12 +21,16 @@ export default function ManagerPage() {
   return (
     <RestrictedAccess isCredentialAuthorized={isCredentialAuthorized}>
       <DefaultLayout>
-        <center>
-          <Tabs aria-label="Management sections" size="lg" color="primary">
-            <Tab key="menu" title="Menu"><MenuManager /></Tab>
-            <Tab key="inventory" title="Inventory"><InventoryManager /></Tab>
-          </Tabs>
-        </center>
+        <MenuContextProvider>
+          <InventoryContextProvider>
+            <center>
+              <Tabs aria-label="Management sections" size="lg" color="primary">
+                <Tab key="menu" title="Menu"><MenuManager/></Tab>
+                <Tab key="inventory" title="Inventory"><InventoryManager/></Tab>
+              </Tabs>
+            </center>
+          </InventoryContextProvider>
+        </MenuContextProvider>
       </DefaultLayout>
     </RestrictedAccess>
   );

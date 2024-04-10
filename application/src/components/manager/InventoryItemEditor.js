@@ -9,7 +9,7 @@ import {
   useDisclosure
 } from "@nextui-org/react";
 import InventoryItem from "@/models/InventoryItem";
-import useValidatedState from "@/components/utils/useValidatedState";
+import useValidatedState from "@/react-hooks/useValidatedState";
 import {useState} from "react";
 
 
