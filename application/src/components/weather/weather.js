@@ -11,6 +11,10 @@ const WeatherComponent = () => {
     return str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   };
 
+  const toFahrenheit = (str) => {
+    return Math.round((parseInt(str) * 9 / 5)) + 32;
+  }
+
   useEffect(() => {
     const fetchWeatherData = async () => {
       try {
@@ -45,13 +49,13 @@ const WeatherComponent = () => {
           />
       </div>
       <div style={{color: 'white'}}>
-        <h2>{weatherData ? `Today's Weather at ${weatherData.location}, ${capitalizeFirstLetter(weatherData.description)}` : 'Loading...'}</h2>
+        <h2>{weatherData ? `Today's Weather at ${weatherData.location}` : 'Loading...'}</h2>
         {error && <p>{error}</p>}
         {weatherData && (
           <p>
-            {weatherData.temperature} °C&nbsp;
-            Humidity: {weatherData.humidity}%&nbsp;
-            Wind Speed: {weatherData.windSpeed} m/s
+            {toFahrenheit(weatherData.temperature)}°F&nbsp;&nbsp;
+            {capitalizeFirstLetter(weatherData.description)}
+            
           </p>
         )}
       </div>
