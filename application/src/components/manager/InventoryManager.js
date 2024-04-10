@@ -21,7 +21,7 @@ import ConfirmationDialog from "@/components/utils/ConfirmationDialog";
 import useObjectArraySorter from "@/components/utils/useObjectArraySorter";
 import ObjectArraySortButton from "@/components/utils/ObjectArraySortButton";
 
-const INVENTORY_ITEMS_PER_PAGE = 15;
+const INVENTORY_ITEMS_PER_PAGE = 10;
 
 
 /**
@@ -52,7 +52,7 @@ export default function InventoryManager() {
         setSortProps({key: sortProps.key, order: sortProps.order, enable: true});
       })
       .catch(error => console.error("Failed to fetch inventory items:", error));
-  }, [databaseChanged, setDatabaseChanged]);
+  }, [databaseChanged, setDatabaseChanged, setSortProps, sortProps.key, sortProps.order]);
 
   useEffect(() => {
     setCurrentPageInventoryItems(inventoryItems

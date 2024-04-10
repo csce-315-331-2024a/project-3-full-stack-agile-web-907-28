@@ -1,4 +1,5 @@
 import {
+  Autocomplete, AutocompleteItem,
   Button, Card, CardBody, CardFooter, CardHeader, Checkbox,
   Input,
   Modal,
@@ -17,11 +18,12 @@ import {useState} from "react";
  * A modal which allows for creation & editing of individual components of menu items.
  * @param trigger {(onOpen: () => void) => ReactNode} Trigger to open the Modal.
  * @param onIngredientChange Callback function for submitting the new/modified menu item component.
+ * @param inventoryItems {[InventoryItem]} (optional) Array of InventoryItems used to validate IDs.
  * @param ingredient {{id: number, amount: number} | null} (optional) The ingredient to edit.
  * @returns {JSX.Element}
  * @constructor
  */
-export default function IngredientEditor({trigger, onIngredientChange, ingredient = null}) {
+export default function IngredientEditor({trigger, onIngredientChange, inventoryItems=[], ingredient = null}) {
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
   const defaultId = ingredient == null ? "" : ingredient.id.toString();
@@ -69,13 +71,26 @@ export default function IngredientEditor({trigger, onIngredientChange, ingredien
                 )
               }
               <ModalBody>
-                <Input
-                  isRequired
-                  label="ID"
-                  value={id}
-                  onValueChange={setId}
-                  isInvalid={!isIdValid && isIdChanged}
-                />
+                {inventoryItems.length !== 0 ? (
+                  <Autocomplete
+                    placeholder="Inventory item..."
+                    selectedKey={id}
+                    onSelectionChange={setId}
+                    isInvalid={!isIdValid && isIdChanged}
+                  >
+                    {inventoryItems.map(item => (
+                      <AutocompleteItem key={item.inventoryItemId}>{item.name}</AutocompleteItem>
+                    ))}
+                  </Autocomplete>
+                ) : (
+                  <Input
+                    isRequired
+                    label="ID"
+                    value={id}
+                    onValueChange={setId}
+                    isInvalid={!isIdValid && isIdChanged}
+                  />
+                )}
                 <Input
                   isRequired
                   label="Amount"

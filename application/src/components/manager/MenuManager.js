@@ -23,7 +23,7 @@ import MenuItem from "@/models/MenuItem";
 import useObjectArraySorter from "@/components/utils/useObjectArraySorter";
 import ObjectArraySortButton from "@/components/utils/ObjectArraySortButton";
 
-const MENU_ITEMS_PER_PAGE = 15;
+const MENU_ITEMS_PER_PAGE = 10;
 
 
 /**
@@ -51,8 +51,22 @@ export default function MenuManager() {
       .then(data => {
         setMenuItems(data.map(MenuItem.parseJson));
         setDatabaseChanged(false);
+        setSortProps({key: sortProps.key, order: sortProps.order, enable: true});
       })
       .catch(error => console.error("Failed to fetch menu items:", error));
+  }, [databaseChanged, setDatabaseChanged, setSortProps, sortProps.key, sortProps.order]);
+
+  useEffect(() => {
+    fetch("/api/inventory/getInventoryItems")
+      .then(res => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          throw res;
+        }
+      })
+      .then(setInventoryItems)
+      .catch(error => console.error("Failed to fetch inventory items:", error));
   }, [databaseChanged, setDatabaseChanged]);
 
   useEffect(() => {

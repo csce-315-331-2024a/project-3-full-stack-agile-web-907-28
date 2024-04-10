@@ -145,6 +145,7 @@ export default function MenuItemEditor({trigger, onMenuItemChange, menuItem = nu
                         newIngredients.push(newIngredient);
                         setIngredients(newIngredients);
                       }}
+                      inventoryItems={inventoryItems}
                     />
                   </CardHeader>
                   <CardBody>
@@ -177,6 +178,7 @@ export default function MenuItemEditor({trigger, onMenuItemChange, menuItem = nu
                                     setIngredients(newIngredients);
                                   }}
                                   ingredient={ingredient}
+                                  inventoryItems={inventoryItems}
                                 />
                                 <ConfirmationDialog
                                   trigger={onOpen => (
