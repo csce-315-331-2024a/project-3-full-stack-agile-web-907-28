@@ -15,13 +15,13 @@ import {useState} from "react";
 
 /**
  * A modal which allows for creation & editing of individual components of menu items.
- * @param children {(onOpen: () => void) => ReactNode} Trigger to open the Modal.
- * @param ingredient {{id: number, amount: number} | null} The menu item component to edit, or null if creating a new one.
+ * @param trigger {(onOpen: () => void) => ReactNode} Trigger to open the Modal.
  * @param onIngredientChange Callback function for submitting the new/modified menu item component.
+ * @param ingredient {{id: number, amount: number} | null} (optional) The ingredient to edit.
  * @returns {JSX.Element}
  * @constructor
  */
-export default function IngredientEditor({children, ingredient = null, onIngredientChange}) {
+export default function IngredientEditor({trigger, onIngredientChange, ingredient = null}) {
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
   const defaultId = ingredient == null ? "" : ingredient.id.toString();
@@ -38,13 +38,17 @@ export default function IngredientEditor({children, ingredient = null, onIngredi
     onOpen();
   }
   const handleSubmit = (onClose) => {
-    if (isIdValid && isAmountValid) {
-      onIngredientChange({
-        id: id,
-        amount: amount
-      });
-      onClose();
-    } else {
+    try {
+      if (isIdValid && isAmountValid) {
+        onIngredientChange({
+          id: id,
+          amount: amount
+        });
+        onClose();
+      }
+    } catch (e) {
+      console.error("Error submitting ingredient", e);
+    } finally {
       setId(id);
       setAmount(amount);
     }
@@ -52,7 +56,7 @@ export default function IngredientEditor({children, ingredient = null, onIngredi
 
   return (
     <div>
-      {children(handleOpen)}
+      {trigger(handleOpen)}
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="top-center">
         <ModalContent>
           {(onClose) => (

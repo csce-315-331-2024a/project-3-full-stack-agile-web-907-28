@@ -20,16 +20,24 @@ import InventoryItem from "@/models/InventoryItem";
 import axios from "axios";
 import ConfirmationDialog from "@/components/utils/ConfirmationDialog";
 import MenuItem from "@/models/MenuItem";
+import useObjectArraySorter from "@/components/utils/useObjectArraySorter";
+import ObjectArraySortButton from "@/components/utils/ObjectArraySortButton";
 
 const MENU_ITEMS_PER_PAGE = 15;
 
 
+/**
+ * Component which displays menu items & allows editing of both the list and each individual item.
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export default function MenuManager() {
   const [menuItems, setMenuItems] = useState([]);
   const [inventoryItems, setInventoryItems] = useState([]);
   const [databaseChanged, setDatabaseChanged] = useState(false);
   const [startIndex, setStartIndex] = useState(0);
   const [currentPageMenuItems, setCurrentPageMenuItems] = useState([]);
+  const [sortProps, setSortProps] = useObjectArraySorter(menuItems, setMenuItems, "menuItemId");
 
   useEffect(() => {
     fetch("/api/menu/menuitems")
@@ -108,8 +116,8 @@ export default function MenuManager() {
     <>
       <Card fullWidth="true" radius="none" shadow="none" className="px-9">
         <CardHeader className="justify-end">
-          <MenuItemEditor onMenuItemChange={handleCreate}>
-            {onOpen => (
+          <MenuItemEditor
+            trigger={onOpen => (
               <Button
                 color="primary"
                 onClick={onOpen}
@@ -118,15 +126,53 @@ export default function MenuManager() {
                 Create menu item
               </Button>
             )}
-          </MenuItemEditor>
+            onMenuItemChange={handleCreate}
+            inventoryItems={inventoryItems}
+          />
         </CardHeader>
         <CardBody>
           <Table isStriped>
             <TableHeader>
-              <TableColumn>ID</TableColumn>
-              <TableColumn>Name</TableColumn>
-              <TableColumn>Price</TableColumn>
-              <TableColumn>Category</TableColumn>
+              <TableColumn>
+                <ObjectArraySortButton
+                  prop="menuItemId"
+                  sortProps={sortProps}
+                  onSortPropsChange={setSortProps}
+                  type="19"
+                >
+                  ID
+                </ObjectArraySortButton>
+              </TableColumn>
+              <TableColumn>
+                <ObjectArraySortButton
+                  prop="name"
+                  sortProps={sortProps}
+                  onSortPropsChange={setSortProps}
+                  type="az"
+                >
+                  Name
+                </ObjectArraySortButton>
+              </TableColumn>
+              <TableColumn>
+                <ObjectArraySortButton
+                  prop="price"
+                  sortProps={sortProps}
+                  onSortPropsChange={setSortProps}
+                  type="19"
+                >
+                  Price
+                </ObjectArraySortButton>
+              </TableColumn>
+              <TableColumn>
+                <ObjectArraySortButton
+                  prop="categoryId"
+                  sortProps={sortProps}
+                  onSortPropsChange={setSortProps}
+                  type="plain"
+                >
+                  Category
+                </ObjectArraySortButton>
+              </TableColumn>
               <TableColumn>Seasonal Dates</TableColumn>
               <TableColumn>Actions</TableColumn>
             </TableHeader>
@@ -135,7 +181,7 @@ export default function MenuManager() {
                 <TableRow key={menuItem.menuItemId}>
                   <TableCell>{menuItem.menuItemId}</TableCell>
                   <TableCell>{menuItem.name}</TableCell>
-                  <TableCell>${menuItem.price}</TableCell>
+                  <TableCell>{"$" + menuItem.price.toFixed(2)}</TableCell>
                   <TableCell>{
                     menuCategories.some(({id}) => id === menuItem.categoryId) ? (
                       menuCategories.find(({id}) => id === menuItem.categoryId).name
@@ -151,11 +197,14 @@ export default function MenuManager() {
                     )
                   }
                   <TableCell>
-                    <MenuItemEditor menuItem={menuItem} onMenuItemChange={handleEdit}>
-                      {onOpen => (
+                    <MenuItemEditor
+                      trigger={onOpen => (
                         <Button aria-label="Edit" isIconOnly onClick={onOpen} size="sm" variant="light"><FaPencil/></Button>
                       )}
-                    </MenuItemEditor>
+                      onMenuItemChange={handleEdit}
+                      menuItem={menuItem}
+                      inventoryItems={inventoryItems}
+                    />
                     <ConfirmationDialog
                       trigger={onOpen => (
                         <Button aria-label="Delete" color="danger" isIconOnly onClick={onOpen} size="sm" variant="light"><FaTrashCan/></Button>

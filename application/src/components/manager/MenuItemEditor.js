@@ -12,23 +12,22 @@ import {
 import MenuItem from "@/models/MenuItem";
 import useValidatedState from "@/components/utils/useValidatedState";
 import {useState} from "react";
-import {FaDollarSign} from "react-icons/fa";
 import IngredientEditor from "@/components/manager/IngredientEditor";
-import InventoryItemEditor from "@/components/manager/InventoryItemEditor";
 import {FaPencil, FaTrashCan} from "react-icons/fa6";
 import menuCategories from "@/models/menuCategories";
+import ConfirmationDialog from "@/components/utils/ConfirmationDialog";
 
 
 /**
  * A modal which allows for creation & editing of menu items.
- * @param children {(onOpen: () => void) => ReactNode} Trigger to open the Modal.
- * @param menuItem {MenuItem | null} The menu item to edit, or null if creating a new one.
+ * @param trigger {(onOpen: () => void) => ReactNode} Trigger to open the Modal.
  * @param onMenuItemChange Callback function for submitting the new/modified menu item.
- * @param inventoryItems {[InventoryItem]} Optional collection of InventoryItems used to map IDs to names.
+ * @param menuItem {MenuItem | null} (optional) The menu item to edit.
+ * @param inventoryItems {[InventoryItem]} (optional) The collection of InventoryItems used to map IDs to names.
  * @returns {JSX.Element}
  * @constructor
  */
-export default function MenuItemEditor({children, menuItem = null, onMenuItemChange, inventoryItems = []}) {
+export default function MenuItemEditor({trigger, onMenuItemChange, menuItem = null, inventoryItems = []}) {
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
   const defaultName = menuItem == null ? "" : menuItem.name.toString();
@@ -93,7 +92,7 @@ export default function MenuItemEditor({children, menuItem = null, onMenuItemCha
 
   return (
     <div>
-      {children(handleOpen)}
+      {trigger(handleOpen)}
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="top-center">
         <ModalContent>
           {(onClose) => (
@@ -137,11 +136,16 @@ export default function MenuItemEditor({children, menuItem = null, onMenuItemCha
                 <Card>
                   <CardHeader className="justify-between">
                     <>Ingredients</>
-                    <IngredientEditor onIngredientChange={(_) => {}}>
-                      {onOpen => (
+                    <IngredientEditor
+                      trigger={onOpen => (
                         <Button color="primary" onClick={onOpen}>Add ingredient</Button>
                       )}
-                    </IngredientEditor>
+                      onIngredientChange={newIngredient => {
+                        const newIngredients = ingredients.slice();
+                        newIngredients.push(newIngredient);
+                        setIngredients(newIngredients);
+                      }}
+                    />
                   </CardHeader>
                   <CardBody>
                     <Table isStriped removeWrapper>
@@ -163,12 +167,26 @@ export default function MenuItemEditor({children, menuItem = null, onMenuItemCha
                             <TableCell>{ingredient.amount}</TableCell>
                             <TableCell className="justify-between">
                               <div className="relative flex items-center gap-2">
-                                <IngredientEditor ingredient={ingredient} onIngredientChange={(_) => {}}>
-                                  {onOpen => (
+                                <IngredientEditor
+                                  trigger={onOpen => (
                                     <Button isIconOnly onClick={onOpen} size="sm" variant="light"><FaPencil /></Button>
                                   )}
-                                </IngredientEditor>
-                                <Button color="danger" isIconOnly size="sm" variant="light"><FaTrashCan /></Button>
+                                  onIngredientChange={newIngredient => {
+                                    const newIngredients = ingredients.slice();
+                                    newIngredients[idx] = newIngredient;
+                                    setIngredients(newIngredients);
+                                  }}
+                                  ingredient={ingredient}
+                                />
+                                <ConfirmationDialog
+                                  trigger={onOpen => (
+                                    <Button color="danger" isIconOnly onClick={onOpen} size="sm" variant="light"><FaTrashCan /></Button>
+                                  )}
+                                  onConfirm={() => {
+                                    const newIngredients = ingredients.filter((_, i) => i !== idx);
+                                    setIngredients(newIngredients);
+                                  }}
+                                />
                               </div>
                             </TableCell>
                           </TableRow>

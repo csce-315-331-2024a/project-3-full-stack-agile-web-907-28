@@ -15,13 +15,13 @@ import {useState} from "react";
 
 /**
  * A modal which allows for creation & editing of inventory items.
- * @param children {(onOpen: () => void) => ReactNode} Trigger to open the Modal.
- * @param inventoryItem {InventoryItem | null} The inventory item to edit, or null if creating a new one.
+ * @param trigger {(onOpen: () => void) => ReactNode} Trigger to open the Modal.
  * @param onInventoryItemChange Callback function for submitting the new/modified inventory item.
+ * @param inventoryItem {InventoryItem | null} (optional) The inventory item to edit.
  * @returns {JSX.Element}
  * @constructor
  */
-export default function InventoryItemEditor({children, inventoryItem = null, onInventoryItemChange}) {
+export default function InventoryItemEditor({trigger, onInventoryItemChange, inventoryItem = null}) {
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
   const defaultName = inventoryItem == null ? "" : inventoryItem.name.toString();
@@ -75,7 +75,7 @@ export default function InventoryItemEditor({children, inventoryItem = null, onI
 
   return (
     <>
-      {children(handleOpen)}
+      {trigger(handleOpen)}
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="top-center">
         <ModalContent>
           {(onClose) => (

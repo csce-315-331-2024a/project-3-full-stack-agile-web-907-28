@@ -13,19 +13,28 @@ import {
 } from "@nextui-org/react";
 import ListPagination from "@/components/utils/ListPagination";
 import InventoryItemEditor from "@/components/manager/InventoryItemEditor";
-import {FaPencil, FaTrashCan} from "react-icons/fa6";
+import {FaArrowDown19, FaArrowDownAZ, FaArrowUp19, FaArrowUpAZ, FaPencil, FaTrashCan} from "react-icons/fa6";
 import {FaPlus} from "react-icons/fa";
 import InventoryItem from "@/models/InventoryItem";
 import axios from "axios";
 import ConfirmationDialog from "@/components/utils/ConfirmationDialog";
+import useObjectArraySorter from "@/components/utils/useObjectArraySorter";
+import ObjectArraySortButton from "@/components/utils/ObjectArraySortButton";
 
 const INVENTORY_ITEMS_PER_PAGE = 15;
 
+
+/**
+ * Component which displays inventory items & allows editing of both the list and each individual item.
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export default function InventoryManager() {
   const [inventoryItems, setInventoryItems] = useState([]);
   const [databaseChanged, setDatabaseChanged] = useState(false);
   const [startIndex, setStartIndex] = useState(0);
   const [currentPageInventoryItems, setCurrentPageInventoryItems] = useState([]);
+  const [sortProps, setSortProps] = useObjectArraySorter(inventoryItems, setInventoryItems, "inventoryItemId");
 
 
   useEffect(() => {
@@ -40,6 +49,7 @@ export default function InventoryManager() {
       .then(data => {
         setInventoryItems(data.map(InventoryItem.parseJson));
         setDatabaseChanged(false);
+        setSortProps({key: sortProps.key, order: sortProps.order, enable: true});
       })
       .catch(error => console.error("Failed to fetch inventory items:", error));
   }, [databaseChanged, setDatabaseChanged]);
@@ -105,8 +115,8 @@ export default function InventoryManager() {
     <>
       <Card fullWidth="true" radius="none" shadow="none" className="px-9">
         <CardHeader className="justify-end">
-          <InventoryItemEditor onInventoryItemChange={handleCreate}>
-            {onOpen => (
+          <InventoryItemEditor
+            trigger={onOpen => (
               <Button
                 color="primary"
                 onClick={onOpen}
@@ -115,17 +125,72 @@ export default function InventoryManager() {
                 Create inventory item
               </Button>
             )}
-          </InventoryItemEditor>
+            onInventoryItemChange={handleCreate}
+          />
         </CardHeader>
         <CardBody>
           <Table isStriped>
             <TableHeader>
-              <TableColumn>ID</TableColumn>
-              <TableColumn>Name</TableColumn>
-              <TableColumn>Quantity</TableColumn>
-              <TableColumn>Purchase Date</TableColumn>
-              <TableColumn>Expiry Date</TableColumn>
-              <TableColumn>Quantity Limit</TableColumn>
+              <TableColumn>
+                <ObjectArraySortButton
+                  prop="inventoryItemId"
+                  sortProps={sortProps}
+                  onSortPropsChange={setSortProps}
+                  type="19"
+                >
+                  ID
+                </ObjectArraySortButton>
+              </TableColumn>
+              <TableColumn>
+                <ObjectArraySortButton
+                  prop="name"
+                  sortProps={sortProps}
+                  onSortPropsChange={setSortProps}
+                  type="az"
+                >
+                  Name
+                </ObjectArraySortButton>
+              </TableColumn>
+              <TableColumn>
+                <ObjectArraySortButton
+                  prop="quantity"
+                  sortProps={sortProps}
+                  onSortPropsChange={setSortProps}
+                  type="19"
+                >
+                  Quantity
+                </ObjectArraySortButton>
+              </TableColumn>
+              <TableColumn>
+                <ObjectArraySortButton
+                  prop="purchaseDate"
+                  sortProps={sortProps}
+                  onSortPropsChange={setSortProps}
+                  type="plain"
+                >
+                  Purchase Date
+                </ObjectArraySortButton>
+              </TableColumn>
+              <TableColumn>
+                <ObjectArraySortButton
+                  prop="expiryDate"
+                  sortProps={sortProps}
+                  onSortPropsChange={setSortProps}
+                  type="plain"
+                >
+                  Expiry Date
+                </ObjectArraySortButton>
+              </TableColumn>
+              <TableColumn>
+                <ObjectArraySortButton
+                  prop="quantityLimit"
+                  sortProps={sortProps}
+                  onSortPropsChange={setSortProps}
+                  type="19"
+                >
+                  Quantity Limit
+                </ObjectArraySortButton>
+              </TableColumn>
               <TableColumn>Actions</TableColumn>
             </TableHeader>
             <TableBody>
@@ -139,11 +204,14 @@ export default function InventoryManager() {
                   <TableCell>{item.quantityLimit}</TableCell>
                   <TableCell>
                     <div className="relative flex items-center gap-2">
-                      <InventoryItemEditor inventoryItem={item} inventoryItems={inventoryItems} onInventoryItemChange={handleEdit}>
-                        {onOpen => (
+                      <InventoryItemEditor
+                        trigger={onOpen => (
                           <Button aria-label="Edit" isIconOnly onClick={onOpen} size="sm" variant="light"><FaPencil/></Button>
                         )}
-                      </InventoryItemEditor>
+                        onInventoryItemChange={handleEdit}
+                        inventoryItem={item}
+                        inventoryItems={inventoryItems}
+                      />
                       <ConfirmationDialog
                         trigger = {(onOpen) => (
                           <Button aria-label="Delete" color="danger" isIconOnly size="sm" variant="light" onClick={onOpen}><FaTrashCan/></Button>
