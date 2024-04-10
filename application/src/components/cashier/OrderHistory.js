@@ -7,6 +7,7 @@ const OrderHistory = () => {
   const [orders, setOrders] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [errorMessage, setErrorMessage] = useState(''); // Add state for error message
 
   useEffect(() => {
     fetch('/api/orders/viewOrders')
@@ -15,7 +16,9 @@ const OrderHistory = () => {
         setOrders(data);
         setTotalPages(Math.ceil(data.length / ORDERS_PER_PAGE));
       })
-      .catch(error => console.error("Failed to fetch orders:", error));
+      .catch(error => {
+        setErrorMessage('Failed to load orders.'); // Optionally handle loading errors
+      });
   }, []);
 
   //HANDLE DELETE
@@ -29,7 +32,7 @@ const OrderHistory = () => {
       }
       setOrders(orders.filter(order => order.order_id !== orderId));
     } catch (error) {
-      console.error("Failed to delete order:", error);
+      setErrorMessage(error.message); // Update error message state
     }
   };
 
@@ -39,6 +42,11 @@ const OrderHistory = () => {
 
   return (
     <div className="px-10" aria-label="Order History">
+      {errorMessage && ( // Conditionally render error message if present
+        <div data-testid="error-message" style={{ color: 'red' }}>
+          {errorMessage}
+        </div>
+      )}
       <Table isStriped aria-label="Order History">
         <TableHeader aria-label="Order History">
           <TableColumn aria-label="Order ID">Order ID</TableColumn>
@@ -57,7 +65,14 @@ const OrderHistory = () => {
               <TableCell aria-label="Order Status">Fulfilled</TableCell>
               <TableCell aria-label="Order Total">{order.total}</TableCell>
               <TableCell aria-label="Actions">
-              <Button aria-label="Delete Order" auto color="error" ghost onClick={() => handleDelete(order.order_id)}>
+              <Button 
+                aria-label="Delete Order" 
+                auto 
+                color="error" 
+                ghost 
+                onClick={() => handleDelete(order.order_id)}
+                data-testid={`delete-${order.order_id}`} // Add this line
+              >
                   ❌
               </Button>
               </TableCell>
