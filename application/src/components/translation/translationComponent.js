@@ -1,37 +1,30 @@
-import React, { useState } from 'react';
-import { translateText } from '/api/translate/translate';
+// components/GoogleTranslate.js
 
-const TranslationComponent = () => {
-  const [originalText, setOriginalText] = useState('');
-  const [translatedText, setTranslatedText] = useState('');
-  const [targetLanguage, setTargetLanguage] = useState('en'); // Default target language
+import React, { useEffect } from 'react';
 
-  const handleTranslate = async () => {
-    try {
-      const translatedText = await translateText(originalText, targetLanguage);
-      setTranslatedText(translatedText);
-    } catch (error) {
-      // Handle translation error
-      console.error('Translation error:', error);
+const GoogleTranslate = () => {
+  useEffect(() => {
+    // Check if the script is already present
+    if (!document.querySelector('#google-translate-script')) {
+      const script = document.createElement('script');
+      script.id = 'google-translate-script';
+      script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+      script.async = true;
+
+      script.onload = () => {
+        const googleTranslateElementInit = () => {
+          new window.google.translate.TranslateElement({ pageLanguage: 'en' }, 'google_translate_element');
+        };
+        window.googleTranslateElementInit = googleTranslateElementInit;
+      };
+
+      document.body.appendChild(script);
     }
-  };
+  }, []);
 
   return (
-    <div>
-      <textarea value={originalText} onChange={(e) => setOriginalText(e.target.value)} />
-      <button onClick={handleTranslate}>Translate</button>
-      <select value={targetLanguage} onChange={(e) => setTargetLanguage(e.target.value)}>
-        <option value="en">English</option>
-        <option value="fr">French</option>
-        <option value="es">Spanish</option>
-        {/* Add more languages as needed */}
-      </select>
-      <div>
-        <h2>Translated Text</h2>
-        <p>{translatedText}</p>
-      </div>
-    </div>
+    <div id="google_translate_element"></div>
   );
 };
 
-export default TranslationComponent;
+export default React.memo(GoogleTranslate);
