@@ -70,6 +70,7 @@ export default function App() {
         className="cursor-default"
         endContent={
           <GoogleTranslate /> // Replace with your GoogleTranslate component
+          //TODO: Get rid of google photo
         }
       >
         Language {/* Instead of Theme */}
