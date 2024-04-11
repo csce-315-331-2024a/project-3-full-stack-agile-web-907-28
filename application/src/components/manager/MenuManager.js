@@ -181,7 +181,7 @@ export default function MenuManager() {
                   }</TableCell>
                   {
                     menuItem.seasonal ? (
-                      <TableCell>{menuItem.startDate.toString().slice(0,10)} - {menuItem.endDate.toString().slice(0,10)}</TableCell>
+                      <TableCell>{menuItem.startDate.toDateString()} - {menuItem.endDate.toDateString()}</TableCell>
                     ) : (
                       <TableCell>N/A</TableCell>
                     )

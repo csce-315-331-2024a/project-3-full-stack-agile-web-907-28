@@ -11,9 +11,7 @@ export default function Menu() {
 
   return (
     <DefaultLayout>
-      <MenuContextProvider>
-        <MenuView />
-      </MenuContextProvider>
+      <MenuView />
     </DefaultLayout>
   );
 };

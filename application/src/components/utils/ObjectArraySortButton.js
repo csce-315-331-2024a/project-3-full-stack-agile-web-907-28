@@ -10,22 +10,24 @@ import {SortProperties} from "@/react-hooks/useSortedArray";
  * @param onSortPropsChange {(SortProperties) => void} Callback function when changing sort properties.
  * @param children Children.
  * @param type {"az" | "19" | "plain" | "none"} Which type of arrow to use.
- * @param props Properties passed to Button.
  * @returns {JSX.Element}
  * @constructor
  */
-export default function ObjectArraySortButton({sortKey, sortProps, onSortPropsChange, children, type, ...props}) {
+export default function ObjectArraySortButton({sortKey, sortProps, onSortPropsChange, children, type="plain"}) {
   return (
     <Button
+      className="text-default-500 font-bold p-0"
       onClick={() => {
-        if (sortProps.key === sortKey.key) {
-          onSortPropsChange(new SortProperties(sortKey.compareFn, sortKey.key, sortProps.order === "asc" ? "desc" : "asc"));
-        } else {
-          onSortPropsChange(sortKey);
+        if (sortProps !== null && sortProps !== undefined) {
+          if (sortProps.key === sortKey.key) {
+            onSortPropsChange(new SortProperties(sortKey.compareFn, sortKey.key, sortProps.order === "asc" ? "desc" : "asc"));
+          } else {
+            onSortPropsChange(sortKey);
+          }
         }
       }}
       endContent={
-        (sortProps.key === sortKey.key) ? (
+        (sortProps !== null && sortProps !== undefined && sortProps.key === sortKey.key) ? (
           (type === "az") ? (
             (sortProps.order === "asc") ? <FaArrowDownAZ /> : <FaArrowUpZA />
           ) : (type === "19") ? (
@@ -35,13 +37,14 @@ export default function ObjectArraySortButton({sortKey, sortProps, onSortPropsCh
           ) : (
             <></>
           )
-        ) : (
+        ) : (type === "none") ? (
           <></>
+        ) : (
+          <FaArrowDown color="transparent" />
         )
       }
       variant="light"
       size="sm"
-      {...props}
     >
       {children}
     </Button>
