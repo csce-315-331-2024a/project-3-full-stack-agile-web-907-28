@@ -6,22 +6,6 @@ export default function App() {
   const [textSize, setTextSize] = useState("normal");
   const [colorContrast, setColorContrast] = useState("normal");
 
-  // Function to handle text size change
-  const handleTextSizeChange = (size) => {
-    setTextSize(size);
-  };
-
-  // Function to handle color contrast change
-  const handleColorContrastChange = (contrast) => {
-    setColorContrast(contrast);
-  };
-
-  // Function to handle language change
-  const handleLanguageChange = (language) => {
-    // Integrate with translation API here
-    console.log(`Selected language: ${language}`);
-  };
-
   return (
     <Dropdown
       arrow="small"
