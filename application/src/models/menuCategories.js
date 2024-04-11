@@ -8,8 +8,6 @@ const menuCategories = [
   { id: 4, name: 'Sandwiches' },
   { id: 5, name: 'Grilled Cheese' },
   { id: 6, name: 'Drinks' },
-  { id: 7, name: 'Desserts' },
-  { id: 8, name: 'Category 8' },
-  { id: 9, name: 'Category 9'}
+  { id: 7, name: 'Desserts' }
 ];
 export default menuCategories;

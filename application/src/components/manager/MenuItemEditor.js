@@ -10,12 +10,13 @@ import {
   useDisclosure
 } from "@nextui-org/react";
 import MenuItem from "@/models/MenuItem";
-import useValidatedState from "@/components/utils/useValidatedState";
-import {useState} from "react";
+import useValidatedState from "@/react-hooks/useValidatedState";
+import {useContext, useState} from "react";
 import IngredientEditor from "@/components/manager/IngredientEditor";
 import {FaPencil, FaTrashCan} from "react-icons/fa6";
 import menuCategories from "@/models/menuCategories";
 import ConfirmationDialog from "@/components/utils/ConfirmationDialog";
+import InventoryContext from "@/contexts/InventoryContext";
 
 
 /**
@@ -27,8 +28,9 @@ import ConfirmationDialog from "@/components/utils/ConfirmationDialog";
  * @returns {JSX.Element}
  * @constructor
  */
-export default function MenuItemEditor({trigger, onMenuItemChange, menuItem = null, inventoryItems = []}) {
+export default function MenuItemEditor({trigger, onMenuItemChange, menuItem = null}) {
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
+  const {inventoryItems} = useContext(InventoryContext);
 
   const defaultName = menuItem == null ? "" : menuItem.name.toString();
   const defaultPrice = menuItem == null ? "" : menuItem.price.toString();

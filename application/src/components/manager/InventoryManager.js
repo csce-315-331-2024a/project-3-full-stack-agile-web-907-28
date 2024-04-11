@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {
   Button,
   Card,
@@ -18,8 +18,9 @@ import {FaPlus} from "react-icons/fa";
 import InventoryItem from "@/models/InventoryItem";
 import axios from "axios";
 import ConfirmationDialog from "@/components/utils/ConfirmationDialog";
-import useObjectArraySorter from "@/components/utils/useObjectArraySorter";
+import useSortedArray, {SortProperties} from "@/react-hooks/useSortedArray";
 import ObjectArraySortButton from "@/components/utils/ObjectArraySortButton";
+import InventoryContext from "@/contexts/InventoryContext";
 
 const INVENTORY_ITEMS_PER_PAGE = 10;
 
@@ -30,34 +31,21 @@ const INVENTORY_ITEMS_PER_PAGE = 10;
  * @constructor
  */
 export default function InventoryManager() {
-  const [inventoryItems, setInventoryItems] = useState([]);
-  const [databaseChanged, setDatabaseChanged] = useState(false);
+  const {inventoryItems, refreshInventoryItems} = useContext(InventoryContext);
   const [startIndex, setStartIndex] = useState(0);
   const [currentPageInventoryItems, setCurrentPageInventoryItems] = useState([]);
-  const [sortProps, setSortProps] = useObjectArraySorter(inventoryItems, setInventoryItems, "inventoryItemId");
+  const [sortedInventoryItems, sortProps, setSortProps] = useSortedArray(inventoryItems, SortProperties.byProperty("inventoryItemId"));
 
-
+  // When the array is refreshed or resorted, go back to the first page.
   useEffect(() => {
-    fetch("/api/inventory/getInventoryItems")
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          throw res;
-        }
-      })
-      .then(data => {
-        setInventoryItems(data.map(InventoryItem.parseJson));
-        setDatabaseChanged(false);
-        setSortProps({key: sortProps.key, order: sortProps.order, enable: true});
-      })
-      .catch(error => console.error("Failed to fetch inventory items:", error));
-  }, [databaseChanged, setDatabaseChanged, setSortProps, sortProps.key, sortProps.order]);
+    setStartIndex(0);
+  }, [sortedInventoryItems]);
 
+  // Only display the menu items on the current page.
   useEffect(() => {
-    setCurrentPageInventoryItems(inventoryItems
+    setCurrentPageInventoryItems(sortedInventoryItems
       .slice(startIndex, startIndex + INVENTORY_ITEMS_PER_PAGE));
-  }, [inventoryItems, startIndex, setCurrentPageInventoryItems]);
+  }, [sortedInventoryItems, startIndex, setCurrentPageInventoryItems]);
 
   const handleCreate = (item) => (
     axios.post("/api/inventory/createInventoryItem", { inventoryItem: item })
@@ -70,7 +58,7 @@ export default function InventoryManager() {
       })
       .then(data => {
         console.log("Created inventory item:", InventoryItem.parseJson(data));
-        setDatabaseChanged(true);
+        refreshInventoryItems();
       })
       .catch(e => {
         console.error("Error creating inventory item:", e);
@@ -87,7 +75,7 @@ export default function InventoryManager() {
       })
       .then(data => {
         console.log("Updated inventory item:", data);
-        setDatabaseChanged(true);
+        refreshInventoryItems();
       })
       .catch(e => {
         console.error("Error updating inventory item:", e);
@@ -104,7 +92,7 @@ export default function InventoryManager() {
       })
       .then(_ => {
         console.log("Deleted inventory item:", item);
-        setDatabaseChanged(true);
+        refreshInventoryItems();
       })
       .catch(e => {
         console.error("Error deleting inventory item:", e);
@@ -133,7 +121,7 @@ export default function InventoryManager() {
             <TableHeader>
               <TableColumn>
                 <ObjectArraySortButton
-                  prop="inventoryItemId"
+                  sortKey={SortProperties.byProperty("inventoryItemId")}
                   sortProps={sortProps}
                   onSortPropsChange={setSortProps}
                   type="19"
@@ -143,7 +131,7 @@ export default function InventoryManager() {
               </TableColumn>
               <TableColumn>
                 <ObjectArraySortButton
-                  prop="name"
+                  sortKey={SortProperties.byProperty("name")}
                   sortProps={sortProps}
                   onSortPropsChange={setSortProps}
                   type="az"
@@ -153,7 +141,7 @@ export default function InventoryManager() {
               </TableColumn>
               <TableColumn>
                 <ObjectArraySortButton
-                  prop="quantity"
+                  sortKey={SortProperties.byProperty("quantity")}
                   sortProps={sortProps}
                   onSortPropsChange={setSortProps}
                   type="19"
@@ -163,7 +151,7 @@ export default function InventoryManager() {
               </TableColumn>
               <TableColumn>
                 <ObjectArraySortButton
-                  prop="purchaseDate"
+                  sortKey={SortProperties.byProperty("purchaseDate")}
                   sortProps={sortProps}
                   onSortPropsChange={setSortProps}
                   type="plain"
@@ -173,7 +161,7 @@ export default function InventoryManager() {
               </TableColumn>
               <TableColumn>
                 <ObjectArraySortButton
-                  prop="expiryDate"
+                  sortKey={SortProperties.byProperty("expiryDate")}
                   sortProps={sortProps}
                   onSortPropsChange={setSortProps}
                   type="plain"
@@ -183,7 +171,7 @@ export default function InventoryManager() {
               </TableColumn>
               <TableColumn>
                 <ObjectArraySortButton
-                  prop="quantityLimit"
+                  sortKey={SortProperties.byProperty("quantityLimit")}
                   sortProps={sortProps}
                   onSortPropsChange={setSortProps}
                   type="19"

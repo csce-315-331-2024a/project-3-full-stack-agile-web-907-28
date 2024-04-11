@@ -2,11 +2,14 @@ import {
   Navbar,
   NavbarContent,
   NavbarBrand,
-  Image,
+  Image, Avatar,
 } from "@nextui-org/react";
 import NextLink from "next/link";
 import { UserManager } from "@/components/onboarding/UserManager";
-import WeatherComponent from "@/components/weather/weather"; 
+import WeatherComponent from "@/components/weather/weather";
+import {useContext} from "react";
+import CartContext from "@/contexts/CartContext";
+import {FaCartShopping} from "react-icons/fa6";
 
 
 /**
@@ -14,6 +17,8 @@ import WeatherComponent from "@/components/weather/weather";
  * @returns {JSX.Element} - The site header component.
  */
 export default function SiteHeader() {
+  const {cartItems, openCart} = useContext(CartContext);
+
   return (
     <div>
       <Navbar className="red" maxWidth="xl" position="sticky" isBlurred="false">
@@ -35,6 +40,17 @@ export default function SiteHeader() {
           <WeatherComponent />
         </NavbarContent>
         <NavbarContent justify="end">
+          {cartItems.length > 0 ? (
+            <Avatar
+              as="button"
+              isBordered
+              showFallback
+              fallback={<FaCartShopping size="2x" />}
+              onClick={openCart}
+            />
+          ) : (
+            <></>
+          )}
           <UserManager />
         </NavbarContent>
       </Navbar>

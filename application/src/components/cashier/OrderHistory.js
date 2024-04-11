@@ -1,21 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Pagination, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button } from '@nextui-org/react';
 import ListPagination from "@/components/utils/ListPagination";
+import {FaTrashCan} from "react-icons/fa6";
+import {useApiFetch} from "@/react-hooks/useApiFetch";
+import useSortedArray, {SortProperties} from "@/react-hooks/useSortedArray";
+import ObjectArraySortButton from "@/components/utils/ObjectArraySortButton";
 
 const ORDERS_PER_PAGE = 20;
 
 const OrderHistory = () => {
-  const [orders, setOrders] = useState([]);
+  const [orders, refreshOrders] = useApiFetch('/api/orders/viewOrders', []);
+  const [sortedOrders, sortProps, setSortProps] = useSortedArray(orders, SortProperties.byProperty("placed_time", "desc"));
   const [startIndex, setStartIndex] = useState(0);
-
-  useEffect(() => {
-    fetch('/api/orders/viewOrders')
-      .then(response => response.json())
-      .then(data => {
-        setOrders(data);
-      })
-      .catch(error => console.error("Failed to fetch orders:", error));
-  }, []);
+  const [currentPageOrders, setCurrentPageOrders] = useState([]);
 
   //HANDLE DELETE
   const handleDelete = async (orderId) => {
@@ -26,24 +23,71 @@ const OrderHistory = () => {
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-      setOrders(orders.filter(order => order.order_id !== orderId));
+      refreshOrders();
     } catch (error) {
       console.error("Failed to delete order:", error);
     }
   };
 
-  // Calculate the orders to display on the current page
-  const currentPageOrders = orders.slice(startIndex, startIndex + ORDERS_PER_PAGE);
+  // When the array is refreshed or resorted, go back to the first page.
+  useEffect(() => {
+    setStartIndex(0);
+  }, [sortedOrders]);
+
+  // Only display the menu items on the current page.
+  useEffect(() => {
+    setCurrentPageOrders(sortedOrders
+      .slice(startIndex, startIndex + ORDERS_PER_PAGE));
+  }, [sortedOrders, startIndex, setCurrentPageOrders]);
 
   return (
     <div className="px-10">
       <Table isStriped>
         <TableHeader>
-          <TableColumn>Order ID</TableColumn>
-          <TableColumn>Customer ID</TableColumn>
-          <TableColumn>Order Date</TableColumn>
-          <TableColumn>Order Status</TableColumn>
-          <TableColumn>Order Total</TableColumn>
+          <TableColumn>
+            <ObjectArraySortButton
+              sortKey={SortProperties.byProperty("order_id")}
+              sortProps={sortProps}
+              onSortPropsChange={setSortProps}
+              type="19"
+              >
+              Order ID
+            </ObjectArraySortButton>
+          </TableColumn>
+          <TableColumn>
+            <ObjectArraySortButton
+              sortKey={SortProperties.byProperty("customer_id")}
+              sortProps={sortProps}
+              onSortPropsChange={setSortProps}
+              type="19"
+            >
+              Customer ID
+            </ObjectArraySortButton>
+          </TableColumn>
+          <TableColumn>
+            <ObjectArraySortButton
+              sortKey={SortProperties.byProperty("placed_time")}
+              sortProps={sortProps}
+              onSortPropsChange={setSortProps}
+            >
+              Order Date
+            </ObjectArraySortButton>
+          </TableColumn>
+          <TableColumn>
+            <ObjectArraySortButton>
+              Status
+            </ObjectArraySortButton>
+          </TableColumn>
+          <TableColumn>
+            <ObjectArraySortButton
+              sortKey={SortProperties.byProperty("total")}
+              sortProps={sortProps}
+              onSortPropsChange={setSortProps}
+              type="19"
+            >
+              Order Total
+            </ObjectArraySortButton>
+          </TableColumn>
           <TableColumn>Actions</TableColumn>
           {/* Add more columns as needed */}
         </TableHeader>
@@ -52,12 +96,12 @@ const OrderHistory = () => {
             <TableRow key={order.order_id}>
               <TableCell>{order.order_id}</TableCell>
               <TableCell>{order.customer_id}</TableCell>
-              <TableCell>{order.placed_time}</TableCell>
+              <TableCell>{new Date(order.placed_time).toString()}</TableCell>
               <TableCell>Fulfilled</TableCell>
               <TableCell>{order.total}</TableCell>
               <TableCell>
-              <Button auto color="error" ghost onClick={() => handleDelete(order.order_id)}>
-                  ❌
+              <Button isIconOnly auto color="danger" variant="light" size="sm" ghost onClick={() => handleDelete(order.order_id)}>
+                <FaTrashCan />
               </Button>
               </TableCell>
             </TableRow>
