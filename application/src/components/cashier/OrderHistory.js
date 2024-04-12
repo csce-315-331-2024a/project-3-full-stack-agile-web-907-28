@@ -9,10 +9,12 @@ import ObjectArraySortButton from "@/components/utils/ObjectArraySortButton";
 const ORDERS_PER_PAGE = 20;
 
 const OrderHistory = () => {
+
   const [orders, refreshOrders] = useApiFetch('/api/orders/viewOrders', []);
   const [sortedOrders, sortProps, setSortProps] = useSortedArray(orders, SortProperties.byProperty("placed_time", "desc"));
   const [startIndex, setStartIndex] = useState(0);
   const [currentPageOrders, setCurrentPageOrders] = useState([]);
+  const [errorMessage, setErrorMessage] = useState(''); // Add state for error message
 
   //HANDLE DELETE
   const handleDelete = async (orderId) => {
@@ -25,7 +27,7 @@ const OrderHistory = () => {
       }
       refreshOrders();
     } catch (error) {
-      console.error("Failed to delete order:", error);
+      setErrorMessage(error.message); // Update error message state
     }
   };
 
@@ -41,7 +43,12 @@ const OrderHistory = () => {
   }, [sortedOrders, startIndex, setCurrentPageOrders]);
 
   return (
-    <div className="px-10">
+    <div className="px-10" aria-label="Order History">
+      {errorMessage && ( // Conditionally render error message if present
+        <div data-testid="error-message" style={{ color: 'red' }}>
+          {errorMessage}
+        </div>
+      )}
       <Table isStriped>
         <TableHeader>
           <TableColumn>
@@ -91,7 +98,7 @@ const OrderHistory = () => {
           <TableColumn>Actions</TableColumn>
           {/* Add more columns as needed */}
         </TableHeader>
-        <TableBody>
+        <TableBody aria-label="Order History">
           {currentPageOrders.map(order => (
             <TableRow key={order.order_id}>
               <TableCell>{order.order_id}</TableCell>
@@ -100,7 +107,7 @@ const OrderHistory = () => {
               <TableCell>Fulfilled</TableCell>
               <TableCell>{order.total}</TableCell>
               <TableCell>
-              <Button isIconOnly auto color="danger" variant="light" size="sm" ghost onClick={() => handleDelete(order.order_id)}>
+              <Button isIconOnly auto color="danger" variant="light" size="sm" ghost onClick={() => handleDelete(order.order_id)} data-testid={`delete-${order.order_id}`}>
                 <FaTrashCan />
               </Button>
               </TableCell>
@@ -113,6 +120,7 @@ const OrderHistory = () => {
           numItems={orders.length}
           itemsPerPage={ORDERS_PER_PAGE}
           setStartIndex={setStartIndex}
+          aria-label="Pagination"
         />
       </center>
     </div>
