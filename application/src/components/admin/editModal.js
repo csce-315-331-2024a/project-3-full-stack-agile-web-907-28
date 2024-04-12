@@ -58,14 +58,14 @@ export default function EditModal({selectedUsers, isOpen, onClose}) {
                   {selectedUsers.length > 0 && (
                     <>
                       <Input
-                        type="text"
+                        type="body"
                         value={newEmail}
                         onChange={(e) => handleFieldChange('email', e.target.value)}
                         placeholder="Email"
                         label="Email"
                       />
                       <Input
-                        type="text"
+                        type="body"
                         value={newName}
                         onChange={(e) => handleFieldChange('name', e.target.value)}
                         placeholder="Name"

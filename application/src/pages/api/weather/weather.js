@@ -18,8 +18,6 @@ export default async function handler(req, res) {
       location: data.name,
       temperature: data.main.temp,
       description: data.weather[0].description,
-      humidity: data.main.humidity,
-      windSpeed: data.wind.speed,
       icon: data.weather[0].icon,
     };
 

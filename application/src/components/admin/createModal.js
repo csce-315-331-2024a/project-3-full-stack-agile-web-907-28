@@ -30,7 +30,7 @@ export default function CreateUserModal({ isOpen, onClose }) {
                         clearable
                         bordered
                         fullWidth
-                        type="text"
+                        type="body"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="Email"
@@ -40,7 +40,7 @@ export default function CreateUserModal({ isOpen, onClose }) {
                         clearable
                         bordered
                         fullWidth
-                        type="text"
+                        type="body"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         placeholder="Name"
