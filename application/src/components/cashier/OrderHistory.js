@@ -22,9 +22,6 @@ const OrderHistory = () => {
       const response = await fetch(`/api/orders/deleteOrder?orderId=${orderId}`, {
         method: 'DELETE',
       });
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
       refreshOrders();
     } catch (error) {
       setErrorMessage(error.message); // Update error message state
@@ -49,7 +46,7 @@ const OrderHistory = () => {
           {errorMessage}
         </div>
       )}
-      <Table isStriped>
+      <Table isStriped aria-label="Order History">
         <TableHeader>
           <TableColumn>
             <ObjectArraySortButton
@@ -100,14 +97,14 @@ const OrderHistory = () => {
         </TableHeader>
         <TableBody aria-label="Order History">
           {currentPageOrders.map(order => (
-            <TableRow key={order.order_id}>
-              <TableCell>{order.order_id}</TableCell>
-              <TableCell>{order.customer_id}</TableCell>
-              <TableCell>{new Date(order.placed_time).toString()}</TableCell>
-              <TableCell>Fulfilled</TableCell>
-              <TableCell>{order.total}</TableCell>
-              <TableCell>
-              <Button isIconOnly auto color="danger" variant="light" size="sm" ghost onClick={() => handleDelete(order.order_id)} data-testid={`delete-${order.order_id}`}>
+            <TableRow key={order.order_id} aria-label="Order">
+              <TableCell aria-label="Order ID">{order.order_id}</TableCell>
+              <TableCell aria-label="Customer ID">{order.customer_id}</TableCell>
+              <TableCell aria-label="Order Date">{new Date(order.placed_time).toString()}</TableCell>
+              <TableCell aria-label="Status">Fulfilled</TableCell>
+              <TableCell aria-label="Order Total">{order.total}</TableCell>
+              <TableCell aria-label="Actions">
+              <Button isIconOnly auto color="danger" variant="light" size="sm" ghost onClick={() => handleDelete(order.order_id)} data-testid={`delete-${order.order_id}`} aria-label="Delete Order">
                 <FaTrashCan />
               </Button>
               </TableCell>
@@ -115,7 +112,7 @@ const OrderHistory = () => {
           ))}
         </TableBody>
       </Table>
-      <center>
+      <center aria-label="Pagination">
         <ListPagination
           numItems={orders.length}
           itemsPerPage={ORDERS_PER_PAGE}
