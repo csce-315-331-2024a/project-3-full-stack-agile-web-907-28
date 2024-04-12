@@ -8,6 +8,10 @@ import ObjectArraySortButton from "@/components/utils/ObjectArraySortButton";
 
 const ORDERS_PER_PAGE = 20;
 
+/**
+ * This component is the order history page for the cashier. It uses the nextui-org library for the table and pagination.
+ * @returns {JSX.Element} - The order history page.
+ */
 const OrderHistory = () => {
 
   const [orders, refreshOrders] = useApiFetch('/api/orders/viewOrders', []);

@@ -1,6 +1,12 @@
 // api/orders/deleteOrder.js
 import { query } from '../../../utils/db'; // Adjust the import path as necessary
 
+/**
+ * This API route is for deleting an order. It uses the next/api library for the API route.
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} - A promise that resolves to void.
+ */
 export default async function handler(req, res) {
   const { orderId } = req.query; // Extract orderId from query parameters
 
