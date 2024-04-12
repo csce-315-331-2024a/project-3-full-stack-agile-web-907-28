@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { translateText } from '/api/translate/translate';
 
+/**
+ * This component is a translation component. It uses the nextui-org library for the textarea and select.
+ * @returns {JSX.Element} - The translation component.
+ */
 const TranslationComponent = () => {
   const [originalText, setOriginalText] = useState('');
   const [translatedText, setTranslatedText] = useState('');

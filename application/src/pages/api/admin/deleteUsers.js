@@ -1,5 +1,11 @@
 import { query } from '../../../utils/db'; // Assuming you have a utility for database operations
 
+/**
+ * This API route is for deleting a user. It uses the next/api library for the API route.
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} - A promise that resolves to void.
+ */
 export default async function handler(req, res) {
   if (req.method !== 'DELETE') {
     return res.status(405).end(`Method ${req.method} Not Allowed`);

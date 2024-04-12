@@ -1,5 +1,11 @@
 import axios from 'axios';
 
+/**
+ * This API route is for translating text. It uses the axios library for the API call.
+ * @param {string} originalText - The text to be translated.
+ * @param {string} targetLanguage - The target language to translate to.
+ * @returns {Promise<string>} - A promise that resolves to the translated text.
+ */
 const translateText = async (originalText, targetLanguage) => {
   try {
     const response = await axios.post(

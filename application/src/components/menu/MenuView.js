@@ -6,6 +6,11 @@ import {useContext, useEffect, useState} from "react";
 import MenuContext from "@/contexts/MenuContext";
 import CartContext from "@/contexts/CartContext";
 
+/**
+ * This component is the menu view page for the cashier. It uses the nextui-org library for the tabs and cards.
+ * @param {function} onItemClick - The function to add an item to the cart.
+ * @returns {JSX.Element} - The menu view page.
+ */
 export default function MenuView({ onItemClick }) {
   const {menuItems} = useContext(MenuContext);
   const {addItemToCart} = useContext(CartContext);
