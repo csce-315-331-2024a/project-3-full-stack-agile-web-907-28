@@ -12,7 +12,9 @@ const Home = () => {
 	const { data: session, status } = useSession(); // Use useSession to check the session
 	const router = useRouter();
 
-	router.push('/menu');
+	useEffect(() => {
+		router.push('/menu');
+	})
 
 	return <DefaultLayout />;
 };
