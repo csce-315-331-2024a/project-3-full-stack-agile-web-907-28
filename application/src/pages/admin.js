@@ -31,7 +31,10 @@ import axios from 'axios';
 
 const colors = ["default", "primary", "secondary", "success", "warning", "danger"];
 
-
+/**
+ * This page is the admin page. It uses the nextui-org library for the table and buttons.
+ * @returns {JSX.Element} - The admin page.
+ */
 export default function Admin() {
     function isCredentialAuthorized(credential) {
         return credential === UserCredentials.Cashier || credential === UserCredentials.Admin || credential === UserCredentials.Manager;

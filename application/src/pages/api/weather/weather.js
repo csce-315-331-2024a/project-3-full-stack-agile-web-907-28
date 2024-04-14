@@ -2,6 +2,12 @@
 
 import axios from 'axios';
 
+/**
+ * This API route is for fetching the weather data. It uses the axios library for the API call.
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} - A promise that resolves to void.
+ */
 export default async function handler(req, res) {
   try {
     const { lat, lon } = req.query;

@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
+/**
+ * This component is a weather component. It uses the nextui-org library for the table and pagination.
+ * @returns {JSX.Element} - The weather component.
+ */
 const WeatherComponent = () => {
   const [weatherData, setWeatherData] = useState(null);
   const [loading, setLoading] = useState(true);

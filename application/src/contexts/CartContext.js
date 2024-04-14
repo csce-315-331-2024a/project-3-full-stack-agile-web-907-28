@@ -5,6 +5,11 @@ import OrderPanel from "@/components/orders/OrderPanel";
 const CartContext = createContext([]);
 export default CartContext;
 
+/**
+ * This context provider is for the cart. It uses the nextui-org library for the disclosure.
+ * @param {JSX.Element} children - The children of the context provider.
+ * @returns {JSX.Element} - The cart context provider.
+ */
 export function CartContextProvider({children}) {
   const [cartItems, setCartItems] = useState([]);
   const [aggregatedCartItems, setAggregatedCartItems] = useState([]);

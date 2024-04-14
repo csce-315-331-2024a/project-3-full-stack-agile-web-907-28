@@ -29,7 +29,7 @@ export function useApiFetch(url, initialResult, transformFn=x=>x) {
           setResult(transformFn(data));
         })
         .catch(e => {
-          console.error("Error fetching", url, e);
+          throw new Error('Network Error');
         });
       setFetchTrigger(false);
     }

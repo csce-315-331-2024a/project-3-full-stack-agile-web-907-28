@@ -4,6 +4,11 @@ import { useContext } from 'react';
 import CartContext from "@/contexts/CartContext";
 import {FaTrashCan} from "react-icons/fa6";
 
+/**
+ * This component is the order panel for the cashier. It uses the nextui-org library for the table and buttons.
+ * @param {function} onClose - The function to close the order panel.
+ * @returns {JSX.Element} - The order panel.
+ */
 const OrderPanel = ({ onClose }) => {
   const {aggregatedCartItems, cartTotal, isCartOpen, isCartSubmitting, removeItemFromCart, submitOrder} = useContext(CartContext);
 

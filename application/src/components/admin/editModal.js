@@ -2,6 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, ModalContent, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Input } from "@nextui-org/react";
 import axios from 'axios';
 
+/**
+ * This component is a modal for editing a user. It uses the nextui-org library for the modal and dropdown.
+ * @param {Array} selectedUsers - The users to be edited.
+ * @param {boolean} isOpen - Whether the modal is open or not.
+ * @param {function} onClose - The function to close the modal.
+ * @returns {JSX.Element} - The modal component.
+ */
 export default function EditModal({selectedUsers, isOpen, onClose}) {
     const [currentUserIndex, setCurrentUserIndex] = useState(0);
     const [selectedCredentials, setSelectedCredentials] = useState("");
