@@ -21,6 +21,15 @@ module.exports = {
           secondary: "#998542",
         }
       },
+      dark: {
+        colors: {
+          primary: {
+            DEFAULT: "#500000",
+            foreground: "#FFFFFF",
+          },
+          secondary: "#998542",
+        }
+      },
       "red": {
         extend: "light",
         colors: {
