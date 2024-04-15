@@ -7,9 +7,8 @@ import {
 import NextLink from "next/link";
 import { UserManager } from "@/components/onboarding/UserManager";
 import WeatherComponent from "@/components/weather/weather"; 
-import App from "@/components/accessibility/dropdown";
-import ColorContrast from "@/components/colorcontrast/colorContrast"; 
-
+import App from "@/components/accessibility/dropdown"; 
+import ColorContrast from '../colorcontrast/colorContrast';
 
 /**
  * This component is the site header that contains the Rev logo and user management.
@@ -38,6 +37,9 @@ export default function SiteHeader() {
         </NavbarContent>
         <NavbarContent justify="end">
           <App />
+        </NavbarContent>
+        <NavbarContent justify="end">
+          <ColorContrast />
         </NavbarContent>
         <NavbarContent justify="end">
           <UserManager />

@@ -1,0 +1,18 @@
+/* src/styles/colorContrast.module.css */
+
+.theme-toggle-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.light {
+  background-color: #ffffff;
+  color: #333333;
+}
+
+.dark {
+  background-color: #333333;
+  color: #ffffff;
+}

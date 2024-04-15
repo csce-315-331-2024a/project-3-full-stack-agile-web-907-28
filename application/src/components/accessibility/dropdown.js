@@ -1,7 +1,7 @@
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem, Button } from '@nextui-org/react';
 import { useState } from 'react';
 import GoogleTranslate from "@/components/translation/translationComponent"
-import ColorContrast from '../colorcontrast/colorContrast';
+//import ColorContrast from '../colorcontrast/colorContrast';
 
 export default function App() {
   const [textSize, setTextSize] = useState("normal");
@@ -34,9 +34,6 @@ export default function App() {
                 Large
               </DropdownItem>
             </DropdownMenu>
-          </DropdownItem>
-          <DropdownItem>
-            <ColorContrast />
           </DropdownItem>
         </DropdownSection>
 

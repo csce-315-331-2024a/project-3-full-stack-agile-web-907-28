@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import {Button, ButtonGroup} from "@nextui-org/react";
+import styles from '../../styles/colorContrast.module.css';
+
 
 const ColorContrast = () => {
   const [theme, setTheme] = useState('light');
