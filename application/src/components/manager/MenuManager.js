@@ -24,7 +24,7 @@ import ObjectArraySortButton from "@/components/utils/ObjectArraySortButton";
 import MenuContext from "@/contexts/MenuContext";
 import InventoryContext from "@/contexts/InventoryContext";
 
-const MENU_ITEMS_PER_PAGE = 10;
+const MENU_ITEMS_PER_PAGE = 15;
 
 
 /**

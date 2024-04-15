@@ -22,7 +22,7 @@ import useSortedArray, {SortProperties} from "@/react-hooks/useSortedArray";
 import ObjectArraySortButton from "@/components/utils/ObjectArraySortButton";
 import InventoryContext from "@/contexts/InventoryContext";
 
-const INVENTORY_ITEMS_PER_PAGE = 10;
+const INVENTORY_ITEMS_PER_PAGE = 15;
 
 
 /**

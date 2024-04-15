@@ -21,9 +21,9 @@ export function CartContextProvider({children}) {
   useEffect(() => {
     const {items, total} = cartItems.reduce((acc, item) => {
       const itemName = item.name;
-      if (acc[itemName]) {
+      if (acc.items[itemName]) {
         acc.items[itemName].quantity += 1;
-        acc.items[itemName].totalPrice = acc[itemName].quantity * parseFloat(item.price);
+        acc.items[itemName].totalPrice = acc.items[itemName].quantity * parseFloat(item.price);
       } else {
         acc.items[itemName] = {...item, quantity: 1, totalPrice: parseFloat(item.price)};
       }
