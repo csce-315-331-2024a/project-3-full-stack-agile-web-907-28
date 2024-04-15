@@ -3,6 +3,7 @@ import DefaultLayout from "@/layouts/default";
 import RestrictedAccess from "@/components/security/RestrictedAccess";
 import {MenuContextProvider} from "@/contexts/MenuContext";
 import MenuManager from "@/components/manager/MenuManager";
+import {InventoryContextProvider} from "@/contexts/InventoryContext";
 
 
 /**
@@ -19,7 +20,9 @@ export default function MenuManagement() {
     <DefaultLayout>
       <RestrictedAccess isCredentialAuthorized={isCredentialAuthorized}>
         <MenuContextProvider>
-          <MenuManager />
+          <InventoryContextProvider>
+            <MenuManager />
+          </InventoryContextProvider>
         </MenuContextProvider>
       </RestrictedAccess>
     </DefaultLayout>
