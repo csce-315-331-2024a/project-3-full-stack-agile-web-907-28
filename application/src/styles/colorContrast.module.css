@@ -1,6 +1,6 @@
-/* src/styles/colorContrast.module.css */
+/* colorContrast.module.css */
 
-.theme-toggle-button {
+.themeToggleButton {
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
@@ -13,6 +13,12 @@
 }
 
 .dark {
+  background-color: #333333;
+  color: #ffffff;
+}
+
+/* Theme-specific styles for the entire page */
+body.dark-theme {
   background-color: #333333;
   color: #ffffff;
 }
