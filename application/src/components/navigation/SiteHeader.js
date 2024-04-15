@@ -8,6 +8,7 @@ import NextLink from "next/link";
 import { UserManager } from "@/components/onboarding/UserManager";
 import WeatherComponent from "@/components/weather/weather"; 
 import App from "@/components/accessibility/dropdown";
+import ColorContrast from "@/components/colorcontrast/colorContrast"; 
 
 
 /**

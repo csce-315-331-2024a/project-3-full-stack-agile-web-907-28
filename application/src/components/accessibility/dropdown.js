@@ -1,6 +1,7 @@
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem, Button } from '@nextui-org/react';
 import { useState } from 'react';
 import GoogleTranslate from "@/components/translation/translationComponent"
+import ColorContrast from '../colorcontrast/colorContrast';
 
 export default function App() {
   const [textSize, setTextSize] = useState("normal");
@@ -35,15 +36,7 @@ export default function App() {
             </DropdownMenu>
           </DropdownItem>
           <DropdownItem>
-            Color Contrast
-            <DropdownMenu>
-              <DropdownItem onClick={() => handleColorContrastChange("normal")}>
-                Normal
-              </DropdownItem>
-              <DropdownItem onClick={() => handleColorContrastChange("high")}>
-                High Contrast
-              </DropdownItem>
-            </DropdownMenu>
+            <ColorContrast />
           </DropdownItem>
         </DropdownSection>
 
