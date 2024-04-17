@@ -2,12 +2,15 @@ import {
   Navbar,
   NavbarContent,
   NavbarBrand,
-  Image,
+  Image, Avatar,
 } from "@nextui-org/react";
 import NextLink from "next/link";
 import { UserManager } from "@/components/onboarding/UserManager";
-import WeatherComponent from "@/components/weather/weather"; 
+import WeatherComponent from "@/components/weather/weather";
 import App from "@/components/accessibility/dropdown";
+import {useContext} from "react";
+import CartContext from "@/contexts/CartContext";
+import {FaCartShopping} from "react-icons/fa6";
 
 
 /**
@@ -15,31 +18,52 @@ import App from "@/components/accessibility/dropdown";
  * @returns {JSX.Element} - The site header component.
  */
 export default function SiteHeader() {
+  const {cartItems, openCart} = useContext(CartContext);
+
   return (
     <div>
       <Navbar className="red" maxWidth="xl" position="sticky" isBlurred="false">
         {/* Rev's logo in top left corner */}
         <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
-          <NavbarBrand className="gap-3 max-w-fit">
-            <NextLink className="flex justify-start items-center gap-1" href="/">
-              <Image
-                fill="none"
-                height={100}
-                width={180}
-                alt="Rev's Logo"
-                src="/logo_transparent.png"
-              />
-            </NextLink>
-          </NavbarBrand>
+          <li>
+            <NavbarBrand className="gap-3 max-w-fit">
+              <NextLink className="flex justify-start items-center gap-1" href="/">
+                <Image
+                  fill="none"
+                  height={100}
+                  width={180}
+                  alt="Rev's Logo"
+                  src="/logo_transparent.png"
+                />
+              </NextLink>
+            </NavbarBrand>
+          </li>
         </NavbarContent>
         <NavbarContent justify="center">
-          <WeatherComponent />
+          <li>
+            <WeatherComponent />
+          </li>
         </NavbarContent>
         <NavbarContent justify="end">
-          <App />
-        </NavbarContent>
-        <NavbarContent justify="end">
-          <UserManager />
+          <li>
+            <App />
+          </li>
+          {cartItems.length > 0 ? (
+            <li>
+              <Avatar
+                as="button"
+                isBordered
+                showFallback
+                fallback={<FaCartShopping size="2x" />}
+                onClick={openCart}
+              />
+            </li>
+          ) : (
+            <li></li>
+          )}
+          <li>
+            <UserManager />
+          </li>
         </NavbarContent>
       </Navbar>
     </div>

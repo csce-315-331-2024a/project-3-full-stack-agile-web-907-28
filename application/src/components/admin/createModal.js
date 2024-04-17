@@ -2,6 +2,12 @@ import React, { useState } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, ModalContent, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Input } from "@nextui-org/react";
 import axios from 'axios';
 
+/**
+ * This component is a modal for creating a new user. It uses the nextui-org library for the modal and dropdown.
+ * @param {boolean} isOpen - Whether the modal is open or not.
+ * @param {function} onClose - The function to close the modal.
+ * @returns {JSX.Element} - The modal component.
+ */
 export default function CreateUserModal({ isOpen, onClose }) {
     const [email, setEmail] = useState("");
     const [name, setName] = useState("");
@@ -30,7 +36,7 @@ export default function CreateUserModal({ isOpen, onClose }) {
                         clearable
                         bordered
                         fullWidth
-                        type="text"
+                        type="body"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="Email"
@@ -40,7 +46,7 @@ export default function CreateUserModal({ isOpen, onClose }) {
                         clearable
                         bordered
                         fullWidth
-                        type="text"
+                        type="body"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         placeholder="Name"

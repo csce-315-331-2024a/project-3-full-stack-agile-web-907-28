@@ -59,7 +59,7 @@ export default function Credentials() {
     <DefaultLayout>
         <div className="flex justify-center">
           <Card className="flex justify-center max-w-sm">
-            <CardHeader><h1 className="text-xl font-semibold">Choose your role</h1></CardHeader>
+            <CardHeader><h1 className="body-xl font-semibold">Choose your role</h1></CardHeader>
             <CardBody className="justify-between">
               <RadioGroup orientation="vertical" onChange={(e) => setRole(e.target.value)}>
                 <Radio value="Customer">Customer</Radio>

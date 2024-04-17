@@ -13,6 +13,16 @@ import {
 import { FaGoogle } from "react-icons/fa";
 import UserCredentials from "@/models/UserCredentials";
 
+
+const pages = {
+  ManageUsers: {displayName: "Manage Users", path: "/admin"},
+  ManageInventory: {displayName: "Manage Inventory", path: "/inventory-management"},
+  ManageMenu: {displayName: "Manage Menu", path: "/menu-management"},
+  OrderHistory: {displayName: "Order History", path: "/order-history"},
+  Menu: {displayName: "Menu", path: "/menu"},
+}
+
+
 /**
  * This component is the user manager that displays the user's profile information and sign out button.
  * @returns {JSX.Element} - The user manager component.
@@ -56,18 +66,10 @@ export const UserManager = () => {
   };
 
   const navigationItems = {
-    Admin: ["/admin", "/customer", "/manager", "/cashier"],
-    Manager: ["/manager", "/cashier", "/customer"],
-    Cashier: ["/cashier", "/customer"],
-    Customer: ["/customer"],
-  };
-
-  const capitalizePath = (path) => {
-    return path
-      .slice(1) // Remove the leading slash
-      .split('/') // Split by slashes to handle nested paths
-      .map(part => part.charAt(0).toUpperCase() + part.slice(1)) // Capitalize the first letter of each part
-      .join(' '); // Join the parts back together
+    Admin: [pages.ManageUsers, pages.ManageInventory, pages.ManageMenu, pages.OrderHistory, pages.Menu],
+    Manager: [pages.ManageInventory, pages.ManageMenu, pages.OrderHistory, pages.Menu],
+    Cashier: [pages.OrderHistory, pages.Menu],
+    Customer: [pages.Menu],
   };
 
   // Return the user manager component
@@ -102,15 +104,14 @@ export const UserManager = () => {
               <p className="font-light">{credentials}</p>
             </DropdownItem>
             </DropdownSection>
-            <DropdownSection>
-            {navigationItems[credentials]?.map((path) => (
+            <DropdownSection name="Navigation" showDivider>
+            {navigationItems[credentials]?.map(({displayName, path}) => (
               <DropdownItem key={path} onClick={() => router.push(path)}>
-                {capitalizePath(path)}
+                {displayName}
               </DropdownItem>
             ))}
-              <DropdownItem key="Settings" href="/credentials">
-                Settings
-              </DropdownItem>
+            </DropdownSection>
+            <DropdownSection>
               <DropdownItem key="logout" color="danger" onClick={handleSignOut}>
                 Sign Out
               </DropdownItem>

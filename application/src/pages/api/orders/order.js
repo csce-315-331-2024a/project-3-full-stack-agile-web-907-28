@@ -1,6 +1,12 @@
 // /pages/api/orders/order.js
 import { query } from '../../../utils/db'; // Adjust the import path according to your project structure
 
+/**
+ * This API route is for creating an order. It uses the next/api library for the API route.
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @returns {Promise<void>} - A promise that resolves to void.
+ */
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });

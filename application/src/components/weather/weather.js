@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
+/**
+ * This component is a weather component. It uses the nextui-org library for the table and pagination.
+ * @returns {JSX.Element} - The weather component.
+ */
 const WeatherComponent = () => {
   const [weatherData, setWeatherData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -10,6 +14,10 @@ const WeatherComponent = () => {
   const capitalizeFirstLetter = (str) => {
     return str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   };
+
+  const toFahrenheit = (str) => {
+    return Math.round((parseInt(str) * 9 / 5)) + 32;
+  }
 
   useEffect(() => {
     const fetchWeatherData = async () => {
@@ -41,17 +49,17 @@ const WeatherComponent = () => {
       <img
             style={{ height: '70px' }}
             src={`http://openweathermap.org/img/wn/${weatherData?.icon}.png`}
-            alt={weatherData?.description}
+            alt={weatherData?.description || "Default weather description"}
           />
       </div>
       <div style={{color: 'white'}}>
-        <h2>{weatherData ? `Today's Weather at ${weatherData.location}, ${capitalizeFirstLetter(weatherData.description)}` : 'Loading...'}</h2>
+        <h2>{weatherData ? `Today's Weather at ${weatherData.location}` : 'Loading...'}</h2>
         {error && <p>{error}</p>}
         {weatherData && (
           <p>
-            {weatherData.temperature} °C&nbsp;
-            Humidity: {weatherData.humidity}%&nbsp;
-            Wind Speed: {weatherData.windSpeed} m/s
+            {toFahrenheit(weatherData.temperature)}°F&nbsp;&nbsp;
+            {capitalizeFirstLetter(weatherData.description)}
+            
           </p>
         )}
       </div>

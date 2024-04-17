@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
-import {Card, Spinner} from "@nextui-org/react";
+import {Spinner} from "@nextui-org/react";
 
 import getUserCredentials from "@/components/security/getUserCredentials"
 import {useSession} from "next-auth/react";
@@ -17,6 +17,7 @@ import UserCredentials from "@/models/UserCredentials";
  */
 export default function RestrictedAccess({ isCredentialAuthorized, redirectURL = "/", errorRedirect = "/", children }) {
   const [ is_allowed, setIsAllowed ] = useState(false);
+  const [ is_ready, setIsReady ] = useState(false);
   const router = useRouter();
   const { status } = useSession();
 
@@ -40,18 +41,20 @@ export default function RestrictedAccess({ isCredentialAuthorized, redirectURL =
           console.log("API error checking user authorization, redirecting to", errorRedirect);
           router.push(errorRedirect);
         }
+      } finally {
+        setIsReady(true);
       }
     }
     redirectIfNotAuthorized();
-  }, [isCredentialAuthorized, errorRedirect, redirectURL, router, setIsAllowed, status]);
+  }, [isCredentialAuthorized, errorRedirect, redirectURL, router, setIsAllowed, setIsReady, status]);
 
-  return status !== "loading" ? (
+  return is_ready ? (
     is_allowed ? (
       <div>
         {children}
       </div>
     ) : (
-      <p className="bg-danger">You are not authorized to view this content.</p>
+      <center><p className="bg-danger">You are not authorized to view this content.</p></center>
     )
   ) : (
     <Spinner />
