@@ -20,7 +20,7 @@ export default function MenuView({ onItemClick }) {
       <Tabs aria-label="menu sections" size="lg" color="primary">
         {
           menuCategories.map(category => (
-            <Tab key={category.id} title={category.name}>
+            <Tab key={category.id} title={category.name} className="text-default">
               <Card fullWidth="true" radius="none" shadow="none">
                 <CardBody>
                   <MenuItemGrid>

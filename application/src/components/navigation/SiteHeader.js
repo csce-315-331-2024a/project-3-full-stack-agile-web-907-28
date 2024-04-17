@@ -24,32 +24,38 @@ export default function SiteHeader() {
       <Navbar className="red" maxWidth="xl" position="sticky" isBlurred="false">
         {/* Rev's logo in top left corner */}
         <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
-          <NavbarBrand className="gap-3 max-w-fit">
-            <NextLink className="flex justify-start items-center gap-1" href="/">
-              <Image
-                fill="none"
-                height={100}
-                width={180}
-                alt="Rev's Logo"
-                src="/logo_transparent.png"
-              />
-            </NextLink>
-          </NavbarBrand>
+          <li>
+            <NavbarBrand className="gap-3 max-w-fit">
+              <NextLink className="flex justify-start items-center gap-1" href="/">
+                <Image
+                  fill="none"
+                  height={100}
+                  width={180}
+                  alt="Rev's Logo"
+                  src="/logo_transparent.png"
+                />
+              </NextLink>
+            </NavbarBrand>
+          </li>
         </NavbarContent>
         <NavbarContent justify="center">
-          <WeatherComponent />
+          <li>
+            <WeatherComponent />
+          </li>
         </NavbarContent>
         <NavbarContent justify="end">
           {cartItems.length > 0 ? (
-            <Avatar
-              as="button"
-              isBordered
-              showFallback
-              fallback={<FaCartShopping size="2x" />}
-              onClick={openCart}
-            />
+            <li>
+              <Avatar
+                as="button"
+                isBordered
+                showFallback
+                fallback={<FaCartShopping size="2x" />}
+                onClick={openCart}
+              />
+            </li>
           ) : (
-            <></>
+            <li></li>
           )}
           <UserManager />
         </NavbarContent>
