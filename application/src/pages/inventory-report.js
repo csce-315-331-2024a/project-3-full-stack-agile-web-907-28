@@ -1,5 +1,5 @@
 import DefaultLayout from "@/layouts/default";
-import {Card, CardHeader} from "@nextui-org/react";
+import { Card, CardHeader } from "@nextui-org/react";
 import InventoryOverTime from "@/components/reports/InventoryOverTime";
 import RestockReport from "@/components/reports/RestockReport";
 import ExcessReport from "@/components/reports/ExcessReport";
@@ -16,8 +16,8 @@ export default function InventoryReport() {
       <RestrictedAccess isCredentialAuthorized={isCredentialAuthorized}>
         <div className="gap-4 grid grid-cols-12 grid-rows-6 p-3 px-9">
           <InventoryOverTime className="col-span-12 sm:col-span-8 sm:row-span-full"/>
-          <RestockReport className="col-span-12 sm:col-span-4 sm:row-span-3"/>
-          <ExcessReport className="col-span-12 sm:col-span-4 sm:row-span-3"/>
+          <RestockReport className="col-span-12 sm:col-span-4 sm:row-span-3 h-[50vh]" />
+          <ExcessReport className="col-span-12 sm:col-span-4 sm:row-span-3 h-[50vh]" />
         </div>
       </RestrictedAccess>
     </DefaultLayout>
