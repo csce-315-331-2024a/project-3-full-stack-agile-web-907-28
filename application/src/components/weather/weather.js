@@ -49,7 +49,7 @@ const WeatherComponent = () => {
       <img
             style={{ height: '70px' }}
             src={`http://openweathermap.org/img/wn/${weatherData?.icon}.png`}
-            alt={weatherData?.description}
+            alt={weatherData?.description || "Default weather description"}
           />
       </div>
       <div style={{color: 'white'}}>
