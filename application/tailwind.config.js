@@ -19,6 +19,12 @@ module.exports = {
             foreground: "#FFFFFF",
           },
           secondary: "#998542",
+          default: {
+            500: "#000000",
+          },
+          foreground: {
+            500: "#000000",
+          }
         }
       },
       dark: {

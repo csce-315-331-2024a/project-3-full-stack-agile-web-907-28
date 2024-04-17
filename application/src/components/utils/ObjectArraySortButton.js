@@ -16,7 +16,7 @@ import {SortProperties} from "@/react-hooks/useSortedArray";
 export default function ObjectArraySortButton({sortKey, sortProps, onSortPropsChange, children, type="plain"}) {
   return (
     <Button
-      className="text-default-500 font-bold p-0"
+      className="text-foreground-500 text-tiny font-semibold p-0"
       onClick={() => {
         if (sortProps !== null && sortProps !== undefined) {
           if (sortProps.key === sortKey.key) {
