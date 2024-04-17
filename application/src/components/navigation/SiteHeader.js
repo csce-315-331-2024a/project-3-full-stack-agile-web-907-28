@@ -7,6 +7,7 @@ import {
 import NextLink from "next/link";
 import { UserManager } from "@/components/onboarding/UserManager";
 import WeatherComponent from "@/components/weather/weather";
+import App from "@/components/accessibility/dropdown";
 import {useContext} from "react";
 import CartContext from "@/contexts/CartContext";
 import {FaCartShopping} from "react-icons/fa6";
@@ -44,6 +45,9 @@ export default function SiteHeader() {
           </li>
         </NavbarContent>
         <NavbarContent justify="end">
+          <li>
+            <App />
+          </li>
           {cartItems.length > 0 ? (
             <li>
               <Avatar
@@ -57,7 +61,9 @@ export default function SiteHeader() {
           ) : (
             <li></li>
           )}
-          <UserManager />
+          <li>
+            <UserManager />
+          </li>
         </NavbarContent>
       </Navbar>
     </div>
