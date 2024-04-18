@@ -4,6 +4,9 @@ import '@testing-library/jest-dom';
 import ObjectArraySortButton from '../../../src/components/utils/ObjectArraySortButton';
 import { SortProperties } from '@/react-hooks/useSortedArray';
 
+/**
+ * @jest-environment jsdom
+ */
 describe('ObjectArraySortButton', () => {
     const mockCompareFn = () => {};
   
