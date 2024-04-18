@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Pagination, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button } from '@nextui-org/react';
+import { Table, Pagination, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button, Select, SelectItem } from '@nextui-org/react';
 import ListPagination from "@/components/utils/ListPagination";
 import {FaTrashCan} from "react-icons/fa6";
 import {useApiFetch} from "@/react-hooks/useApiFetch";
@@ -19,6 +19,20 @@ const OrderHistory = () => {
   const [startIndex, setStartIndex] = useState(0);
   const [currentPageOrders, setCurrentPageOrders] = useState([]);
   const [errorMessage, setErrorMessage] = useState(''); // Add state for error message
+
+  // Function to check if the order is less than 10 minutes old
+  const isOrderPending = (placedTime) => {
+    const tenMinutesAgo = new Date(new Date() - 10 * 60000);
+    console.log(placedTime);
+    console.log(tenMinutesAgo);
+    return new Date(placedTime) > tenMinutesAgo;
+  };
+
+  // Function to handle status change (you might need to implement actual change logic based on your backend)
+  const handleStatusChange = (orderId, newStatus) => {
+    console.log(`Order ${orderId} status changed to ${newStatus}`);
+    // Implement the API call or state change logic here
+  };
 
   //HANDLE DELETE
   const handleDelete = async (orderId) => {
@@ -105,12 +119,21 @@ const OrderHistory = () => {
               <TableCell aria-label="Order ID">{order.order_id}</TableCell>
               <TableCell aria-label="Customer ID">{order.customer_id}</TableCell>
               <TableCell aria-label="Order Date">{new Date(order.placed_time).toString()}</TableCell>
-              <TableCell aria-label="Status">Fulfilled</TableCell>
+              <TableCell aria-label="Status">
+                <Select
+                  placeholder={isOrderPending(order.placed_time) ? "Pending" : "Fulfilled"}
+                  onChange={(value) => handleStatusChange(order.order_id, value)}
+                >
+                  <SelectItem value="Pending">Pending</SelectItem>
+                  <SelectItem value="Fulfilled">Fulfilled</SelectItem>
+                  <SelectItem value="Cancelled">Cancelled</SelectItem>
+                </Select>
+              </TableCell>
               <TableCell aria-label="Order Total">{order.total}</TableCell>
               <TableCell aria-label="Actions">
-              <Button isIconOnly auto color="danger" variant="light" size="sm" ghost onClick={() => handleDelete(order.order_id)} data-testid={`delete-${order.order_id}`} aria-label="Delete Order">
-                <FaTrashCan />
-              </Button>
+                <Button isIconOnly auto color="danger" variant="light" size="sm" ghost onClick={() => handleDelete(order.order_id)} data-testid={`delete-${order.order_id}`} aria-label="Delete Order">
+                  <FaTrashCan />
+                </Button>
               </TableCell>
             </TableRow>
           ))}
