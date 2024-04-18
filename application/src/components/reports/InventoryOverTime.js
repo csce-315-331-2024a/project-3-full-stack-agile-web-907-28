@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import { Card, CardHeader } from "@nextui-org/react";
-// Dynamically import Chart only on the client side
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
+/**
+ * Bar chart showing inventory usage over time
+ * @param {*} props 
+ * @returns {React.Component}
+ */
 export default function InventoryOverTime({...props}) {
   const [series, setSeries] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -58,8 +62,8 @@ export default function InventoryOverTime({...props}) {
       },
       labels: {
         style: {
-          colors: '#000', // Darker text color for x-axis values
-          fontSize: '14px' // Optional: Adjust font size if needed
+          colors: '#000',
+          fontSize: '14px'
         }
       }
     },
