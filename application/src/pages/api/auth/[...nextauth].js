@@ -35,7 +35,14 @@ export default NextAuth({
       // Check if the user was flagged as new in the session callback
       if (session?.user?.isNewUser) {
         // Redirect new users to the credentials page
-        return `${baseUrl}/credentials`; // Adjust the path as necessary
+        const response = await fetch('/api/onboarding/createUser', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email: session.user.email, name: session.user.name, role: 'customer' }), // Include email and name in the request body
+        });
+        return `${baseUrl}/menu`; // Adjust the path as necessary
       }
       // For existing users, or any other redirects, return the original URL or the base URL
       return url.startsWith(baseUrl) ? url : baseUrl;

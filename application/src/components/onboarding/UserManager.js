@@ -36,7 +36,15 @@ export const UserManager = () => {
   // Redirect to credentials page if user is new
   useEffect(() => {
     if (status === "authenticated" && session?.user?.isNewUser) {
-      router.push('/credentials');
+      console.log("Creating user");
+      const response = fetch('/api/onboarding/createUser', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: session.user.email, name: session.user.name, credentials: 'Customer' }), // Include email and name in the request body
+      });
+      router.push('/menu');
     }
   }, [session, status, router]);
 
