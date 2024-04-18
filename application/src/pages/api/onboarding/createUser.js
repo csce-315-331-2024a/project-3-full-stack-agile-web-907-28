@@ -19,7 +19,7 @@ export default async function handler(req, res) {
     } else {
       // Insert the new user
       const insertUserResult = await query(
-        'INSERT INTO users (email, name, credentials, created_at, last_signed_in_at) VALUES ($1, $2, $3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *;',
+        'INSERT INTO users (email, name, created_at, last_signed_in_at, credentials) VALUES ($1, $2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, $3) RETURNING *;',
         [email, name, credentials]
       );
       res.status(201).json(insertUserResult.rows[0]);
