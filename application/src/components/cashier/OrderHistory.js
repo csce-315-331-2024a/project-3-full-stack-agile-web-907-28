@@ -29,9 +29,21 @@ const OrderHistory = () => {
   };
 
   // Function to handle status change (you might need to implement actual change logic based on your backend)
-  const handleStatusChange = (orderId, newStatus) => {
-    console.log(`Order ${orderId} status changed to ${newStatus}`);
-    // Implement the API call or state change logic here
+  const handleStatusChange = async (orderId, newStatus) => {
+    console.log(orderId);
+    console.log(newStatus);
+    try {
+      const response = await fetch(`/api/orders/changeStatus`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ order_id: orderId, order_status: newStatus }),
+      });
+      refreshOrders();
+    } catch (error) {
+      setErrorMessage(error.message);
+    }
   };
 
   //HANDLE DELETE
@@ -42,10 +54,9 @@ const OrderHistory = () => {
       });
       refreshOrders();
     } catch (error) {
-      setErrorMessage(error.message); // Update error message state
+      setErrorMessage(error.message);
     }
   };
-
   // When the array is refreshed or resorted, go back to the first page.
   useEffect(() => {
     setStartIndex(0);
@@ -59,7 +70,7 @@ const OrderHistory = () => {
 
   return (
     <div className="px-10" aria-label="Order History">
-      {errorMessage && ( // Conditionally render error message if present
+      {errorMessage && (
         <div data-testid="error-message" style={{ color: 'red' }}>
           {errorMessage}
         </div>
@@ -120,15 +131,17 @@ const OrderHistory = () => {
               <TableCell aria-label="Customer ID">{order.customer_id}</TableCell>
               <TableCell aria-label="Order Date">{new Date(order.placed_time).toString()}</TableCell>
               <TableCell aria-label="Status">
+              <div>
                 <Select
-                  placeholder={isOrderPending(order.placed_time) ? "Pending" : "Fulfilled"}
-                  onChange={(value) => handleStatusChange(order.order_id, value)}
+                  placeholder={order.order_status}
+                  onChange={(e) => handleStatusChange(order.order_id, e.target.value)}
                 >
-                  <SelectItem value="Pending">Pending</SelectItem>
-                  <SelectItem value="Fulfilled">Fulfilled</SelectItem>
-                  <SelectItem value="Cancelled">Cancelled</SelectItem>
+                  <SelectItem key="Pending">Pending</SelectItem>
+                  <SelectItem key="Fulfilled">Fulfilled</SelectItem>
+                  <SelectItem key="Cancelled">Cancelled</SelectItem>
                 </Select>
-              </TableCell>
+              </div>
+            </TableCell>
               <TableCell aria-label="Order Total">{order.total}</TableCell>
               <TableCell aria-label="Actions">
                 <Button isIconOnly auto color="danger" variant="light" size="sm" ghost onClick={() => handleDelete(order.order_id)} data-testid={`delete-${order.order_id}`} aria-label="Delete Order">

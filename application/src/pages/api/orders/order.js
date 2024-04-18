@@ -23,8 +23,8 @@ export default async function handler(req, res) {
     // Insert the new order into the database
     // Assuming your table name is 'orders' and columns match the request body fields
     const result = await query(
-      `INSERT INTO orders (customer_id, employee_id, menuitem_ids, total, placed_time, served_time)
-       VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING *;`,
+      `INSERT INTO orders (customer_id, employee_id, menuitem_ids, total, placed_time, served_time, order_status)
+       VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Pending') RETURNING *;`,
       [customer_id, employee_id, `{${menuitem_ids.join(",")}}`, total] // menuitem_ids is an array, converting to Postgres array format
     );
 
