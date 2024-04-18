@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Pagination, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button } from '@nextui-org/react';
+import { Table, Pagination, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button, Select, SelectItem } from '@nextui-org/react';
 import ListPagination from "@/components/utils/ListPagination";
 import {FaTrashCan} from "react-icons/fa6";
 import {useApiFetch} from "@/react-hooks/useApiFetch";
@@ -20,6 +20,32 @@ const OrderHistory = () => {
   const [currentPageOrders, setCurrentPageOrders] = useState([]);
   const [errorMessage, setErrorMessage] = useState(''); // Add state for error message
 
+  // Function to check if the order is less than 10 minutes old
+  const isOrderPending = (placedTime) => {
+    const tenMinutesAgo = new Date(new Date() - 10 * 60000);
+    console.log(placedTime);
+    console.log(tenMinutesAgo);
+    return new Date(placedTime) > tenMinutesAgo;
+  };
+
+  // Function to handle status change (you might need to implement actual change logic based on your backend)
+  const handleStatusChange = async (orderId, newStatus) => {
+    console.log(orderId);
+    console.log(newStatus);
+    try {
+      const response = await fetch(`/api/orders/changeStatus`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ order_id: orderId, order_status: newStatus }),
+      });
+      refreshOrders();
+    } catch (error) {
+      setErrorMessage(error.message);
+    }
+  };
+
   //HANDLE DELETE
   const handleDelete = async (orderId) => {
     try {
@@ -28,10 +54,9 @@ const OrderHistory = () => {
       });
       refreshOrders();
     } catch (error) {
-      setErrorMessage(error.message); // Update error message state
+      setErrorMessage(error.message);
     }
   };
-
   // When the array is refreshed or resorted, go back to the first page.
   useEffect(() => {
     setStartIndex(0);
@@ -45,7 +70,7 @@ const OrderHistory = () => {
 
   return (
     <div className="px-10" aria-label="Order History">
-      {errorMessage && ( // Conditionally render error message if present
+      {errorMessage && (
         <div data-testid="error-message" style={{ color: 'red' }}>
           {errorMessage}
         </div>
@@ -105,12 +130,23 @@ const OrderHistory = () => {
               <TableCell aria-label="Order ID">{order.order_id}</TableCell>
               <TableCell aria-label="Customer ID">{order.customer_id}</TableCell>
               <TableCell aria-label="Order Date">{new Date(order.placed_time).toString()}</TableCell>
-              <TableCell aria-label="Status">Fulfilled</TableCell>
+              <TableCell aria-label="Status">
+              <div>
+                <Select
+                  placeholder={order.order_status}
+                  onChange={(e) => handleStatusChange(order.order_id, e.target.value)}
+                >
+                  <SelectItem key="Pending">Pending</SelectItem>
+                  <SelectItem key="Fulfilled">Fulfilled</SelectItem>
+                  <SelectItem key="Cancelled">Cancelled</SelectItem>
+                </Select>
+              </div>
+            </TableCell>
               <TableCell aria-label="Order Total">{order.total}</TableCell>
               <TableCell aria-label="Actions">
-              <Button isIconOnly auto color="danger" variant="light" size="sm" ghost onClick={() => handleDelete(order.order_id)} data-testid={`delete-${order.order_id}`} aria-label="Delete Order">
-                <FaTrashCan />
-              </Button>
+                <Button isIconOnly auto color="danger" variant="light" size="sm" ghost onClick={() => handleDelete(order.order_id)} data-testid={`delete-${order.order_id}`} aria-label="Delete Order">
+                  <FaTrashCan />
+                </Button>
               </TableCell>
             </TableRow>
           ))}

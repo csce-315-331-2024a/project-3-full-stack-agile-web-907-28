@@ -24,7 +24,11 @@ module.exports = {
           },
           foreground: {
             500: "#000000",
-          }
+          },
+          success: "#00FF00",//green
+          danger: "#FF0000",//red
+          warning: "#FFBF00",//yellow
+          info: "#00BFFF",//blue
         }
       },
       dark: {
