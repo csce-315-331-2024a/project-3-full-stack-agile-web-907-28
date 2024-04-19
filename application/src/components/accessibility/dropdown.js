@@ -2,6 +2,10 @@ import { Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem,
 import { useState } from 'react';
 import GoogleTranslate from "@/components/translation/translationComponent"
 
+/**
+ * This is a dropdown menu for accessibility settings.
+ * @returns {Dropdown}
+ */
 export default function App() {
   const [textSize, setTextSize] = useState("normal");
   const [colorContrast, setColorContrast] = useState("normal");
@@ -53,11 +57,10 @@ export default function App() {
         key="theme"
         className="cursor-default"
         endContent={
-          <GoogleTranslate /> // Replace with your GoogleTranslate component
-          //TODO: Get rid of google photo
+          <GoogleTranslate /> 
         }
       >
-        Language {/* Instead of Theme */}
+        Language
       </DropdownItem>
     </DropdownSection>
       </DropdownMenu>
