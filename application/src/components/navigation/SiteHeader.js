@@ -11,6 +11,7 @@ import App from "@/components/accessibility/dropdown";
 import {useContext} from "react";
 import CartContext from "@/contexts/CartContext";
 import {FaCartShopping} from "react-icons/fa6";
+import useHoverTTS from '../../pages/api/text_to_speech/TTSHook';
 
 
 /**
@@ -43,6 +44,9 @@ export default function SiteHeader() {
           <li>
             <WeatherComponent />
           </li>
+          <p className="hoverable-text" style={{ cursor: 'pointer' }}>
+        Hover over me for TTS
+      </p>
         </NavbarContent>
         <NavbarContent justify="end">
           <li>

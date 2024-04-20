@@ -1,10 +1,11 @@
-const speakText = (text) => {
-    const utterance = new SpeechSynthesisUtterance(text);
-    speechSynthesis.speak(utterance);
-  };
+// textToSpeech.js
+
+export function speak(text) {
+    if ('speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      speechSynthesis.speak(utterance);
+    } else {
+      console.error('Speech synthesis not supported');
+    }
+  }
   
-  const cancelSpeech = () => {
-    speechSynthesis.cancel();
-  };
-  
-  export { speakText, cancelSpeech };

@@ -1,6 +1,7 @@
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem, Button } from '@nextui-org/react';
 import { useState } from 'react';
 import GoogleTranslate from "@/components/translation/translationComponent"
+import ToggleTTS from '../text_to_speech/textToSpeechComponent';
 
 export default function App() {
   const [textSize, setTextSize] = useState("normal");
@@ -58,6 +59,16 @@ export default function App() {
         }
       >
         Language {/* Instead of Theme */}
+      </DropdownItem>
+    </DropdownSection>
+    <DropdownSection>
+    <DropdownItem
+      isReadOnly
+        key="theme"
+        className="cursor-default"
+        endContent={
+          <ToggleTTS/>
+        }>
       </DropdownItem>
     </DropdownSection>
       </DropdownMenu>
