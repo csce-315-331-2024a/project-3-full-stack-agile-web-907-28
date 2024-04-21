@@ -20,7 +20,7 @@ export default function MenuView({ onItemClick }) {
       <Tabs aria-label="menu sections" size="lg" color="primary">
         {
           menuCategories.map(category => (
-            <Tab key={category.id} title={category.name} className="text-default">
+            <Tab key={category.id} title={category.name} className="text-default" textValue={category.name}>
               <Card fullWidth="true" radius="none" shadow="none">
                 <CardBody>
                   <MenuItemGrid>
@@ -34,6 +34,7 @@ export default function MenuView({ onItemClick }) {
                           category={item.categoryId}
                           onClick={() => addItemToCart(item)}
                           isPressable
+                          textValue={`${item.name}, $${item.price}`}
                         />
                       ))
                     }

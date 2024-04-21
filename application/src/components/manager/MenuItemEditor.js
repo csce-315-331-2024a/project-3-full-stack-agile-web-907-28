@@ -1,6 +1,7 @@
 import {
   Autocomplete, AutocompleteItem,
-  Button, Card, CardBody, CardFooter, CardHeader, Checkbox,
+  Button, Card, CardBody, CardHeader,
+  DatePicker,
   Input,
   Modal,
   ModalBody,
@@ -17,6 +18,7 @@ import {FaPencil, FaTrashCan} from "react-icons/fa6";
 import menuCategories from "@/models/menuCategories";
 import ConfirmationDialog from "@/components/utils/ConfirmationDialog";
 import InventoryContext from "@/contexts/InventoryContext";
+import {fromDate, toCalendarDate} from "@internationalized/date";
 
 
 /**
@@ -37,18 +39,18 @@ export default function MenuItemEditor({trigger, onMenuItemChange, menuItem = nu
   const defaultComponents = menuItem == null ? [] : menuItem.inventoryItemIds.map((id, idx) => {return {id: id, amount: menuItem.inventoryItemAmounts[idx]}});
   const defaultCategoryId = menuItem == null ? "" : menuItem.categoryId.toString();
   const defaultSeasonal = menuItem == null ? false : menuItem.seasonal;
-  const defaultStartDate = menuItem == null || !menuItem.seasonal ? "" : menuItem.startDate.toISOString().slice(0,10);
-  const defaultEndDate = menuItem == null || !menuItem.seasonal ? "" : menuItem.endDate.toISOString().slice(0,10);
+  const defaultStartDate = menuItem == null || !menuItem.seasonal ? undefined : toCalendarDate(fromDate(menuItem.startDate, "UTC"));
+  const defaultEndDate = menuItem == null || !menuItem.seasonal ? undefined : toCalendarDate(fromDate(menuItem.endDate, "UTC"));
 
   const isNumber = (value) => !isNaN(value) && !isNaN(parseFloat(value));
 
-  const [name, setName, resetName, isNameValid, isNameChanged] = useValidatedState(defaultName, s => s.trim() !== "");
+  const [name, setName, resetName, isNameValid, isNameChanged] = useValidatedState(defaultName, s => s.trim() !== "--");
   const [price, setPrice, resetPrice, isPriceValid, isPriceChanged] = useValidatedState(defaultPrice, p => isNumber(p) && parseFloat(p) >= 0);
   const [ingredients, setIngredients] = useState(defaultComponents);
   const [categoryId, setCategoryId] = useState(defaultCategoryId);
   const [seasonal, setSeasonal] = useState(defaultSeasonal);
-  const [startDate, setStartDate, resetStartDate, isStartDateValid, isStartDateChanged] = useValidatedState(defaultStartDate, d => d.trim() !== "");
-  const [endDate, setEndDate, resetEndDate, isEndDateValid, isEndDateChanged] = useValidatedState(defaultEndDate, d => d.trim() !== "");
+  const [startDate, setStartDate, resetStartDate, isStartDateValid, isStartDateChanged] = useValidatedState(defaultStartDate, d => d !== undefined);
+  const [endDate, setEndDate, resetEndDate, isEndDateValid, isEndDateChanged] = useValidatedState(defaultEndDate, d => d !== undefined);
 
   const [error, setError] = useState("");
 
@@ -73,8 +75,8 @@ export default function MenuItemEditor({trigger, onMenuItemChange, menuItem = nu
           ingredients.map(({amount}) => amount),
           categoryId,
           seasonal,
-          seasonal ? startDate : new Date().toISOString().slice(0,10),
-          seasonal ? endDate : new Date().toISOString().slice(0,10)
+          seasonal ? startDate.toDate() : new Date(),
+          seasonal ? endDate.toDate() : new Date()
         ));
         onClose();
       }
@@ -208,19 +210,17 @@ export default function MenuItemEditor({trigger, onMenuItemChange, menuItem = nu
                 {
                   seasonal ? (
                     <>
-                      <Input
+                      <DatePicker
                         isRequired
                         label="Start Date"
-                        type="date"
-                        value={startDate.slice(0,10)}
+                        value={startDate}
                         onValueChange={setStartDate}
                         isInvalid={!isStartDateValid && isStartDateChanged}
                       />
-                      <Input
+                      <DatePicker
                         isRequired
                         label="End Date"
-                        type="date"
-                        value={endDate.slice(0,10)}
+                        value={endDate}
                         onValueChange={setEndDate}
                         isInvalid={!isEndDateValid && isEndDateChanged}
                       />
