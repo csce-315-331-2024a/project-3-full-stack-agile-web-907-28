@@ -1,5 +1,5 @@
 import {
-  Button,
+  Button, DatePicker,
   Input,
   Modal,
   ModalBody,
@@ -11,6 +11,7 @@ import {
 import InventoryItem from "@/models/InventoryItem";
 import useValidatedState from "@/react-hooks/useValidatedState";
 import {useState} from "react";
+import {fromDate, toCalendarDate} from "@internationalized/date";
 
 
 /**
@@ -26,16 +27,16 @@ export default function InventoryItemEditor({trigger, onInventoryItemChange, inv
 
   const defaultName = inventoryItem == null ? "" : inventoryItem.name.toString();
   const defaultQuantity = inventoryItem == null ? "" : inventoryItem.quantity.toString();
-  const defaultPurchaseDate = inventoryItem == null ? "" : inventoryItem.purchaseDate.toISOString().slice(0,10);
-  const defaultExpiryDate = inventoryItem == null ? "" : inventoryItem.expiryDate.toISOString().slice(0,10);
+  const defaultPurchaseDate = inventoryItem == null ? undefined : toCalendarDate(fromDate(inventoryItem.purchaseDate, "UTC"));
+  const defaultExpiryDate = inventoryItem == null ? undefined : toCalendarDate(fromDate(inventoryItem.expiryDate, "UTC"));
   const defaultQuantityLimit = inventoryItem == null ? "0" : inventoryItem.quantityLimit.toString();
 
   const isNumber = (value) => !isNaN(value) && !isNaN(parseFloat(value));
 
   const [name, setName, resetName, isNameValid, isNameChanged] = useValidatedState(defaultName, s => s.trim() !== "");
   const [quantity, setQuantity, resetQuantity, isQuantityValid, isQuantityChanged] = useValidatedState(defaultQuantity, isNumber);
-  const [purchaseDate, setPurchaseDate, resetPurchaseDate, isPurchaseDateValid, isPurchaseDateChanged] = useValidatedState(defaultPurchaseDate, d => d.trim() !== "");
-  const [expiryDate, setExpiryDate, resetExpiryDate, isExpiryDateValid, isExpiryDateChanged] = useValidatedState(defaultExpiryDate, d => d.trim() !== "");
+  const [purchaseDate, setPurchaseDate, resetPurchaseDate, isPurchaseDateValid, isPurchaseDateChanged] = useValidatedState(defaultPurchaseDate, d => d !== undefined);
+  const [expiryDate, setExpiryDate, resetExpiryDate, isExpiryDateValid, isExpiryDateChanged] = useValidatedState(defaultExpiryDate, d => d !== undefined);
   const [quantityLimit, setQuantityLimit, resetQuantityLimit, isQuantityLimitValid, isQuantityLimitChanged] = useValidatedState(defaultQuantityLimit, isNumber);
 
   const [error, setError] = useState("");
@@ -55,8 +56,8 @@ export default function InventoryItemEditor({trigger, onInventoryItemChange, inv
           inventoryItem == null ? -1 : inventoryItem.inventoryItemId,
           name,
           parseFloat(quantity),
-          new Date(purchaseDate),
-          new Date(expiryDate),
+          purchaseDate.toDate(),
+          expiryDate.toDate(),
           parseFloat(quantityLimit)
         ));
         onClose();
@@ -103,18 +104,16 @@ export default function InventoryItemEditor({trigger, onInventoryItemChange, inv
                   onValueChange={setQuantity}
                   isInvalid={!isQuantityValid && isQuantityChanged}
                 />
-                <Input
+                <DatePicker
                   isRequired
                   label="Purchase Date"
-                  type="date"
                   value={purchaseDate}
                   onValueChange={setPurchaseDate}
                   isInvalid={!isPurchaseDateValid && isPurchaseDateChanged}
                 />
-                <Input
+                <DatePicker
                   isRequired
                   label="Expiry Date"
-                  type="date"
                   value={expiryDate}
                   onValueChange={setExpiryDate}
                   isInvalid={!isExpiryDateValid && isExpiryDateChanged}
