@@ -51,8 +51,8 @@ export default function WhatSellsTogether({...props}) {
           </TableHeader>
           <TableBody>
             {
-              whatSellsTogether.slice(startIndex, startIndex + 5).map((item) => (
-                <TableRow>
+              whatSellsTogether.slice(startIndex, startIndex + 5).map((item, idx) => (
+                <TableRow key={idx}>
                   <TableCell>{item.item1_name}</TableCell>
                   <TableCell>{item.item2_name}</TableCell>
                   <TableCell>{item.frequency}</TableCell>
