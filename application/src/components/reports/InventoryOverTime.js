@@ -37,7 +37,6 @@ export default function InventoryOverTime({...props}) {
   const options = {
     chart: {
       id: "basic-bar",
-
     },
     plotOptions: {
       bar: {
@@ -134,7 +133,7 @@ export default function InventoryOverTime({...props}) {
           />
       </CardHeader>
       {!loading ? (
-        <Chart options={options} series={formattedSeries} type="bar" height={screenHeight} />
+        <Chart options={options} height={window.innerHeight - 210} series={formattedSeries} type="bar" />
       ) : (
         <div>Loading...</div>
       )}
