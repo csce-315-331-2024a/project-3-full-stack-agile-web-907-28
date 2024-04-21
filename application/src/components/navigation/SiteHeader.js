@@ -11,6 +11,8 @@ import App from "@/components/accessibility/dropdown";
 import {useContext} from "react";
 import CartContext from "@/contexts/CartContext";
 import {FaCartShopping} from "react-icons/fa6";
+import FontSizeButton from "@/components/fontsize/FontButton";
+
 
 
 /**
@@ -42,6 +44,11 @@ export default function SiteHeader() {
         <NavbarContent justify="center">
           <li>
             <WeatherComponent />
+          </li>
+        </NavbarContent>
+        <NavbarContent justify="end">
+          <li>
+            <FontSizeButton />
           </li>
         </NavbarContent>
         <NavbarContent justify="end">
