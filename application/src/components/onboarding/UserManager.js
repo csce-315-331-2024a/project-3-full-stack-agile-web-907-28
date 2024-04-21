@@ -16,6 +16,8 @@ import UserCredentials from "@/models/UserCredentials";
 
 const pages = {
   ManageUsers: {displayName: "Manage Users", path: "/admin"},
+  SalesReport: {displayName: "Sales Report", path: "/sales-report"},
+  InventoryReport: {displayName: "Inventory Report", path: "/inventory-report"},
   ManageInventory: {displayName: "Manage Inventory", path: "/inventory-management"},
   ManageMenu: {displayName: "Manage Menu", path: "/menu-management"},
   OrderHistory: {displayName: "Order History", path: "/order-history"},
@@ -74,8 +76,8 @@ export const UserManager = () => {
   };
 
   const navigationItems = {
-    Admin: [pages.ManageUsers, pages.ManageInventory, pages.ManageMenu, pages.OrderHistory, pages.Menu],
-    Manager: [pages.ManageInventory, pages.ManageMenu, pages.OrderHistory, pages.Menu],
+    Admin: [pages.ManageUsers, pages.SalesReport, pages.InventoryReport, pages.ManageInventory, pages.ManageMenu, pages.OrderHistory, pages.Menu],
+    Manager: [pages.SalesReport, pages.InventoryReport, pages.ManageInventory, pages.ManageMenu, pages.OrderHistory, pages.Menu],
     Cashier: [pages.OrderHistory, pages.Menu],
     Customer: [pages.Menu],
   };
