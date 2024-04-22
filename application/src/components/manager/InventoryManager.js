@@ -117,7 +117,7 @@ export default function InventoryManager() {
           />
         </CardHeader>
         <CardBody>
-          <Table isStriped>
+          <Table isStriped aria-label="Inventory management table">
             <TableHeader>
               <TableColumn>
                 <ObjectArraySortButton
