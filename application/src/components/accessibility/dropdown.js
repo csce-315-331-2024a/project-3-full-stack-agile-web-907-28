@@ -6,11 +6,6 @@ import TTSButton from '../text_to_speech/textToSpeechComponent';
 export default function App() {
   const [textSize, setTextSize] = useState("normal");
   const [colorContrast, setColorContrast] = useState("normal");
-  const [ttsEnabled, setTTSEnabled] = useState(false);
-
-  const toggleTTS = () => {
-    setTTSEnabled(prevState => !prevState);
-  };
 
   return (
     <Dropdown
@@ -65,16 +60,6 @@ export default function App() {
       >
         Language {/* Instead of Theme */}
       </DropdownItem>
-    </DropdownSection>
-    <DropdownItem
-            isReadOnly
-            key="tts"
-            className="cursor-default"
-            endContent={<TTSButton ttsEnabled={ttsEnabled} onToggle={toggleTTS} />}
-          >
-            Text to Speech
-      </DropdownItem>
-    <DropdownSection>
     </DropdownSection>
       </DropdownMenu>
     </Dropdown>
