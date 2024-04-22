@@ -28,7 +28,9 @@ const TTSButton = ({ ttsEnabled, onToggle }) => {
           target.tagName === 'H6' ||
           target.tagName == 'B' ||
           target.tagName == 'DIV' ||
-          target.tagName == 'BUTTON'
+          target.tagName == 'BUTTON' ||
+          target.tagName == 'TD' ||
+          target.tagName == 'TH'
         ) {
           speak(target.textContent);
         }
