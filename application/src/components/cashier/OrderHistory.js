@@ -142,7 +142,7 @@ const OrderHistory = () => {
                 </Select>
               </div>
             </TableCell>
-              <TableCell aria-label="Order Total">{order.total}</TableCell>
+              <TableCell aria-label="Order Total">${order.total}</TableCell>
               <TableCell aria-label="Actions">
                 <Button isIconOnly auto color="danger" variant="light" size="sm" ghost onClick={() => handleDelete(order.order_id)} data-testid={`delete-${order.order_id}`} aria-label="Delete Order">
                   <FaTrashCan />
