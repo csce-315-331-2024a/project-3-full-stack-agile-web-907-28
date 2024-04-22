@@ -9,7 +9,7 @@ import axios from 'axios';
  * @param {function} onClose - The function to close the modal.
  * @returns {JSX.Element} - The modal component.
  */
-export default function EditModal({selectedUsers, isOpen, onClose}) {
+export default function EditModal({selectedUsers, isOpen, onClose, onEditComplete}) {
     const [currentUserIndex, setCurrentUserIndex] = useState(0);
     const [selectedCredentials, setSelectedCredentials] = useState("");
     const [newEmail, setNewEmail] = useState("");
@@ -50,6 +50,7 @@ export default function EditModal({selectedUsers, isOpen, onClose}) {
         try {
             const response = await axios.post('/api/admin/editUser', body);
             console.log('Update response:', response.data);
+            onEditComplete(); // Optionally close the modal on success
             onClose(); // Optionally close the modal on success
         } catch (error) {
             console.error('Failed to update user:', error.response?.data || error.message);
