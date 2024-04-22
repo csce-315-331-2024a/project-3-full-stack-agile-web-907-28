@@ -1,26 +1,42 @@
-// ToggleTTS.js
+// components/TTSButton.js
 
-import React, { useState } from 'react';
-import { speak } from '@/pages/api/text_to_speech/textToSpeechAPI';
+import { useState, useEffect } from 'react';
 
-const ToggleTTS = () => {
-  const [ttsEnabled, setTTSenabled] = useState(true);
+const TTSButton = () => {
+  const [enabled, setEnabled] = useState(false);
+
+  useEffect(() => {
+    if (enabled) {
+      speak("Text to speech enabled");
+      document.addEventListener('mouseover', handleMouseOver);
+    } else {
+      speak("Text to speech disabled");
+      document.removeEventListener('mouseover', handleMouseOver);
+    }
+    return () => {
+      document.removeEventListener('mouseover', handleMouseOver);
+    };
+  }, [enabled]);
+
+  const handleMouseOver = (event) => {
+    const target = event.target;
+    
+      speak(target.textContent);
+    
+  };
+
+  const speak = (text) => {
+    const utterance = new SpeechSynthesisUtterance(text);
+    window.speechSynthesis.speak(utterance);
+  };
 
   const toggleTTS = () => {
-    const newState = !ttsEnabled;
-    setTTSenabled(newState);
-    speak(newState ? 'Text To Speech enabled' : 'Text To Speech disabled');
+    setEnabled(!enabled);
   };
 
   return (
-    <div style={{ textAlign: 'left' }}>
-      <button onClick={toggleTTS} style={{ textAlign: 'left' }}>
-        <span style={{ textAlign: 'left' }}>
-          {ttsEnabled ? 'Disable Text To Speech' : 'Enable Text To Speech'}
-        </span>
-      </button>
-    </div>
+    <button onClick={toggleTTS}>{enabled ? 'Disable TTS' : 'Enable TTS'}</button>
   );
 };
 
-export default ToggleTTS;
+export default TTSButton;
