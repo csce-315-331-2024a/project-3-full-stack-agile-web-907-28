@@ -11,7 +11,6 @@ import App from "@/components/accessibility/dropdown";
 import {useContext} from "react";
 import CartContext from "@/contexts/CartContext";
 import {FaCartShopping} from "react-icons/fa6";
-import FontSizeButton from "@/components/fontsize/FontButton";
 
 
 
