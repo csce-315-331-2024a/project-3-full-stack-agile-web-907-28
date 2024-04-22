@@ -63,9 +63,10 @@ export default function SiteHeader() {
             <li>
               <Avatar
                 as="button"
+                aria-label="Open cart"
                 isBordered
                 showFallback
-                fallback={<FaCartShopping size="2x" />}
+                fallback={<FaCartShopping className="text-2xl" />}
                 onClick={openCart}
               />
             </li>

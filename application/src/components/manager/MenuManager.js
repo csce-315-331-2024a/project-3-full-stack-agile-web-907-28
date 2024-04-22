@@ -121,7 +121,7 @@ export default function MenuManager() {
           />
         </CardHeader>
         <CardBody>
-          <Table isStriped>
+          <Table isStriped aria-label="Menu management table">
             <TableHeader>
               <TableColumn>
                 <ObjectArraySortButton

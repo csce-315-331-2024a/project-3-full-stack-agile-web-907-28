@@ -89,6 +89,8 @@ export const UserManager = () => {
         {
           session ? (
             <Avatar
+              aria-label={`Signed in as ${session.user.name}`}
+              name={session.user.name}
               as="button"
               isBordered
               showFallback
@@ -96,6 +98,7 @@ export const UserManager = () => {
             />
           ) : (
             <Avatar
+              aria-label="Not signed in"
               as="button"
               isBordered
               isDisabled
@@ -108,7 +111,7 @@ export const UserManager = () => {
         session ? (
           <DropdownMenu aria-label="Profile Actions">
             <DropdownSection showDivider>
-            <DropdownItem key="profile" className="gap-2">
+            <DropdownItem key="profile" className="gap-2" textValue={`Signed in as ${session.user.email} with role ${credentials}`}>
               <p className="font-semibold">Signed in as:</p>
               <p className="font-semibold">{session.user.email}</p>
               <p className="font-light">{credentials}</p>
