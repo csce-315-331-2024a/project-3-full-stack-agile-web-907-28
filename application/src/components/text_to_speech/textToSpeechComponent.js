@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react';
 
-const TTSButton = () => {
-  const [enabled, setEnabled] = useState(false);
+const TTSButton = ({ ttsEnabled, onToggle }) => {
+  const [enabled, setEnabled] = useState(ttsEnabled);
+
+  useEffect(() => {
+    setEnabled(ttsEnabled);
+  }, [ttsEnabled]);
 
   useEffect(() => {
     const handleMouseOver = (event) => {
@@ -17,6 +21,8 @@ const TTSButton = () => {
 
     if (enabled) {
       document.addEventListener('mouseover', handleMouseOver);
+    } else {
+      document.removeEventListener('mouseover', handleMouseOver);
     }
 
     return () => {
@@ -32,11 +38,11 @@ const TTSButton = () => {
   const toggleTTS = () => {
     const newEnabled = !enabled;
     setEnabled(newEnabled);
+    onToggle(newEnabled);
     if (!newEnabled) {
       speak("Text to speech disabled");
     } else {
       speak("Text to speech enabled");
-
     }
   };
 
