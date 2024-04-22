@@ -15,25 +15,45 @@ export function useApiFetch(url, initialResult, transformFn=x=>x) {
   const refresh = () => setFetchTrigger(true);
 
   useEffect(() => {
-    if (fetchTrigger) {
-      fetch(url)
-        .then(response => {
-          if (response.ok) {
-            return response.json();
-          } else {
-            throw response;
+    refresh();
+  }, [url]);
+
+  useEffect(() => {
+    if (fetchTrigger && url !== "") {
+      const handleFetch = async () => {
+        const data = await
+          fetch(url, initialResult)
+            .then(response => {
+              if (response.ok) {
+                return response.json();
+              } else {
+                throw response;
+              }
+            })
+            .then(data => {
+              console.log("Fetched", url, data);
+              return data;
+            })
+            .catch(e => {
+              console.error("Error fetching", url, e);
+              throw new Error('Network Error');
+            });
+        let transformedData;
+        try {
+          transformedData = transformFn(data);
+          if (transformedData !== data) {
+            console.log("Transformed data from", url, transformedData);
           }
-        })
-        .then(data => {
-          console.log("Fetched", url, data);
-          setResult(transformFn(data));
-        })
-        .catch(e => {
-          throw new Error('Network Error');
-        });
+        } catch (e) {
+          console.error("Error transforming data from", url, e);
+          throw e;
+        }
+        setResult(transformedData);
+      }
+      handleFetch();
       setFetchTrigger(false);
     }
-  }, [fetchTrigger, setResult, transformFn, url]);
+  }, [fetchTrigger, initialResult, setResult, transformFn, url]);
 
   return [result, refresh];
 }
