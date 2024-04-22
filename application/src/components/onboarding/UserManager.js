@@ -101,7 +101,6 @@ export const UserManager = () => {
               aria-label="Not signed in"
               as="button"
               isBordered
-              isDisabled
               showFallback
             />
           )
