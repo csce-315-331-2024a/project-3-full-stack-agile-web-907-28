@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import dynamic from 'next/dynamic';
-import { Card, CardHeader } from "@nextui-org/react";
+import {Card, CardBody, CardHeader, DateRangePicker, Spinner} from "@nextui-org/react";
+import {DateRangeContext} from "@/contexts/DateRangeContext";
+import {useApiFetch} from "@/react-hooks/useApiFetch";
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 /**
@@ -9,30 +11,22 @@ const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
  * @returns {React.Component}
  */
 export default function InventoryOverTime({...props}) {
-  const [series, setSeries] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [startDate, setStartDate] = useState(new Date("2024-01-01").toISOString().slice(0, 10));
-  const [endDate, setEndDate] = useState(new Date("2024-01-31").toISOString().slice(0, 10));
- const [ screenHeight, setScreenHeight] = useState(window.innerHeight - 80);
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(`/api/inventory_dashboard/getOverTime?startDate=${startDate}&endDate=${endDate}`);
-        const data = await response.json();
-        const chartData = data.map(item => ({
-          name: item.name,
-          data: [item.total_amount_used] // Assuming you only want one data point per item
-        }));
-        setSeries(chartData);
-      } catch (error) {
-        console.error('Failed to fetch data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const [dateRange, setDateRange] = useContext(DateRangeContext);
+  const [fetchUrl, setFetchUrl] = useState("");
+  const [series, refreshSeries] = useApiFetch(fetchUrl, {data: []},
+    (data) => ({
+        data: data.map(item => ({
+          x: item.name,
+          y: [item.total_amount_used]
+        }))
+    })
+  );
 
-    fetchData();
-  }, [startDate, endDate]);
+  useEffect(() => {
+    const sd = dateRange.start.toDate().toISOString().slice(0, 10);
+    const ed = dateRange.end.toDate().toISOString().slice(0, 10);
+    setFetchUrl(`/api/inventory_dashboard/getOverTime?startDate=${sd}&endDate=${ed}`);
+  }, [dateRange]);
 
   const options = {
     chart: {
@@ -50,7 +44,7 @@ export default function InventoryOverTime({...props}) {
       enabled: false
     },
     xaxis: {
-      categories: series.map(item => item.name),
+      categories: series.data.map(item => item.x),
       title: {
         text: 'Inventory Items',
         style: {
@@ -94,49 +88,22 @@ export default function InventoryOverTime({...props}) {
     }
   };
 
-  const formattedSeries = [{
-    data: series.map(item => ({
-      x: item.name,
-      y: item.data
-    }))
-  }];
-
-  const handleStartDateChange = (e) => {
-    setStartDate(e);
-  }
-
-  const handleEndDateChange = (e) => {
-    setEndDate(e);
-  }
-
-
 
   return (
     <Card {...props}>
-      <CardHeader>
+      <CardHeader className="justify-between">
         <p className="text-xl font-semibold">Inventory Over Time</p>
-        <input
-              required
-              label="Start Date"
-              type="date"
-              className="w-fit px-1 border-2 border-gray-300 rounded-md"
-              value={startDate}
-              onChange={e => handleStartDateChange(e.target.value)}
-            />
-        <input
-              required
-              label="End Date"
-              type="date"
-              className="w-fit px-1 border-2 border-gray-300 rounded-md"
-              value={endDate}
-              onChange={e => handleEndDateChange(e.target.value)}
-          />
+        <div>
+          <DateRangePicker aria-label="Chart date range" className="max-w-xs" value={dateRange} onChange={setDateRange} visibleMonths={3} />
+        </div>
       </CardHeader>
-      {!loading ? (
-        <Chart options={options} height={window.innerHeight - 210} series={formattedSeries} type="bar" />
-      ) : (
-        <div>Loading...</div>
-      )}
+      <CardBody>
+        {series.data === [] ? (
+          <Spinner />
+        ) : (
+          <Chart options={options} height={window.innerHeight - 210} series={[series]} type="bar" />
+        )}
+      </CardBody>
     </Card>
   );
 }
