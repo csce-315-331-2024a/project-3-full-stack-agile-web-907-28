@@ -20,7 +20,9 @@ const TTSButton = () => {
 
   const handleMouseOver = (event) => {
     const target = event.target;
-    if (target.tagName === 'P' || target.tagName === 'SPAN' || target.tagName === 'H1' || target.tagName === 'H2' || target.tagName === 'H3' || target.tagName === 'H4' || target.tagName === 'H5' || target.tagName === 'H6') {
+    if (target.tagName === 'IMG' && target.alt) {
+      speak(target.alt);
+    } else if (target.tagName === 'P' || target.tagName === 'SPAN' || target.tagName === 'H1' || target.tagName === 'H2' || target.tagName === 'H3' || target.tagName === 'H4' || target.tagName === 'H5' || target.tagName === 'H6') {
       speak(target.textContent);
     }
   };
