@@ -1,4 +1,4 @@
-import { Button, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@nextui-org/react";
+import {Button, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Input} from "@nextui-org/react";
 import styles from '../../styles/OrderPanel.module.css';
 import { useContext } from 'react';
 import CartContext from "@/contexts/CartContext";
@@ -10,7 +10,7 @@ import {FaTrashCan} from "react-icons/fa6";
  * @returns {JSX.Element} - The order panel.
  */
 const OrderPanel = ({ onClose }) => {
-  const {aggregatedCartItems, cartTotal, isCartOpen, isCartSubmitting, removeItemFromCart, submitOrder} = useContext(CartContext);
+  const {aggregatedCartItems, cartTotal, isCartOpen, isCartSubmitting, changeItemQuantity, removeItemFromCart, submitOrder} = useContext(CartContext);
 
   return (
     isCartOpen ? (
@@ -34,7 +34,9 @@ const OrderPanel = ({ onClose }) => {
               {Object.values(aggregatedCartItems).map((item, index) => (
                 <TableRow key={index}>
                   <TableCell>{item.name}</TableCell>
-                  <TableCell>{item.quantity}</TableCell>
+                  <TableCell>
+                    <Input aria-label="amount" type="number" value={item.quantity} onValueChange={(newQuantity) => changeItemQuantity(item, newQuantity)} />
+                  </TableCell>
                   <TableCell>${parseFloat(item.price).toFixed(2)}</TableCell>
                   <TableCell>${parseFloat(item.totalPrice).toFixed(2)}</TableCell>
                   <TableCell>

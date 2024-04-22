@@ -16,44 +16,69 @@ export function CartContextProvider({children}) {
   const [cartTotal, setCartTotal] = useState(0.0);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCartSubmitting, setIsCartSubmitting] = useState(false);
+  const [cartLock, setCartLock] = useState(false);
 
   // recalculate cart quantities & total when cart is modified
   useEffect(() => {
-    const {items, total} = cartItems.reduce((acc, item) => {
-      const itemName = item.name;
-      if (acc.items[itemName]) {
-        acc.items[itemName].quantity += 1;
-        acc.items[itemName].totalPrice = acc.items[itemName].quantity * parseFloat(item.price);
-      } else {
-        acc.items[itemName] = {...item, quantity: 1, totalPrice: parseFloat(item.price)};
-      }
-      acc.total += item.price;
-      return acc;
-    }, {items: {}, total: 0});
-    setAggregatedCartItems(items);
-    setCartTotal(total);
-  }, [cartItems, setAggregatedCartItems, setCartTotal]);
+    if (!cartLock) {
+      const {items, total} = cartItems.reduce((acc, item) => {
+        const itemName = item.name;
+        if (acc.items[itemName]) {
+          acc.items[itemName].quantity += 1;
+          acc.items[itemName].totalPrice = acc.items[itemName].quantity * parseFloat(item.price);
+        } else {
+          acc.items[itemName] = {...item, quantity: 1, totalPrice: parseFloat(item.price)};
+        }
+        acc.total += item.price;
+        return acc;
+      }, {items: {}, total: 0});
+      setAggregatedCartItems(items);
+      setCartTotal(total);
+    }
+  }, [cartItems, cartLock, setAggregatedCartItems, setCartTotal]);
 
   const openCart = () => setIsCartOpen(true);
   const closeCart = () => setIsCartOpen(false);
 
   const addItemToCart = (item) => {
+    while (isCartSubmitting || cartLock) {}
+    setCartLock(true);
     const newCartItems = cartItems.slice();
     newCartItems.push(item);
     setCartItems(newCartItems);
     setIsCartOpen(true);
+    setCartLock(false);
   };
 
   const removeItemFromCart = (item) => {
+    while (isCartSubmitting || cartLock) {}
+    setCartLock(true);
     const newCartItems = cartItems.filter(({name}) => name !== item.name);
     setCartItems(newCartItems);
+    if (newCartItems.length === 0) {
+      setIsCartOpen(false);
+    }
+    setCartLock(false);
   }
 
-  const submitOrder = async () => {
-    setIsCartSubmitting(true);
+  const changeItemQuantity = (item, newQuantity) => {
+    while (isCartSubmitting || cartLock) {}
+    setCartLock(true);
+    const newCartItems = cartItems.filter(({name}) => name !== item.name);
+    for (let i = 0; i < newQuantity; i++) {
+      newCartItems.push(item);
+    }
+    setCartItems(newCartItems);
+    if (newCartItems.length === 0) {
+      setIsCartOpen(false);
+    }
+    setCartLock(false);
+  };
 
-    const openCart = () => setIsCartOpen(true);
-    const closeCart = () => setIsCartOpen(false);
+  const submitOrder = async () => {
+    while (isCartSubmitting || cartLock) {}
+    setCartLock(true);
+    setIsCartSubmitting(true);
 
     const orderData = {
       customer_id: '1',
@@ -81,11 +106,12 @@ export function CartContextProvider({children}) {
       console.error('Error submitting order:', error);
     } finally {
       setIsCartSubmitting(false);
+      setCartLock(false);
     }
   };
 
   return (
-    <CartContext.Provider value={{cartItems, aggregatedCartItems, cartTotal, isCartOpen, isCartSubmitting, openCart, closeCart, setIsCartOpen, addItemToCart, removeItemFromCart, submitOrder}}>
+    <CartContext.Provider value={{cartItems, aggregatedCartItems, cartTotal, isCartOpen, isCartSubmitting, openCart, closeCart, setIsCartOpen, addItemToCart, changeItemQuantity, removeItemFromCart, submitOrder}}>
       {children}
       <OrderPanel cart={cartItems} setCart={setCartItems} isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </CartContext.Provider>
