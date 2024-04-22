@@ -48,11 +48,6 @@ export default function SiteHeader() {
         </NavbarContent>
         <NavbarContent justify="end">
           <li>
-            <FontSizeButton />
-          </li>
-        </NavbarContent>
-        <NavbarContent justify="end">
-          <li>
             <App />
           </li>
           {cartItems.length > 0 ? (
