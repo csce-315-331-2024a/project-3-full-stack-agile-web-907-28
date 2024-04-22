@@ -18,8 +18,8 @@ export default function SalesReport() {
         <DateRangeProvider>
           <div className="gap-4 grid grid-cols-12 grid-rows-6 p-3 px-9 w-full h-full">
             <SalesOverTime className="col-span-12 sm:col-span-8 sm:row-span-full"/>
-            <SalesByCategory className="col-span-12 sm:col-span-4 sm:row-span-2"/>
-            <WhatSellsTogether className="col-span-12 sm:col-span-4 sm:row-span-4"/>
+            <SalesByCategory className="col-span-12 sm:col-span-4 sm:row-span-3"/>
+            <WhatSellsTogether className="col-span-12 sm:col-span-4 sm:row-span-3"/>
           </div>
         </DateRangeProvider>
       </RestrictedAccess>
