@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 
 const TTSButton = ({ ttsEnabled, onToggle }) => {
   const [enabled, setEnabled] = useState(ttsEnabled);
+  const [currentUtterance, setCurrentUtterance] = useState(null);
 
   useEffect(() => {
     setEnabled(ttsEnabled);
@@ -10,10 +11,23 @@ const TTSButton = ({ ttsEnabled, onToggle }) => {
   useEffect(() => {
     const handleMouseOver = (event) => {
       if (enabled) {
+        if (currentUtterance) {
+          window.speechSynthesis.cancel();
+        }
         const target = event.target;
         if (target.tagName === 'IMG' && target.alt) {
           speak(target.alt);
-        } else if (target.tagName === 'P' || target.tagName === 'SPAN' || target.tagName === 'H1' || target.tagName === 'H2' || target.tagName === 'H3' || target.tagName === 'H4' || target.tagName === 'H5' || target.tagName === 'H6') {
+        } else if (
+          target.tagName === 'P' ||
+          target.tagName === 'SPAN' ||
+          target.tagName === 'H1' ||
+          target.tagName === 'H2' ||
+          target.tagName === 'H3' ||
+          target.tagName === 'H4' ||
+          target.tagName === 'H5' ||
+          target.tagName === 'H6' ||
+          target.tagName == 'B'
+        ) {
           speak(target.textContent);
         }
       }
@@ -28,10 +42,14 @@ const TTSButton = ({ ttsEnabled, onToggle }) => {
     return () => {
       document.removeEventListener('mouseover', handleMouseOver);
     };
-  }, [enabled]);
+  }, [enabled, currentUtterance]);
 
   const speak = (text) => {
     const utterance = new SpeechSynthesisUtterance(text);
+    setCurrentUtterance(utterance);
+    utterance.onend = () => {
+      setCurrentUtterance(null);
+    };
     window.speechSynthesis.speak(utterance);
   };
 
