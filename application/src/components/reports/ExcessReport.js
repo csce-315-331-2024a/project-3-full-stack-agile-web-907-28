@@ -31,7 +31,7 @@ export default function ExcessReport({ ...props }) {
           <Spinner />
         ) : (
           <>
-            <Table aria-label="Excess Inventory Report" css={{ maxHeight: "300px" }}>
+            <Table aria-label="Excess Inventory Report" isStriped>
               <TableHeader>
                 <TableColumn key="name">Item Name</TableColumn>
                 <TableColumn key="quantity">Current Quantity</TableColumn>

@@ -26,7 +26,7 @@ export default function RestockReport({ ...props }) {
           <Spinner />
         ) : (
           <>
-            <Table aria-label="Inventory shortage table" css={{ maxHeight: "300px" }}>
+            <Table aria-label="Inventory shortage table" isStriped>
               <TableHeader>
                 <TableColumn key="name">Item Name</TableColumn>
                 <TableColumn key="quantity">Quantity</TableColumn>
