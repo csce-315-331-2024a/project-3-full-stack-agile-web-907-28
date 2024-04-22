@@ -66,7 +66,19 @@ const TTSButton = ({ ttsEnabled, onToggle }) => {
 
   return (
     <div>
-      <button onClick={toggleTTS}>{enabled ? 'Disable TTS' : 'Enable TTS'}</button>
+    <button
+        onClick={toggleTTS}
+        style={{
+          padding: '8px 20px',
+          fontSize: '16px',
+          backgroundColor: '#D3D3D3',
+          border: 'none',
+          borderRadius: '10px',
+          cursor: 'pointer',
+        }}
+      >
+        {enabled ? 'Disable Text to Speech' : 'Enable Text to Speech'}
+      </button>
     </div>
   );
 };

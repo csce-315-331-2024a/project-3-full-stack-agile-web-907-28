@@ -1,7 +1,6 @@
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem, Button } from '@nextui-org/react';
 import { useState } from 'react';
 import GoogleTranslate from "@/components/translation/translationComponent"
-import TTSButton from '../text_to_speech/textToSpeechComponent';
 
 export default function App() {
   const [textSize, setTextSize] = useState("normal");
