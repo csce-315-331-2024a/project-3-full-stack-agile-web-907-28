@@ -5,6 +5,7 @@ import MenuItem from "@/components/menu/MenuItem";
 import {useContext, useEffect, useState} from "react";
 import MenuContext from "@/contexts/MenuContext";
 import CartContext from "@/contexts/CartContext";
+import Carousel from "@/components/menu/Carousel";
 
 /**
  * This component is the menu view page for the cashier. It uses the nextui-org library for the tabs and cards.
@@ -17,6 +18,7 @@ export default function MenuView({ onItemClick }) {
 
   return (
     <center>
+      <Carousel />
       <Tabs aria-label="menu sections" size="lg" color="primary">
         {
           menuCategories.map(category => (
