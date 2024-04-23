@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Pagination, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button, Select, SelectItem } from '@nextui-org/react';
 import ListPagination from "@/components/utils/ListPagination";
-import {FaTrashCan} from "react-icons/fa6";
+import {FaPencil, FaTrashCan} from "react-icons/fa6";
 import {useApiFetch} from "@/react-hooks/useApiFetch";
 import useSortedArray, {SortProperties} from "@/react-hooks/useSortedArray";
 import ObjectArraySortButton from "@/components/utils/ObjectArraySortButton";
+import ConfirmationDialog from "@/components/utils/ConfirmationDialog";
+import OrderEditor from "@/components/cashier/OrderEditor";
 
 const ORDERS_PER_PAGE = 20;
 
@@ -23,15 +25,11 @@ const OrderHistory = () => {
   // Function to check if the order is less than 10 minutes old
   const isOrderPending = (placedTime) => {
     const tenMinutesAgo = new Date(new Date() - 10 * 60000);
-    console.log(placedTime);
-    console.log(tenMinutesAgo);
     return new Date(placedTime) > tenMinutesAgo;
   };
 
   // Function to handle status change (you might need to implement actual change logic based on your backend)
   const handleStatusChange = async (orderId, newStatus) => {
-    console.log(orderId);
-    console.log(newStatus);
     try {
       const response = await fetch(`/api/orders/changeStatus`, {
         method: 'POST',
@@ -45,6 +43,22 @@ const OrderHistory = () => {
       setErrorMessage(error.message);
     }
   };
+
+  const handleEditOrder = async (newOrder) => {
+    try {
+      const response = await fetch('/api/orders/updateOrder', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newOrder)
+      });
+      refreshOrders();
+    } catch (e) {
+      console.error(e);
+      setErrorMessage(error.message);
+    }
+  }
 
   //HANDLE DELETE
   const handleDelete = async (orderId) => {
@@ -146,9 +160,22 @@ const OrderHistory = () => {
             </TableCell>
               <TableCell aria-label="Order Total">{order.total}</TableCell>
               <TableCell aria-label="Actions">
-                <Button isIconOnly auto color="danger" variant="light" size="sm" ghost onClick={() => handleDelete(order.order_id)} data-testid={`delete-${order.order_id}`} aria-label="Delete Order">
-                  <FaTrashCan />
-                </Button>
+                <OrderEditor
+                  trigger={onOpen => (
+                    <Button aria-label="Edit" isIconOnly onClick={onOpen} size="sm" variant="light"><FaPencil/></Button>
+                  )}
+                  order={order}
+                  onOrderChange={handleEditOrder}
+                />
+                <ConfirmationDialog
+                  trigger = {(onOpen) => (
+                    <Button aria-label="Delete" color="danger" isIconOnly size="sm" variant="light" onClick={onOpen}><FaTrashCan/></Button>
+                  )}
+                  onConfirm={() => {
+                    handleDelete(order.order_id);
+                  }}
+                  body="Are you sure you want to delete this order?"
+                />
               </TableCell>
             </TableRow>
           ))}
