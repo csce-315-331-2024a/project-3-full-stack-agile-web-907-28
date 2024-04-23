@@ -43,7 +43,7 @@ export default function WhatSellsTogether({...props}) {
         <p className="text-xl font-semibold">What Sells Together</p>
       </CardHeader>
       <CardBody>
-        <Table>
+        <Table aria-label="Sales trends table" isStriped>
           <TableHeader>
             <TableColumn>Item 1</TableColumn>
             <TableColumn>Item 2</TableColumn>
