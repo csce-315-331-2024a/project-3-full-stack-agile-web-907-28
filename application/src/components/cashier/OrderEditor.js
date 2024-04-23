@@ -15,6 +15,14 @@ import ConfirmationDialog from "@/components/utils/ConfirmationDialog";
 import {FaTrashCan} from "react-icons/fa6";
 
 
+/**
+ * This component creates a Modal which allows order contents to be edited.
+ * @param trigger {(onOpen: () => void) => ReactNode} Trigger to open the Modal.
+ * @param onOrderChange Callback function for submitting the new/modified order.
+ * @param order {Object | null} (optional) The order to edit.
+ * @returns {JSX.Element}
+ * @constructor
+ */
 export default function OrderEditor({trigger, onOrderChange, order}) {
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
   const {menuItems} = useContext(MenuContext);
