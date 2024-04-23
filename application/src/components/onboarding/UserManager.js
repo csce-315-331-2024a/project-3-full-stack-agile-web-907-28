@@ -16,6 +16,8 @@ import UserCredentials from "@/models/UserCredentials";
 
 const pages = {
   ManageUsers: {displayName: "Manage Users", path: "/admin"},
+  SalesReport: {displayName: "Sales Report", path: "/sales-report"},
+  InventoryReport: {displayName: "Inventory Report", path: "/inventory-report"},
   ManageInventory: {displayName: "Manage Inventory", path: "/inventory-management"},
   ManageMenu: {displayName: "Manage Menu", path: "/menu-management"},
   OrderHistory: {displayName: "Order History", path: "/order-history"},
@@ -74,8 +76,8 @@ export const UserManager = () => {
   };
 
   const navigationItems = {
-    Admin: [pages.ManageUsers, pages.ManageInventory, pages.ManageMenu, pages.OrderHistory, pages.Menu],
-    Manager: [pages.ManageInventory, pages.ManageMenu, pages.OrderHistory, pages.Menu],
+    Admin: [pages.ManageUsers, pages.SalesReport, pages.InventoryReport, pages.ManageInventory, pages.ManageMenu, pages.OrderHistory, pages.Menu],
+    Manager: [pages.SalesReport, pages.InventoryReport, pages.ManageInventory, pages.ManageMenu, pages.OrderHistory, pages.Menu],
     Cashier: [pages.OrderHistory, pages.Menu],
     Customer: [pages.Menu],
   };
@@ -87,6 +89,8 @@ export const UserManager = () => {
         {
           session ? (
             <Avatar
+              aria-label={`Signed in as ${session.user.name}`}
+              name={session.user.name}
               as="button"
               isBordered
               showFallback
@@ -94,9 +98,9 @@ export const UserManager = () => {
             />
           ) : (
             <Avatar
+              aria-label="Not signed in"
               as="button"
               isBordered
-              isDisabled
               showFallback
             />
           )
@@ -106,7 +110,7 @@ export const UserManager = () => {
         session ? (
           <DropdownMenu aria-label="Profile Actions">
             <DropdownSection showDivider>
-            <DropdownItem key="profile" className="gap-2">
+            <DropdownItem key="profile" className="gap-2" textValue={`Signed in as ${session.user.email} with role ${credentials}`}>
               <p className="font-semibold">Signed in as:</p>
               <p className="font-semibold">{session.user.email}</p>
               <p className="font-light">{credentials}</p>

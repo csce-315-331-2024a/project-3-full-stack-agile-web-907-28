@@ -65,6 +65,7 @@ export default function Admin() {
         } else {
           alert("No users selected for editing.");
         }
+        refreshUsers();
       };
       
 
@@ -97,6 +98,13 @@ export default function Admin() {
         setSelectedEmails(prevSelected => [...prevSelected, email]);
         setSelectedUsers(prevSelected => [...prevSelected, users.find(user => user.email === email[Object.keys(email)[0]])]);
         console.log("Selected users:", selectedUsers);
+      };
+
+
+      //Function to regresh users after edit
+      const refreshUsers = async () => {
+        const response = await axios.get('/api/admin/getUsers');
+        setUsers(response.data);
       };
 
 
@@ -140,8 +148,8 @@ export default function Admin() {
                 <Button onClick={onCreateOpen}>Create User</Button>
             </div>
             </DefaultLayout>
-            <EditModal selectedUsers={selectedUsers} isOpen={isOpen} onClose={onClose} />
-            <CreateUserModal isOpen={isCreateOpen} onClose={onCreateClose} />
+            <EditModal selectedUsers={selectedUsers} isOpen={isOpen} onClose={onClose} onEditComplete={refreshUsers} />
+            <CreateUserModal isOpen={isCreateOpen} onClose={onCreateClose} onCreateComplete={refreshUsers} />
 
 
         

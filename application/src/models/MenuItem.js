@@ -30,7 +30,7 @@ class MenuItem {
       parseInt(json.menuItemId),
       json.name,
       parseFloat(json.price),
-      json.inventoryItemIds.map(parseInt),
+      json.inventoryItemIds.map(parseFloat),
       json.inventoryItemAmounts.map(parseFloat),
       parseInt(json.categoryId),
       json.seasonal,

@@ -130,9 +130,11 @@ const OrderHistory = () => {
               <TableCell aria-label="Order ID">{order.order_id}</TableCell>
               <TableCell aria-label="Customer ID">{order.customer_id}</TableCell>
               <TableCell aria-label="Order Date">{new Date(order.placed_time).toString()}</TableCell>
-              <TableCell aria-label="Status">
+              <TableCell>
               <div>
                 <Select
+                  aria-label="Status"
+                  size="xs"
                   placeholder={order.order_status}
                   onChange={(e) => handleStatusChange(order.order_id, e.target.value)}
                 >
@@ -142,7 +144,7 @@ const OrderHistory = () => {
                 </Select>
               </div>
             </TableCell>
-              <TableCell aria-label="Order Total">{order.total}</TableCell>
+              <TableCell aria-label="Order Total">${order.total}</TableCell>
               <TableCell aria-label="Actions">
                 <Button isIconOnly auto color="danger" variant="light" size="sm" ghost onClick={() => handleDelete(order.order_id)} data-testid={`delete-${order.order_id}`} aria-label="Delete Order">
                   <FaTrashCan />

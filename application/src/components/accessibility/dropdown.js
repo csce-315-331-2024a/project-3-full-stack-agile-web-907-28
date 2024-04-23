@@ -23,7 +23,7 @@ export default function App() {
         aria-label="Custom item styles"
         className="p-3"
       >
-        <DropdownSection aria-label="Accessibility Options" showDivider>
+        {/* <DropdownSection aria-label="Accessibility Options" showDivider>
           <DropdownItem>
             Text Size
             <DropdownMenu>
@@ -49,7 +49,7 @@ export default function App() {
               </DropdownItem>
             </DropdownMenu>
           </DropdownItem>
-        </DropdownSection>
+        </DropdownSection> */}
 
         <DropdownSection aria-label="Preferences" showDivider>
       <DropdownItem

@@ -11,6 +11,9 @@ import App from "@/components/accessibility/dropdown";
 import {useContext} from "react";
 import CartContext from "@/contexts/CartContext";
 import {FaCartShopping} from "react-icons/fa6";
+import TTSButton from "../text_to_speech/textToSpeechComponent";
+import React, { useState } from 'react';
+
 
 
 /**
@@ -19,6 +22,11 @@ import {FaCartShopping} from "react-icons/fa6";
  */
 export default function SiteHeader() {
   const {cartItems, openCart} = useContext(CartContext);
+
+  const [ttsEnabled, setTTSEnabled] = useState(false);
+  const toggleTTS = () => {
+    setTTSEnabled(prevState => !prevState);
+  };
 
   return (
     <div>
@@ -46,15 +54,19 @@ export default function SiteHeader() {
         </NavbarContent>
         <NavbarContent justify="end">
           <li>
+          <TTSButton ttsEnabled={ttsEnabled} onToggle={toggleTTS} />
+          </li>
+          <li>
             <App />
           </li>
           {cartItems.length > 0 ? (
             <li>
               <Avatar
                 as="button"
+                aria-label="Open cart"
                 isBordered
                 showFallback
-                fallback={<FaCartShopping size="2x" />}
+                fallback={<FaCartShopping className="text-2xl" />}
                 onClick={openCart}
               />
             </li>
