@@ -158,7 +158,7 @@ const OrderHistory = () => {
                 </Select>
               </div>
             </TableCell>
-              <TableCell aria-label="Order Total">{order.total}</TableCell>
+              <TableCell aria-label="Order Total">${order.total}</TableCell>
               <TableCell aria-label="Actions">
                 <OrderEditor
                   trigger={onOpen => (

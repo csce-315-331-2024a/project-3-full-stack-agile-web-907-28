@@ -29,18 +29,18 @@ export default function ObjectArraySortButton({sortKey, sortProps, onSortPropsCh
       endContent={
         (sortProps !== null && sortProps !== undefined && sortProps.key === sortKey.key) ? (
           (type === "az") ? (
-            (sortProps.order === "asc") ? <FaArrowDownAZ /> : <FaArrowUpZA />
+            (sortProps.order === "asc") ? <FaArrowDownAZ data-testid="FaArrowDownAZ" /> : <FaArrowUpZA data-testid="FaArrowUpZA" />
           ) : (type === "19") ? (
-            (sortProps.order === "asc") ? <FaArrowDown19 /> : <FaArrowUp91 />
+            (sortProps.order === "asc") ? <FaArrowDown19 data-testid="FaArrowDown19" /> : <FaArrowUp91 data-testid="FaArrowUp91" />
           ) : (type === "plain") ? (
-            (sortProps.order === "asc") ? <FaArrowDown /> : <FaArrowUp />
+            (sortProps.order === "asc") ? <FaArrowDown data-testid="FaArrowDown" /> : <FaArrowUp data-testid="FaArrowUp" />
           ) : (
             <></>
           )
         ) : (type === "none") ? (
           <></>
         ) : (
-          <FaArrowDown color="transparent" />
+          <FaArrowDown color="transparent" data-testid="FaArrowDownTransparent" />
         )
       }
       variant="light"
