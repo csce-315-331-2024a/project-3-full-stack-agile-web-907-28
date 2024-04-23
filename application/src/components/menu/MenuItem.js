@@ -64,7 +64,7 @@ export default function MenuItem({ id, name, price, category, ...args }) {
           />
           <CardFooter className="justify-between">
               <b>{name}</b>
-              <p>{price}</p>
+              <p>${price}</p>
           </CardFooter>
       </Card>
     )
