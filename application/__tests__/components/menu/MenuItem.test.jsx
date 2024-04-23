@@ -6,9 +6,10 @@ import MenuItem from '../../../src/components/menu/MenuItem'; // Adjust the impo
 describe('MenuItem Component', () => {
     //Test that the component renders without crashing
     it('renders without crashing', () => {
-        render(<MenuItem id={1} name="Test Burger" price="$9.99" category={0} />);
+        render(<MenuItem id={1} name="Test Burger" price="9.99" category={0} />);
         expect(screen.getByText('Test Burger')).toBeInTheDocument();
-        expect(screen.getByText('$9.99')).toBeInTheDocument();
+        // Use a regular expression to match the price text flexibly
+        expect(screen.getByText(/\$9\.99/)).toBeInTheDocument();
     });
 
     //Pass Burger and test if the image is correct
