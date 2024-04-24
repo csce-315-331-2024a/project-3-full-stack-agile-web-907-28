@@ -47,7 +47,13 @@ module.exports = {
           foreground: "#FFFFFF",
           secondary: "#998542",
         }
-      }
+      },
+      contrast: {
+        colors: {
+          background: '#000000', // Black background
+          foreground: '#87CEEB', // Light blue text
+        },
+      },
     }
   })],
 }

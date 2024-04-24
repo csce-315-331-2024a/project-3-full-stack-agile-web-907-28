@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem, Button } from '@nextui-org/react';
 import GoogleTranslate from "@/components/translation/translationComponent";
-import FontSizeButton from "@/components/fontsize/FontButton";
+import ColorContrastSwitch from "@/components/colorcontrast/ColorSwitch";
 
 export default function App() {
   const [textSize, setTextSize] = useState("normal");
@@ -14,11 +14,8 @@ export default function App() {
       </DropdownTrigger>
       <DropdownMenu aria-label="Custom item styles" className="p-3">
         <DropdownSection aria-label="Preferences" showDivider>
-          <DropdownItem isReadOnly key="fontsize" className="cursor-default" endContent={<FontSizeButton />}>
+          <DropdownItem isReadOnly key="fontsize" className="cursor-default" endContent={<ColorContrastSwitch />}>
             Color Contrast {}
-          </DropdownItem>
-          <DropdownItem isReadOnly key="fontsize" className="cursor-default" endContent={<FontSizeButton />}>
-            Text Enlargement {}
           </DropdownItem>
           <DropdownItem isReadOnly key="theme" className="cursor-default" endContent={<GoogleTranslate />}>
             Language {}
