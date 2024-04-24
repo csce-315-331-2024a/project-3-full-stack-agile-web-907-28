@@ -10,7 +10,7 @@ import {FaTrashCan} from "react-icons/fa6";
  * @returns {JSX.Element} - The order panel.
  */
 const OrderPanel = ({ onClose }) => {
-  const {aggregatedCartItems, cartTotal, isCartOpen, isCartSubmitting, changeItemQuantity, removeItemFromCart, submitOrder} = useContext(CartContext);
+  const {aggregatedCartItems, cartTotal, isCartOpen, isCartSubmitting, changeItemQuantity, removeItemFromCart, submitOrder, insufficientStock} = useContext(CartContext);
 
   return (
     isCartOpen ? (
@@ -50,9 +50,17 @@ const OrderPanel = ({ onClose }) => {
           </Table>
           <div className={styles.orderTotalSubmit}>
             <div className={styles.orderTotal}>Total Cost: ${cartTotal.toFixed(2)}</div>
-            <Button auto disabled={isCartSubmitting} onClick={submitOrder}>
-              {isCartSubmitting ? 'Submitting...' : 'Submit Order'}
-            </Button>
+            {
+              insufficientStock ? (
+                <Button disabled={true} color="danger">
+                  Out of stock
+                </Button>
+              ) : (
+                <Button disabled={isCartSubmitting} onClick={submitOrder}>
+                  {isCartSubmitting ? 'Submitting...' : 'Submit Order'}
+                </Button>
+              )
+            }
           </div>
         </div>
       </>
