@@ -106,10 +106,12 @@ export function CartContextProvider({children}) {
       }
     }
 
+    console.log("The menu items are: ", aggregatedCartItems);
+
     const orderData = {
       customer_id: '1',
       employee_id: '10',
-      menuitem_ids: Object.values(aggregatedCartItems).map(item => item.menuItemId), // Assuming item.id is available
+      menuitem_ids: Object.values(aggregatedCartItems).flatMap(item => Array(item.quantity).fill(item.menuItemId)),
       total: cartTotal.toFixed(2)
     };
 
