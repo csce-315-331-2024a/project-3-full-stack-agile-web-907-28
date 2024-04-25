@@ -14,23 +14,47 @@ export default async function handler(req, res) {
 
   const { customer_id, employee_id, menuitem_ids, total } = req.body;
 
-  // Basic validation (you might want to add more comprehensive checks)
   if (!customer_id || !employee_id || !menuitem_ids || !total) {
     return res.status(400).json({ message: 'Missing required fields' });
   }
 
   try {
+    // Start transaction
+    await query('BEGIN');
+
     // Insert the new order into the database
-    // Assuming your table name is 'orders' and columns match the request body fields
-    const result = await query(
+    const orderResult = await query(
       `INSERT INTO orders (customer_id, employee_id, menuitem_ids, total, placed_time, served_time, order_status)
        VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'Pending') RETURNING *;`,
-      [customer_id, employee_id, `{${menuitem_ids.join(",")}}`, total] // menuitem_ids is an array, converting to Postgres array format
+      [customer_id, employee_id, `{${menuitem_ids.join(",")}}`, total]
     );
 
+    // Update inventory for each menu item
+    for (const menuItemId of menuitem_ids) {
+      const menuItem = await query('SELECT inventoryitem_ids, inventoryitem_amounts FROM menuitem WHERE menuitem_id = $1', [menuItemId]);
+      const inventoryIds = menuItem.rows[0].inventoryitem_ids;
+      const amounts = menuItem.rows[0].inventoryitem_amounts;
+
+      for (let i = 0; i < inventoryIds.length; i++) {
+        const inventoryId = inventoryIds[i];
+        const amount = amounts[i];
+
+        // Update inventory
+        await query(
+          'UPDATE inventoryitem SET quantity = quantity - $1 WHERE inventoryitem_id = $2 AND quantity >= $1',
+          [amount, inventoryId]
+        );
+      }
+    }
+
+    // Commit transaction
+    await query('COMMIT');
+
     // If insert is successful, return the created order
-    res.status(201).json(result.rows[0]);
+    res.status(201).json(orderResult.rows[0]);
   } catch (error) {
+    // Rollback transaction in case of error
+    await query('ROLLBACK');
     console.error('Failed to create order:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
