@@ -7,6 +7,8 @@ import useSortedArray, {SortProperties} from "@/react-hooks/useSortedArray";
 import ObjectArraySortButton from "@/components/utils/ObjectArraySortButton";
 import ConfirmationDialog from "@/components/utils/ConfirmationDialog";
 import OrderEditor from "@/components/cashier/OrderEditor";
+import { useContext } from "react";
+import CustomerContext from "@/contexts/CustomerContext";
 
 const ORDERS_PER_PAGE = 20;
 
@@ -21,6 +23,7 @@ const OrderHistory = () => {
   const [startIndex, setStartIndex] = useState(0);
   const [currentPageOrders, setCurrentPageOrders] = useState([]);
   const [errorMessage, setErrorMessage] = useState(''); // Add state for error message
+  const {customers, refreshCustomers} = useContext(CustomerContext);
 
   // Function to check if the order is less than 10 minutes old
   const isOrderPending = (placedTime) => {
@@ -108,7 +111,7 @@ const OrderHistory = () => {
               onSortPropsChange={setSortProps}
               type="19"
             >
-              Customer ID
+              Customer Name
             </ObjectArraySortButton>
           </TableColumn>
           <TableColumn>
@@ -142,7 +145,7 @@ const OrderHistory = () => {
           {currentPageOrders.map(order => (
             <TableRow key={order.order_id} aria-label="Order">
               <TableCell aria-label="Order ID">{order.order_id}</TableCell>
-              <TableCell aria-label="Customer ID">{order.customer_id}</TableCell>
+              <TableCell aria-label="Customer Name">{customers.find(c => c.customer_id === order.customer_id).name}</TableCell>
               <TableCell aria-label="Order Date">{new Date(order.placed_time).toString()}</TableCell>
               <TableCell>
               <div>

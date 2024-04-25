@@ -1,9 +1,10 @@
-import {Button, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Input} from "@nextui-org/react";
+import {Button, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Input, RadioGroup, Radio} from "@nextui-org/react";
 import styles from '../../styles/OrderPanel.module.css';
-import { useContext } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import CartContext from "@/contexts/CartContext";
 import {FaTrashCan} from "react-icons/fa6";
-
+import {useSession} from "next-auth/react";
+import getUserCredentials from "../security/getUserCredentials"
 /**
  * This component is the order panel for the cashier. It uses the nextui-org library for the table and buttons.
  * @param {function} onClose - The function to close the order panel.
@@ -11,6 +12,19 @@ import {FaTrashCan} from "react-icons/fa6";
  */
 const OrderPanel = ({ onClose }) => {
   const {aggregatedCartItems, cartTotal, isCartOpen, isCartSubmitting, changeItemQuantity, removeItemFromCart, submitOrder, insufficientStock} = useContext(CartContext);
+  const [customerName, setCustomerName] = useState("");
+  const [paymentType, setPaymentType] = useState("");
+
+  //Get current user credentials, if it is customer then set the customerName
+  useEffect(() => {
+    if (isCartOpen) {
+      const userCredentials = getUserCredentials();
+      if (userCredentials.role === "Customer") {
+        setCustomerName(userCredentials.name);
+      }
+    }
+  }, [isCartOpen]);
+
 
   return (
     isCartOpen ? (
@@ -48,6 +62,24 @@ const OrderPanel = ({ onClose }) => {
               ))}
             </TableBody>
           </Table>
+          {/*Create a div that will hold an input for the customer name as well as a radio button for type of payment*/}
+          <div>
+            <div>
+              <Input
+                label="Customer Name"
+                isRequired
+                type="text"
+                value={customerName}
+                placeholder={customerName ? customerName : "Enter customer name"}
+                onChange={setCustomerName}
+              />
+              <RadioGroup label="Select Payment Method">
+                <Radio value="cash">Cash</Radio>
+                <Radio value="credit">Credit</Radio>
+                <Radio value="debit">Debit</Radio>
+              </RadioGroup>
+            </div>
+          </div>
           <div className={styles.orderTotalSubmit}>
             <div className={styles.orderTotal}>Total Cost: ${cartTotal.toFixed(2)}</div>
             {
@@ -59,9 +91,11 @@ const OrderPanel = ({ onClose }) => {
                 <Button disabled={isCartSubmitting} onClick={submitOrder}>
                   {isCartSubmitting ? 'Submitting...' : 'Submit Order'}
                 </Button>
+
               )
             }
           </div>
+
         </div>
       </>
     ) : (
