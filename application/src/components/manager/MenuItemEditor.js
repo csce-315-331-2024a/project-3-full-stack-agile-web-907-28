@@ -214,15 +214,13 @@ export default function MenuItemEditor({trigger, onMenuItemChange, menuItem = nu
                         isRequired
                         label="Start Date"
                         value={startDate}
-                        onValueChange={setStartDate}
-                        isInvalid={!isStartDateValid && isStartDateChanged}
+                        onChange={setStartDate}
                       />
                       <DatePicker
                         isRequired
                         label="End Date"
                         value={endDate}
-                        onValueChange={setEndDate}
-                        isInvalid={!isEndDateValid && isEndDateChanged}
+                        onChange={setEndDate}
                       />
                     </>
                   ) : (
