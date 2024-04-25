@@ -1,6 +1,7 @@
-import {createContext, useEffect, useState} from "react";
+import {createContext, useContext, useEffect, useState} from "react";
 import {useDisclosure} from "@nextui-org/react";
 import OrderPanel from "@/components/orders/OrderPanel";
+import InventoryContext from "@/contexts/InventoryContext";
 
 const CartContext = createContext([]);
 export default CartContext;
@@ -11,12 +12,14 @@ export default CartContext;
  * @returns {JSX.Element} - The cart context provider.
  */
 export function CartContextProvider({children}) {
+  const {inventoryItems} = useContext(InventoryContext);
   const [cartItems, setCartItems] = useState([]);
   const [aggregatedCartItems, setAggregatedCartItems] = useState([]);
   const [cartTotal, setCartTotal] = useState(0.0);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCartSubmitting, setIsCartSubmitting] = useState(false);
   const [cartLock, setCartLock] = useState(false);
+  const [insufficientStock, setInsufficientStock] = useState(false);
 
   // recalculate cart quantities & total when cart is modified
   useEffect(() => {
@@ -32,6 +35,7 @@ export function CartContextProvider({children}) {
         acc.total += item.price;
         return acc;
       }, {items: {}, total: 0});
+      setInsufficientStock(false);
       setAggregatedCartItems(items);
       setCartTotal(total);
     }
@@ -80,10 +84,34 @@ export function CartContextProvider({children}) {
     setCartLock(true);
     setIsCartSubmitting(true);
 
+    let inventoryRequirements = Object.values(aggregatedCartItems)
+      .map(item => item.inventoryItemIds.map((id, idx) => ({id: id, amount: item.quantity * item.inventoryItemAmounts[idx]})))
+      .reduce((acc, inventory_items) => {
+        for (const {id, amount} of inventory_items) {
+          if (acc[id]) {
+            acc[id] += amount;
+          } else {
+            acc[id] = amount;
+          }
+        }
+        return acc;
+      }, {});
+    for (const inventoryItemId of Object.keys(inventoryRequirements)) {
+      let quantityInStock = inventoryItems.find((item) => item.inventoryItemId === parseFloat(inventoryItemId)).quantity;
+      if (quantityInStock < inventoryRequirements[inventoryItemId]) {
+        setInsufficientStock(true);
+        setIsCartSubmitting(false);
+        setCartLock(false);
+        return;
+      }
+    }
+
+    console.log("The menu items are: ", aggregatedCartItems);
+
     const orderData = {
       customer_id: '1',
       employee_id: '10',
-      menuitem_ids: Object.values(aggregatedCartItems).map(item => item.menuItemId), // Assuming item.id is available
+      menuitem_ids: Object.values(aggregatedCartItems).flatMap(item => Array(item.quantity).fill(item.menuItemId)),
       total: cartTotal.toFixed(2)
     };
 
@@ -111,7 +139,7 @@ export function CartContextProvider({children}) {
   };
 
   return (
-    <CartContext.Provider value={{cartItems, aggregatedCartItems, cartTotal, isCartOpen, isCartSubmitting, openCart, closeCart, setIsCartOpen, addItemToCart, changeItemQuantity, removeItemFromCart, submitOrder}}>
+    <CartContext.Provider value={{cartItems, aggregatedCartItems, cartTotal, isCartOpen, isCartSubmitting, openCart, closeCart, setIsCartOpen, addItemToCart, changeItemQuantity, removeItemFromCart, submitOrder, insufficientStock}}>
       {children}
       <OrderPanel cart={cartItems} setCart={setCartItems} isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </CartContext.Provider>
