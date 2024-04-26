@@ -24,11 +24,6 @@ const OrderHistory = () => {
   const [currentPageOrders, setCurrentPageOrders] = useState([]);
   const [errorMessage, setErrorMessage] = useState(''); // Add state for error message
 
-  // Function to check if the order is less than 10 minutes old
-  const isOrderPending = (placedTime) => {
-    const tenMinutesAgo = new Date(new Date() - 10 * 60000);
-    return new Date(placedTime) > tenMinutesAgo;
-  };
 
   // Function to handle status change (you might need to implement actual change logic based on your backend)
   const handleStatusChange = async (orderId, newStatus) => {
@@ -145,7 +140,7 @@ const OrderHistory = () => {
           {currentPageOrders.map(order => (
             <TableRow key={order.order_id} aria-label="Order">
               <TableCell aria-label="Order ID">{order.order_id}</TableCell>
-              <TableCell aria-label="Customer Name">{customers.find(c => c.customer_id === order.customer_id)?.name || 'Unknown Customer'}</TableCell>
+              <TableCell aria-label="Customer Name">{order.customer_name}</TableCell>
               <TableCell aria-label="Order Date">{new Date(order.placed_time).toString()}</TableCell>
               <TableCell>
               <div>
