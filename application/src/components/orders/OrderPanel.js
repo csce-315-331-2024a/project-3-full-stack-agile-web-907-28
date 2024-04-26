@@ -24,7 +24,7 @@ const OrderPanel = ({ onClose }) => {
         setCustomerName(userCredentials.name);
       }
     }
-  }, [isCartOpen]);
+  }, [isCartOpen, setCustomerName]);
 
 
   return (
