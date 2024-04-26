@@ -4,7 +4,7 @@ import Customer from '@/models/Customer';
 export default async function handler(req, res) {
   try {
     console.log("Getting customers");
-    const { rows } = await query("SELECT * FROM customers;");
+    const { rows } = await query("SELECT * FROM customers DESC LIMIT 1000;");
     console.log("Customers: ", rows);
     const customers = rows.map(Customer.parseDatabaseEntry);
     console.log("Customers after map: ", customers);

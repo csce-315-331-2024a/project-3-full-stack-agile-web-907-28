@@ -3,8 +3,8 @@ import Customer from '@/models/Customer';
 
 export default async function handler(req, res) {
   try {
-    console.log("Getting customers");
-    const result = await query("SELECT * FROM customers;");
+    const selectQuery = `SELECT * FROM customers;`;
+    const result = await query(selectQuery);
     return res.status(200).json(result);
   } catch (error) {
     console.error(error);
