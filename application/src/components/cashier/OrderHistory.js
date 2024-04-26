@@ -84,6 +84,11 @@ const OrderHistory = () => {
       .slice(startIndex, startIndex + ORDERS_PER_PAGE));
   }, [sortedOrders, startIndex, setCurrentPageOrders]);
 
+
+  useEffect(() => {
+    refreshCustomers();
+  }, []);
+
   return (
     <div className="px-10" aria-label="Order History">
       {errorMessage && (
