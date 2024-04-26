@@ -17,13 +17,12 @@ const ORDERS_PER_PAGE = 20;
  * @returns {JSX.Element} - The order history page.
  */
 const OrderHistory = () => {
-
+  const {customers, refreshCustomers} = useContext(CustomerContext);
   const [orders, refreshOrders] = useApiFetch('/api/orders/viewOrders', []);
   const [sortedOrders, sortProps, setSortProps] = useSortedArray(orders, SortProperties.byProperty("placed_time", "desc"));
   const [startIndex, setStartIndex] = useState(0);
   const [currentPageOrders, setCurrentPageOrders] = useState([]);
   const [errorMessage, setErrorMessage] = useState(''); // Add state for error message
-  const {customers, refreshCustomers} = useContext(CustomerContext);
 
   // Function to check if the order is less than 10 minutes old
   const isOrderPending = (placedTime) => {
@@ -145,7 +144,7 @@ const OrderHistory = () => {
           {currentPageOrders.map(order => (
             <TableRow key={order.order_id} aria-label="Order">
               <TableCell aria-label="Order ID">{order.order_id}</TableCell>
-              <TableCell aria-label="Customer Name">{customers.find(c => c.customer_id === order.customer_id).name}</TableCell>
+              <TableCell aria-label="Customer Name">{customers.find(c => c.customer_id === order.customer_id)?.name || 'Unknown Customer'}</TableCell>
               <TableCell aria-label="Order Date">{new Date(order.placed_time).toString()}</TableCell>
               <TableCell>
               <div>
