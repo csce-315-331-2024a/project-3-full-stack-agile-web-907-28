@@ -2,6 +2,9 @@ import {createContext, useContext, useEffect, useState} from "react";
 import {useDisclosure} from "@nextui-org/react";
 import OrderPanel from "@/components/orders/OrderPanel";
 import InventoryContext from "@/contexts/InventoryContext";
+import Customer from "@/models/Customer";
+import CustomerContext from "@/contexts/CustomerContext";
+
 
 const CartContext = createContext([]);
 export default CartContext;
@@ -20,6 +23,11 @@ export function CartContextProvider({children}) {
   const [isCartSubmitting, setIsCartSubmitting] = useState(false);
   const [cartLock, setCartLock] = useState(false);
   const [insufficientStock, setInsufficientStock] = useState(false);
+  const [customerName, setCustomerName] = useState("");
+  const [paymentType, setPaymentType] = useState("");
+  const [currentCustomer, setCurrentCustomer] = useState(null);
+  const {customers, refreshCustomers} = useContext(CustomerContext);
+
 
   // recalculate cart quantities & total when cart is modified
   useEffect(() => {
@@ -108,8 +116,36 @@ export function CartContextProvider({children}) {
 
     console.log("The menu items are: ", aggregatedCartItems);
 
+    //Create a new customer and use that customer's id for the order
+
+    try {
+      const response = await fetch('/api/customer/createCustomer', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({name: customerName, payment_method: paymentType, payment_number: 1}),
+      });
+    } catch (error) {
+      console.error('Error creating customer:', error);
+    }
+
+    //Now get the customer id from the database
+    const response = await fetch(`/api/customer/getOneCustomer?name=${encodeURIComponent(customerName)}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+  
+    const data = await response.json();
+    console.log("Current customer: ", data);
+    setCurrentCustomer(data);
+
+    refreshCustomers();
+
     const orderData = {
-      customer_id: '1',
+      customer_id: data.customer_id,
       employee_id: '10',
       menuitem_ids: Object.values(aggregatedCartItems).flatMap(item => Array(item.quantity).fill(item.menuItemId)),
       total: cartTotal.toFixed(2)
@@ -139,7 +175,7 @@ export function CartContextProvider({children}) {
   };
 
   return (
-    <CartContext.Provider value={{cartItems, aggregatedCartItems, cartTotal, isCartOpen, isCartSubmitting, openCart, closeCart, setIsCartOpen, addItemToCart, changeItemQuantity, removeItemFromCart, submitOrder, insufficientStock}}>
+    <CartContext.Provider value={{cartItems, aggregatedCartItems, cartTotal, isCartOpen, isCartSubmitting, openCart, closeCart, setIsCartOpen, addItemToCart, changeItemQuantity, removeItemFromCart, submitOrder, insufficientStock, customerName, setCustomerName, paymentType, setPaymentType}}>
       {children}
       <OrderPanel cart={cartItems} setCart={setCartItems} isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </CartContext.Provider>

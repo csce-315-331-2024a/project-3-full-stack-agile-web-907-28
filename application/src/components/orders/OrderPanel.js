@@ -11,15 +11,16 @@ import getUserCredentials from "../security/getUserCredentials"
  * @returns {JSX.Element} - The order panel.
  */
 const OrderPanel = ({ onClose }) => {
-  const {aggregatedCartItems, cartTotal, isCartOpen, isCartSubmitting, changeItemQuantity, removeItemFromCart, submitOrder, insufficientStock} = useContext(CartContext);
-  const [customerName, setCustomerName] = useState("");
-  const [paymentType, setPaymentType] = useState("");
+  const {aggregatedCartItems, cartTotal, isCartOpen, isCartSubmitting, changeItemQuantity, removeItemFromCart, submitOrder, insufficientStock, customerName, setCustomerName, paymentType, setPaymentType} = useContext(CartContext);
+
 
   //Get current user credentials, if it is customer then set the customerName
   useEffect(() => {
     if (isCartOpen) {
+      console.log("Checking if a customer exists");
       const userCredentials = getUserCredentials();
       if (userCredentials.role === "Customer") {
+        console.log("Customer exists");
         setCustomerName(userCredentials.name);
       }
     }
@@ -70,10 +71,14 @@ const OrderPanel = ({ onClose }) => {
                 isRequired
                 type="text"
                 value={customerName}
-                placeholder={customerName ? customerName : "Enter customer name"}
-                onChange={setCustomerName}
-              />
-              <RadioGroup label="Select Payment Method">
+                placeholder={customerName || "Enter customer name"}
+                onChange={(e) => setCustomerName(e.target.value)}
+            />
+              <RadioGroup
+                label="Select Payment Method"
+                value={paymentType}
+                onChange={(e) => setPaymentType(e.target.value)}
+              >
                 <Radio value="cash">Cash</Radio>
                 <Radio value="credit">Credit</Radio>
                 <Radio value="debit">Debit</Radio>
