@@ -2,7 +2,7 @@ import {
   Navbar,
   NavbarContent,
   NavbarBrand,
-  Image, Avatar,
+  Image, Avatar, Badge
 } from "@nextui-org/react";
 import NextLink from "next/link";
 import { UserManager } from "@/components/onboarding/UserManager";
@@ -12,7 +12,8 @@ import {useContext} from "react";
 import CartContext from "@/contexts/CartContext";
 import {FaCartShopping} from "react-icons/fa6";
 import TTSButton from "../text_to_speech/textToSpeechComponent";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+
 
 
 
@@ -27,6 +28,9 @@ export default function SiteHeader() {
   const toggleTTS = () => {
     setTTSEnabled(prevState => !prevState);
   };
+
+ 
+
 
   return (
     <div>
@@ -61,14 +65,14 @@ export default function SiteHeader() {
           </li>
           {cartItems.length > 0 ? (
             <li>
-              <Avatar
-                as="button"
-                aria-label="Open cart"
-                isBordered
-                showFallback
-                fallback={<FaCartShopping className="text-2xl" />}
-                onClick={openCart}
-              />
+                <Avatar
+                  as="button"
+                  aria-label="Open cart"
+                  isBordered
+                  showFallback
+                  fallback={<FaCartShopping className="text-2xl" />}
+                  onClick={openCart}
+                />
             </li>
           ) : (
             <li></li>
