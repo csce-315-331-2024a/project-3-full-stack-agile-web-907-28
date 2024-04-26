@@ -2,12 +2,11 @@ import { query } from '@/utils/db';
 import Customer from '@/models/Customer';
 
 export default async function handler(req, res) {
+  const range = req.query.range;
+
   try {
-    console.log("Getting customers");
-    const { rows } = await query("SELECT * FROM customers DESC LIMIT 1000;");
-    console.log("Customers: ", rows);
+    const { rows } = await query("SELECT * FROM customers ORDER BY customer_id DESC LIMIT 40000");
     const customers = rows.map(Customer.parseDatabaseEntry);
-    console.log("Customers after map: ", customers);
     return res.status(200).json(customers);
   } catch (error) {
     console.error(error);
