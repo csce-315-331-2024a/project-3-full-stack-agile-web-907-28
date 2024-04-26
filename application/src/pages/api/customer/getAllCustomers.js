@@ -1,17 +1,13 @@
 import { query } from '@/utils/db';
-import InventoryItem from "@/models/InventoryItem";
+import Customer from '@/models/Customer';
 
-/**
- * This function handles the GET request for inventory items
- * @param req {Request} The request object.
- * @param res {Response} The response object.
- */
 export default async function handler(req, res) {
   try {
-    const { rows } = await query("SELECT * FROM inventoryitem;");
-    const inventoryItems = rows.map(InventoryItem.parseDatabaseEntry);
-    return res.status(200).json(inventoryItems);
-  } catch (e) {
+    console.log("Getting customers");
+    const { rows } = await query("SELECT * FROM customers;");
+    return res.status(200).json(rows);
+  } catch (error) {
+    console.error(error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 }
