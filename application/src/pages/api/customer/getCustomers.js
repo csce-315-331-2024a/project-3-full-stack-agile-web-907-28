@@ -1,7 +1,7 @@
 import { query } from '@/utils/db';
 import Customer from '@/models/Customer';
 
-export default async function getCustomers(req, res) {
+export default async function handler(req, res) {
   try {
     const { rows } = await query('SELECT * FROM customers;');
     const customers = rows.map(Customer.parseDatabaseEntry);
