@@ -85,10 +85,6 @@ const OrderHistory = () => {
   }, [sortedOrders, startIndex, setCurrentPageOrders]);
 
 
-  useEffect(() => {
-    refreshCustomers();
-  }, []);
-
   return (
     <div className="px-10" aria-label="Order History">
       {errorMessage && (
