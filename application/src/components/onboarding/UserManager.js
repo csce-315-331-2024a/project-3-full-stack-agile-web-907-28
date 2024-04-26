@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { signIn, signOut, useSession } from "next-auth/react";
 import getUserCredentials from "@/components/security/getUserCredentials";
-
 import {
   Avatar,
   Dropdown,
   DropdownMenu,
   DropdownTrigger,
-  DropdownItem, DropdownSection,
+  DropdownItem,
+  DropdownSection,
+  Badge
 } from "@nextui-org/react"
 import { FaGoogle } from "react-icons/fa";
 import UserCredentials from "@/models/UserCredentials";
@@ -34,6 +35,7 @@ export const UserManager = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [ credentials, setCredentials ] = useState("");
+  const [notifications, setNotifications] = useState([]);
 
   // Redirect to credentials page if user is new
   useEffect(() => {
@@ -82,29 +84,52 @@ export const UserManager = () => {
     Customer: [pages.Menu],
   };
 
+   //call to api/notifications/getFulfilled with the name of the session
+   useEffect(() => {
+    if (session?.user?.name) {
+      fetch(`/api/notifications/getFulfilled?name=${session.user.name}`)
+        .then(res => res.json())
+        .then(data => {
+          setNotifications(data.length);
+          console.log(data);
+        });
+    }
+  }, [session?.user?.name]); // This ensures useEffect reacts to changes in session.user.name
+
   // Return the user manager component
   return (
     <Dropdown>
       <DropdownTrigger>
-        {
-          session ? (
-            <Avatar
-              aria-label={`Signed in as ${session.user.name}`}
-              name={session.user.name}
-              as="button"
-              isBordered
-              showFallback
-              src={session.user.image}
-            />
-          ) : (
-            <Avatar
-              aria-label="Not signed in"
-              as="button"
-              isBordered
-              showFallback
-            />
-          )
-        }
+      {session ? (
+      notifications > 0 ? (
+        <Badge content={notifications} color="primary">
+          <Avatar
+            aria-label={`Signed in as ${session.user.name}`}
+            name={session.user.name}
+            as="button"
+            isBordered
+            showFallback
+            src={session.user.image}
+          />
+        </Badge>
+      ) : (
+        <Avatar
+          aria-label={`Signed in as ${session.user.name}`}
+          name={session.user.name}
+          as="button"
+          isBordered
+          showFallback
+          src={session.user.image}
+        />
+      )
+    ) : (
+      <Avatar
+        aria-label="Not signed in"
+        as="button"
+        isBordered
+        showFallback
+      />
+    )}
       </DropdownTrigger>
       {
         session ? (
