@@ -145,7 +145,7 @@ export const UserManager = () => {
             </DropdownItem>
             </DropdownSection>
             <DropdownSection name="Navigation" showDivider>
-            {navigationItems[credentials]?.map(({displayName, path}) => (
+            {notifications > 0 && navigationItems[credentials]?.map(({displayName, path}) => (
               <DropdownItem key={path} onClick={() => router.push(path)}>
                 {displayName}
               </DropdownItem>
