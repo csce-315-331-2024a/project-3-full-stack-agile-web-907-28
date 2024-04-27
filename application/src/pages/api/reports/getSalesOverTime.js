@@ -1,5 +1,11 @@
 import {query} from "@/utils/db";
 
+/**
+ * This function handles the retrieval of sales over time. It uses the /api/reports/getSalesOverTime endpoint to retrieve sales over time.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Promise<Object>} - The response object.
+ */
 export default async function handler(req, res) {
   if (req.method !== "GET") {
     res.setHeader("Allow", ["GET"]);

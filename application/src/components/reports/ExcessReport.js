@@ -4,7 +4,11 @@ import {DateRangeContext} from "@/contexts/DateRangeContext";
 import {useApiFetch} from "@/react-hooks/useApiFetch";
 import ListPagination from "@/components/utils/ListPagination";
 
-
+/**
+ * This function handles the creation of the Excess Report. It fetches the data from the /api/inventory_dashboard/getExcessReport endpoint and displays it in a table.
+ * @param {*} props - The props of the component.
+ * @returns {JSX.Element}
+ */
 export default function ExcessReport({ ...props }) {
   const [dateRange, setDateRange] = useContext(DateRangeContext);
   const [fetchUrl, setFetchUrl] = useState("");
@@ -27,7 +31,7 @@ export default function ExcessReport({ ...props }) {
         <p className="text-xl font-semibold">Excess Inventory</p>
       </CardHeader>
       {
-        data === [] ? (
+        data.length === 0 ? (
           <Spinner />
         ) : (
           <>

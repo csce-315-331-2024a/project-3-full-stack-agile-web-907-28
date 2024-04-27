@@ -25,7 +25,12 @@ const OrderHistory = () => {
   const [errorMessage, setErrorMessage] = useState(''); // Add state for error message
 
 
-  // Function to handle status change (you might need to implement actual change logic based on your backend)
+  /**
+   * This function handles the status change of an order. It sends a POST request to the /api/orders/changeStatus endpoint with the order_id and order_status.
+   * @param {number} orderId - The ID of the order.
+   * @param {string} newStatus - The new status of the order.
+   * @returns {Promise<void>} - A Promise that resolves when the request is successful.
+   */
   const handleStatusChange = async (orderId, newStatus) => {
     try {
       const response = await fetch(`/api/orders/changeStatus`, {
@@ -41,6 +46,11 @@ const OrderHistory = () => {
     }
   };
 
+  /**
+   * This function handles the edit of an order. It sends a POST request to the /api/orders/updateOrder endpoint with the newOrder.
+   * @param {Object} newOrder - The new order.
+   * @returns {Promise<void>} - A Promise that resolves when the request is successful.
+   */
   const handleEditOrder = async (newOrder) => {
     try {
       const response = await fetch('/api/orders/updateOrder', {
@@ -57,7 +67,11 @@ const OrderHistory = () => {
     }
   }
 
-  //HANDLE DELETE
+  /**
+   * This function handles the deletion of an order. It sends a DELETE request to the /api/orders/deleteOrder endpoint with the orderId.
+   * @param {number} orderId - The ID of the order.
+   * @returns {Promise<void>} - A Promise that resolves when the request is successful.
+   */
   const handleDelete = async (orderId) => {
     try {
       const response = await fetch(`/api/orders/deleteOrder?orderId=${orderId}`, {
@@ -134,7 +148,6 @@ const OrderHistory = () => {
             </ObjectArraySortButton>
           </TableColumn>
           <TableColumn>Actions</TableColumn>
-          {/* Add more columns as needed */}
         </TableHeader>
         <TableBody aria-label="Order History">
           {currentPageOrders.map(order => (

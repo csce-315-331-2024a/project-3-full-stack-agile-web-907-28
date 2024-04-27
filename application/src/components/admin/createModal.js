@@ -13,6 +13,10 @@ export default function CreateUserModal({ isOpen, onClose, onCreateComplete }) {
     const [name, setName] = useState("");
     const [credentials, setCredentials] = useState("");
 
+    /**
+     * This function handles the submission of the form. It sends a POST request to the /api/admin/createUser endpoint with the email, name, and credentials of the new user.
+     * @returns {Promise<void>} - A Promise that resolves when the request is successful.
+     */
     const handleSubmit = async () => {
         const body = { email, name, credentials: credentials[Object.keys(credentials)[0]] };
 

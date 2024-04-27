@@ -63,7 +63,6 @@ const OrderPanel = ({ onClose }) => {
               ))}
             </TableBody>
           </Table>
-          {/*Create a div that will hold an input for the customer name as well as a radio button for type of payment*/}
           <div>
             <div className="pt-5">
               <Input

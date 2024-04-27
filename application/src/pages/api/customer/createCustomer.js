@@ -1,6 +1,12 @@
 import { query } from '@/utils/db';
 import Customer from '@/models/Customer';
 
+/**
+ * This function handles the creation of a customer. It uses the /api/customer/createCustomer endpoint to create a customer.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Promise<Object>} - The response object.
+ */
 export default async function createCustomer(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });

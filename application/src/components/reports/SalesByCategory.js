@@ -43,7 +43,7 @@ export default function SalesByCategory({...props}) {
         <p className="text-xl font-semibold">Sales By Category</p>
       </CardHeader>
       <CardBody>
-        {salesByCategory === {} ? (
+        {salesByCategory.length === 0 ? (
           <Spinner />
         ) : (
           <Chart options={chartOptions} height="90%" type="donut" series={salesByCategory} />

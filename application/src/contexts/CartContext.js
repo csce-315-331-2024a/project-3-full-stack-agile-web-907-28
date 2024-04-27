@@ -49,9 +49,20 @@ export function CartContextProvider({children}) {
     }
   }, [cartItems, cartLock, setAggregatedCartItems, setCartTotal]);
 
+  /**
+   * This function handles the opening of the cart. It opens the cart.
+   */
   const openCart = () => setIsCartOpen(true);
+
+  /**
+   * This function handles the closing of the cart. It closes the cart.
+   */
   const closeCart = () => setIsCartOpen(false);
 
+  /**
+   * This function handles the addition of an item to the cart. It adds the item to the cartItems state and opens the cart.
+   * @param {Object} item - The item to be added to the cart.
+   */
   const addItemToCart = (item) => {
     while (isCartSubmitting || cartLock) {}
     setCartLock(true);
@@ -62,6 +73,10 @@ export function CartContextProvider({children}) {
     setCartLock(false);
   };
 
+  /**
+   * This function handles the removal of an item from the cart. It removes the item from the cartItems state and closes the cart if the cartItems state is empty.
+   * @param {Object} item - The item to be removed from the cart.
+   */
   const removeItemFromCart = (item) => {
     while (isCartSubmitting || cartLock) {}
     setCartLock(true);
@@ -73,6 +88,11 @@ export function CartContextProvider({children}) {
     setCartLock(false);
   }
 
+  /**
+   * This function handles the changing of the quantity of an item in the cart. It removes the item from the cartItems state and adds the item to the cartItems state the specified number of times.
+   * @param {Object} item - The item to be changed in the cart.
+   * @param {number} newQuantity - The new quantity of the item.
+   */
   const changeItemQuantity = (item, newQuantity) => {
     while (isCartSubmitting || cartLock) {}
     setCartLock(true);
@@ -87,6 +107,9 @@ export function CartContextProvider({children}) {
     setCartLock(false);
   };
 
+  /**
+   * This function handles the submission of the order. It creates a new customer and uses that customer's id for the order. It then sends a POST request to the /api/orders/order endpoint with the order data.
+   */
   const submitOrder = async () => {
     while (isCartSubmitting || cartLock) {}
     setCartLock(true);

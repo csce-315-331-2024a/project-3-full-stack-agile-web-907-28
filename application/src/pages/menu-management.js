@@ -12,6 +12,12 @@ import {InventoryContextProvider} from "@/contexts/InventoryContext";
  * @constructor
  */
 export default function MenuManagement() {
+  
+  /**
+   * This function handles the authorization of the user. It checks if the user is authorized to access the menu management page.
+   * @param {UserCredentials} credential - The user's credentials.
+   * @returns {boolean} - The authorization status.
+   */
   function isCredentialAuthorized(credential) {
     return credential === UserCredentials.Manager || credential === UserCredentials.Admin;
   }

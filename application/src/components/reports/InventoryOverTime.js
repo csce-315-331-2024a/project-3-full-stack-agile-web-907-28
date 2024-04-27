@@ -98,7 +98,7 @@ export default function InventoryOverTime({...props}) {
         </div>
       </CardHeader>
       <CardBody>
-        {series.data === [] ? (
+        {series.data.length === 0 ? (
           <Spinner />
         ) : (
           <Chart options={options} height={window.innerHeight - 210} series={[series]} type="bar" />
