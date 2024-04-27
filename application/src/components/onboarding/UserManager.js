@@ -157,13 +157,13 @@ useEffect(() => {
             </DropdownItem>
             </DropdownSection>
             <DropdownSection name="Navigation" showDivider>
-            {notifications > 0 && navigationItems[credentials]?.map(({displayName, path}) => (
+            {navigationItems[credentials]?.map(({displayName, path}) => (
               <DropdownItem key={path} onClick={() => router.push(path)}>
                 {displayName}
               </DropdownItem>
             ))}
             </DropdownSection>
-            {fulfilled.map((item) => (
+            {notifications > 0 && fulfilled.map((item) => (
               <DropdownItem key={item.order_id}>
                 Your order for ${item.total} has been fulfilled.
               </DropdownItem>
