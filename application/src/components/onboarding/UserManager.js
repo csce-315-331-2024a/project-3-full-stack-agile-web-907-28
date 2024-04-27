@@ -36,6 +36,7 @@ export const UserManager = () => {
   const router = useRouter();
   const [ credentials, setCredentials ] = useState("");
   const [notifications, setNotifications] = useState([]);
+  const [fulfilled, setFulfilled] = useState([]);
 
   // Redirect to credentials page if user is new
   useEffect(() => {
@@ -46,7 +47,7 @@ export const UserManager = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email: session.user.email, name: session.user.name, credentials: 'Customer' }), // Include email and name in the request body
+        body: JSON.stringify({ email: session.user.email, name: session.user.name, credentials: 'Customer' }),
       });
       router.push('/menu');
     }
@@ -91,11 +92,13 @@ export const UserManager = () => {
         .then(res => res.json())
         .then(data => {
           setNotifications(data.length);
-          console.log(data);
+          setFulfilled(data);
         });
     }
   }, [session?.user?.name]); // This ensures useEffect reacts to changes in session.user.name
 
+
+  console.log(fulfilled);
   // Return the user manager component
   return (
     <Dropdown>
@@ -148,6 +151,11 @@ export const UserManager = () => {
               </DropdownItem>
             ))}
             </DropdownSection>
+            {fulfilled.map((item) => (
+              <DropdownItem key={item.order_id}>
+                Your order for ${item.total} has been fulfilled.
+              </DropdownItem>
+            ))}
             <DropdownSection>
               <DropdownItem key="logout" color="danger" onClick={handleSignOut}>
                 Sign Out
