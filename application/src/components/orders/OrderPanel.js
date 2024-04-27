@@ -65,7 +65,7 @@ const OrderPanel = ({ onClose }) => {
           </Table>
           {/*Create a div that will hold an input for the customer name as well as a radio button for type of payment*/}
           <div>
-            <div>
+            <div className="pt-5">
               <Input
                 label="Customer Name"
                 isRequired
@@ -78,6 +78,7 @@ const OrderPanel = ({ onClose }) => {
                 label="Select Payment Method"
                 value={paymentType}
                 onChange={(e) => setPaymentType(e.target.value)}
+                className="pt-5"
               >
                 <Radio value="cash">Cash</Radio>
                 <Radio value="credit">Credit</Radio>
@@ -93,7 +94,7 @@ const OrderPanel = ({ onClose }) => {
                   Out of stock
                 </Button>
               ) : (
-                <Button disabled={isCartSubmitting} onClick={submitOrder}>
+                <Button disabled={isCartSubmitting || !customerName || !paymentType} onClick={submitOrder}>
                   {isCartSubmitting ? 'Submitting...' : 'Submit Order'}
                 </Button>
 

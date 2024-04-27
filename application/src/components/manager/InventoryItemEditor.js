@@ -108,14 +108,14 @@ export default function InventoryItemEditor({trigger, onInventoryItemChange, inv
                   isRequired
                   label="Purchase Date"
                   value={purchaseDate}
-                  onValueChange={setPurchaseDate}
+                  onChange={setPurchaseDate}
                   isInvalid={!isPurchaseDateValid && isPurchaseDateChanged}
                 />
                 <DatePicker
                   isRequired
                   label="Expiry Date"
                   value={expiryDate}
-                  onValueChange={setExpiryDate}
+                  onChange={setExpiryDate}
                   isInvalid={!isExpiryDateValid && isExpiryDateChanged}
                 />
                 <Input

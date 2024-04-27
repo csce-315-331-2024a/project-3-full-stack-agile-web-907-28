@@ -148,6 +148,8 @@ export default function MenuItemEditor({trigger, onMenuItemChange, menuItem = nu
                         const newIngredients = ingredients.slice();
                         newIngredients.push(newIngredient);
                         setIngredients(newIngredients);
+                        console.log(newIngredients);
+                        console.log(inventoryItems);
                       }}
                       inventoryItems={inventoryItems}
                     />
@@ -163,8 +165,8 @@ export default function MenuItemEditor({trigger, onMenuItemChange, menuItem = nu
                         {ingredients.map((ingredient, idx) => (
                           <TableRow key={idx}>
                             <TableCell>{
-                              inventoryItems.some(item => item.inventoryItemId === ingredient.id) ? (
-                                inventoryItems.find(item => item.inventoryItemId === ingredient.id).name
+                              inventoryItems.some(item => item.inventoryItemId === parseInt(ingredient.id)) ? (
+                                inventoryItems.find(item => item.inventoryItemId === parseInt(ingredient.id)).name
                               ) : (
                                 ingredient.id
                               ).toString()
