@@ -14,6 +14,10 @@ import {Button, Modal, ModalBody, ModalContent, ModalFooter, useDisclosure} from
 export default function ConfirmationDialog({trigger, onConfirm, body="Are you sure?", noText="No", yesText="Yes"}) {
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
+  /**
+   * This function handles the confirmation of the action. It closes the Modal and calls the onConfirm callback.
+   * @param {function} onClose - The function to close the Modal.
+   */
   const handleConfirm = (onClose) => {
     onClose();
     onConfirm();

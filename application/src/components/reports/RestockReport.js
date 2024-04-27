@@ -22,7 +22,7 @@ export default function RestockReport({ ...props }) {
         <p className="text-xl font-semibold">Restock Report</p>
       </CardHeader>
       {
-        inventoryItems === [] ? (
+        inventoryItems.length === 0 ? (
           <Spinner />
         ) : (
           <>

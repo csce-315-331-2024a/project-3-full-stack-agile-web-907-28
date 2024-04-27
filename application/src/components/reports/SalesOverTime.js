@@ -101,7 +101,7 @@ export default function SalesOverTime({...props}) {
         <DateRangePicker aria-label="Chart date range" className="max-w-xs" value={dateRange} onChange={setDateRange} visibleMonths={3} />
       </CardHeader>
       <CardBody>
-        {salesTotals === [] ? (
+        {salesTotals.length === 0 ? (
           <Spinner />
         ) : (
           <Chart options={showRevenue ? revenueChartOptions : salesChartOptions} height={window.innerHeight - 210} type="line" series={showRevenue ? revenueTotals : salesTotals} />

@@ -30,6 +30,11 @@ export default function OrderEditor({trigger, onOrderChange, order}) {
   const [menuItemIds, setMenuItemIds] = useState(order.menuitem_ids);
   const [error, setError] = useState("");
 
+  /**
+   * This function aggregates the quantities of each menu item in the order.
+   * @param {Array} ids - The array of menu item IDs.
+   * @returns {Object} - An object where the keys are the menu item IDs and the values are the quantities.
+   */
   const aggregateCartQuantities = (ids) => {
     let quantities = {};
     for (const id of ids) {
@@ -46,6 +51,11 @@ export default function OrderEditor({trigger, onOrderChange, order}) {
     setAggregatedCart(aggregateCartQuantities(menuItemIds));
   }, [menuItemIds]);
 
+  /**
+   * This function changes the quantity of a menu item in the order.
+   * @param {number} item_id - The ID of the menu item.
+   * @param {number} newQuantity - The new quantity of the menu item.
+   */
   const changeItemQuantity = (item_id, newQuantity) => {
     console.log(item_id, newQuantity);
     let newMenuItemIds = menuItemIds.filter(id => id !== item_id);
@@ -57,11 +67,19 @@ export default function OrderEditor({trigger, onOrderChange, order}) {
     setMenuItemIds(newMenuItemIds);
   }
 
+  /**
+   * This function handles the opening of the Modal. It sets the menuItemIds state to the menuitem_ids of the order.
+   */
   const handleOpen = () => {
     setMenuItemIds(order.menuitem_ids);
     setError("");
     onOpen();
   };
+
+  /**
+   * This function handles the submission of the form. It sets the menuItemIds state to the menuitem_ids of the order.
+   * @param {function} onClose - The function to close the Modal.
+   */
   const handleSubmit = (onClose) => {
     try {
       let newOrder = {...order};

@@ -66,10 +66,16 @@ export const UserManager = () => {
     sc();
   }, [status, setCredentials]);
 
+  /**
+   * This function handles the sign in of the user. It redirects to the sign in URL.
+   */
   const handleSignIn = async () => {
     await signIn("google", { callbackUrl: "/" });
   }
 
+  /**
+   * This function handles the sign out of the user. It redirects to the sign out URL.
+   */
   const handleSignOut = async () => {
     const signOutResponse = await signOut({ redirect: false, callbackUrl: "/login" });
     if (signOutResponse.url) {

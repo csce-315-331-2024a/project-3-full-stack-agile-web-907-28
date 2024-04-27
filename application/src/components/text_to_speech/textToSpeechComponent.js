@@ -1,5 +1,11 @@
 import { useState, useEffect } from 'react';
 
+/**
+ * This function handles the creation of the Text to Speech button. It uses the window.speechSynthesis API to speak the text.
+ * @param {boolean} ttsEnabled - The enabled state of the Text to Speech.
+ * @param {function} onToggle - The callback function for toggling the Text to Speech.
+ * @returns {JSX.Element}
+ */
 const TTSButton = ({ ttsEnabled, onToggle }) => {
   const [enabled, setEnabled] = useState(ttsEnabled);
   const [currentUtterance, setCurrentUtterance] = useState(null);
@@ -48,6 +54,10 @@ const TTSButton = ({ ttsEnabled, onToggle }) => {
     };
   }, [enabled, currentUtterance]);
 
+  /**
+   * This function handles the speaking of the text. It uses the window.speechSynthesis API to speak the text.
+   * @param {string} text - The text to speak.
+   */
   const speak = (text) => {
     const utterance = new SpeechSynthesisUtterance(text);
     setCurrentUtterance(utterance);
@@ -57,6 +67,9 @@ const TTSButton = ({ ttsEnabled, onToggle }) => {
     window.speechSynthesis.speak(utterance);
   };
 
+  /**
+   * This function handles the toggling of the Text to Speech. It sets the enabled state to the opposite of the current enabled state and calls the onToggle callback.
+   */
   const toggleTTS = () => {
     const newEnabled = !enabled;
     setEnabled(newEnabled);
