@@ -1,6 +1,12 @@
 import { query } from '@/utils/db';
 import Customer from '@/models/Customer';
 
+/**
+ * This function handles the retrieval of customers. It uses the /api/customer/getCustomers endpoint to retrieve customers.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Promise<Object>} - The response object.
+ */
 export default async function handler(req, res) {
   const range = req.query.range;
 

@@ -8,6 +8,12 @@ import {DateRangeProvider} from "@/contexts/DateRangeContext";
 
 
 export default function SalesReport() {
+
+  /**
+   * This function handles the authorization of the user. It checks if the user is authorized to access the sales report.
+   * @param {UserCredentials} credential - The user's credentials.
+   * @returns {boolean} - The authorization status.
+   */
   function isCredentialAuthorized(credential) {
     return credential === UserCredentials.Admin || credential === UserCredentials.Manager;
   }

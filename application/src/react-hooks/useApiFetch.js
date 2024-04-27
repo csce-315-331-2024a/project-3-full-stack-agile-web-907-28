@@ -12,6 +12,9 @@ export function useApiFetch(url, initialResult, transformFn=x=>x) {
   const [result, setResult] = useState(initialResult);
   const [fetchTrigger, setFetchTrigger] = useState(true);
 
+  /**
+   * This function handles the refresh of the data. It sets the fetchTrigger to true.
+   */
   const refresh = () => setFetchTrigger(true);
 
   useEffect(() => {

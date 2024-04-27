@@ -16,14 +16,26 @@ export default function useValidatedState(initialState, validationFn) {
   const [changed, setChanged] = useState(false);
   const [state, setState] = useState(initialState);
 
+  /**
+   * This function handles the validation of the state. It uses the validation function to validate the state.
+   * @returns {boolean} - The validation status.
+   */
   const isStateValid = useMemo(() => {
     return validationFn(state);
   }, [state, validationFn]);
 
+  /**
+   * This function handles the setting of the state. It sets the state and sets the changed flag to true.
+   * @param {unknown} s - The state to be set.
+   */
   const stateSetter = (s) => {
     setState(s);
     setChanged(true);
   };
+
+  /**
+   * This function handles the resetting of the state. It resets the state to the initial state and sets the changed flag to false.
+   */
   const stateResetter = () => {
     setState(initialState);
     setChanged(false);
