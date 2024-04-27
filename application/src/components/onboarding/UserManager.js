@@ -85,17 +85,29 @@ export const UserManager = () => {
     Customer: [pages.Menu],
   };
 
-   //call to api/notifications/getFulfilled with the name of the session
-   useEffect(() => {
-    if (session?.user?.name) {
-      fetch(`/api/notifications/getFulfilled?name=${session.user.name}`)
-        .then(res => res.json())
-        .then(data => {
-          setNotifications(data.length);
-          setFulfilled(data);
-        });
-    }
-  }, [session?.user?.name]); // This ensures useEffect reacts to changes in session.user.name
+useEffect(() => {
+  if (session?.user?.name) {
+    fetch(`/api/notifications/getFulfilled?name=${session.user.name}`)
+      .then(res => {
+        if (!res.ok) {
+          throw new Error('Failed to fetch');
+        }
+        return res.json();
+      })
+      .then(data => {
+        if (!Array.isArray(data)) {
+          throw new Error('Data is not an array');
+        }
+        setNotifications(data.length);
+        setFulfilled(data);
+      })
+      .catch(error => {
+        console.error('Error fetching notifications:', error);
+        setNotifications(0);
+        setFulfilled([]);
+      });
+  }
+}, [session?.user?.name]);
 
 
   console.log(fulfilled);
