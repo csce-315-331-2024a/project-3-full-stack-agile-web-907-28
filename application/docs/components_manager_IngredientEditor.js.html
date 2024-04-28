@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/manager/IngredientEditor.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/manager/IngredientEditor.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import {
+  Autocomplete, AutocompleteItem,
+  Button, Card, CardBody, CardFooter, CardHeader, Checkbox,
+  Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader, Switch, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow,
+  useDisclosure
+} from "@nextui-org/react";
+import MenuItem from "@/models/MenuItem";
+import useValidatedState from "@/react-hooks/useValidatedState";
+import {useContext, useState} from "react";
+import InventoryContext from "@/contexts/InventoryContext";
+
+
+/**
+ * A modal which allows for creation &amp; editing of individual components of menu items.
+ * @param {(onOpen: () => void) => ReactNode} trigger - The trigger to open the Modal.
+ * @param {(MenuItem) => void} onIngredientChange - The callback function for submitting the new/modified menu item component.
+ * @param {[InventoryItem]} inventoryItems - The collection of InventoryItems used to validate IDs.
+ * @param {MenuItem | null} ingredient - The ingredient to edit.
+ * @returns {JSX.Element}
+ * @constructor
+ */
+export default function IngredientEditor({trigger, onIngredientChange, ingredient = null}) {
+  const {isOpen, onOpen, onOpenChange} = useDisclosure();
+  const {inventoryItems} = useContext(InventoryContext);
+
+  const defaultId = ingredient == null ? "" : ingredient.id.toString();
+  const defaultAmount = ingredient == null ? "" : ingredient.amount.toString();
+
+  const isNumber = (value) => !isNaN(value) &amp;&amp; !isNaN(parseFloat(value));
+
+  const [id, setId, resetId, isIdValid, isIdChanged] = useValidatedState(defaultId, n => isNumber(n) &amp;&amp; parseInt(n) >= 0);
+  const [amount, setAmount, resetAmount, isAmountValid, isAmountChanged] = useValidatedState(defaultAmount, n => isNumber(n) &amp;&amp; parseFloat(n) >= 0);
+
+  /**
+   * This function handles the opening of the Modal. It resets the id and amount states and opens the Modal.
+   */
+  const handleOpen = () => {
+    resetId();
+    resetAmount();
+    onOpen();
+  }
+
+  /**
+   * This function handles the submission of the form. It sends a POST request to the /api/orders/updateOrder endpoint with the newOrder.
+   * @param {function} onClose - The function to close the Modal.
+   */
+  const handleSubmit = (onClose) => {
+    try {
+      if (isIdValid &amp;&amp; isAmountValid) {
+        onIngredientChange({
+          id: id,
+          amount: amount
+        });
+        onClose();
+      }
+    } catch (e) {
+      console.error("Error submitting ingredient", e);
+    } finally {
+      setId(id);
+      setAmount(amount);
+    }
+  };
+
+  return (
+    &lt;div>
+      {trigger(handleOpen)}
+      &lt;Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="top-center">
+        &lt;ModalContent>
+          {(onClose) => (
+            &lt;div>
+              {
+                ingredient == null ? (
+                  &lt;ModalHeader>Create Ingredient&lt;/ModalHeader>
+                ) : (
+                  &lt;ModalHeader>Edit Ingredient&lt;/ModalHeader>
+                )
+              }
+              &lt;ModalBody>
+                {inventoryItems.length !== 0 ? (
+                  &lt;Autocomplete
+                    placeholder="Inventory item..."
+                    selectedKey={id}
+                    onSelectionChange={setId}
+                    isInvalid={!isIdValid &amp;&amp; isIdChanged}
+                  >
+                    {inventoryItems.map(item => (
+                      &lt;AutocompleteItem key={item.inventoryItemId}>{item.name}&lt;/AutocompleteItem>
+                    ))}
+                  &lt;/Autocomplete>
+                ) : (
+                  &lt;Input
+                    isRequired
+                    label="ID"
+                    value={id}
+                    onValueChange={setId}
+                    isInvalid={!isIdValid &amp;&amp; isIdChanged}
+                  />
+                )}
+                &lt;Input
+                  isRequired
+                  label="Amount"
+                  type="number"
+                  value={amount}
+                  onValueChange={setAmount}
+                  isInvalid={!isAmountValid &amp;&amp; isAmountChanged}
+                />
+              &lt;/ModalBody>
+              &lt;ModalFooter>
+                &lt;Button onPress={onClose}>Cancel&lt;/Button>
+                &lt;Button color="primary" onPress={() => handleSubmit(onClose)}>Submit&lt;/Button>
+              &lt;/ModalFooter>
+            &lt;/div>
+          )}
+        &lt;/ModalContent>
+      &lt;/Modal>
+    &lt;/div>
+  )
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Customer.html">Customer</a></li><li><a href="InventoryItem.html">InventoryItem</a></li><li><a href="MenuItem.html">MenuItem</a></li><li><a href="SortProperties_SortProperties.html">SortProperties</a></li><li><a href="module.html#.exports">exports</a></li><li><a href="module.exports_module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#CartContextProvider">CartContextProvider</a></li><li><a href="global.html#CustomerContextProvider">CustomerContextProvider</a></li><li><a href="global.html#DateRangeProvider">DateRangeProvider</a></li><li><a href="global.html#GoogleTranslate">GoogleTranslate</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#InventoryContextProvider">InventoryContextProvider</a></li><li><a href="global.html#MenuContextProvider">MenuContextProvider</a></li><li><a href="global.html#OrderHistory">OrderHistory</a></li><li><a href="global.html#OrderPanel">OrderPanel</a></li><li><a href="global.html#TTSButton">TTSButton</a></li><li><a href="global.html#UserCredentials">UserCredentials</a></li><li><a href="global.html#UserManager">UserManager</a></li><li><a href="global.html#WeatherComponent">WeatherComponent</a></li><li><a href="global.html#compareFnFunctiontocomparetwoarrayitems.">compareFn Function to compare two array items.</a></li><li><a href="global.html#parseDatabaseEntry">parseDatabaseEntry</a></li><li><a href="global.html#parseJson">parseJson</a></li><li><a href="global.html#query">query</a></li><li><a href="global.html#translateText">translateText</a></li><li><a href="global.html#useApiFetch">useApiFetch</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Sun Apr 28 2024 12:56:03 GMT-0500 (Central Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

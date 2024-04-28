@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/cashier/OrderEditor.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/cashier/OrderEditor.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import {
+  Autocomplete, AutocompleteItem, Button, Input,
+  Modal, ModalBody,
+  ModalContent, ModalFooter,
+  ModalHeader, Select,
+  Table,
+  TableBody, TableCell,
+  TableColumn,
+  TableHeader, TableRow,
+  useDisclosure
+} from "@nextui-org/react";
+import {useContext, useEffect, useState} from "react";
+import MenuContext from "@/contexts/MenuContext";
+import ConfirmationDialog from "@/components/utils/ConfirmationDialog";
+import {FaTrashCan} from "react-icons/fa6";
+
+
+/**
+ * This component creates a Modal which allows order contents to be edited.
+ * @param trigger {(onOpen: () => void) => ReactNode} Trigger to open the Modal.
+ * @param onOrderChange Callback function for submitting the new/modified order.
+ * @param order {Object | null} (optional) The order to edit.
+ * @returns {JSX.Element}
+ * @constructor
+ */
+export default function OrderEditor({trigger, onOrderChange, order}) {
+  const {isOpen, onOpen, onOpenChange} = useDisclosure();
+  const {menuItems} = useContext(MenuContext);
+
+  const [menuItemIds, setMenuItemIds] = useState(order.menuitem_ids);
+  const [error, setError] = useState("");
+
+  /**
+   * This function aggregates the quantities of each menu item in the order.
+   * @param {Array} ids - The array of menu item IDs.
+   * @returns {Object} - An object where the keys are the menu item IDs and the values are the quantities.
+   */
+  const aggregateCartQuantities = (ids) => {
+    let quantities = {};
+    for (const id of ids) {
+      if (quantities[id]) {
+        quantities[id] += 1;
+      } else {
+        quantities[id] = 1;
+      }
+    }
+    return quantities;
+  }
+  const [aggregatedCart, setAggregatedCart] = useState(aggregateCartQuantities(order.menuitem_ids));
+  useEffect(() => {
+    setAggregatedCart(aggregateCartQuantities(menuItemIds));
+  }, [menuItemIds]);
+
+  /**
+   * This function changes the quantity of a menu item in the order.
+   * @param {number} item_id - The ID of the menu item.
+   * @param {number} newQuantity - The new quantity of the menu item.
+   */
+  const changeItemQuantity = (item_id, newQuantity) => {
+    console.log(item_id, newQuantity);
+    let newMenuItemIds = menuItemIds.filter(id => id !== item_id);
+    console.log(newMenuItemIds);
+    for (let i = 0; i &lt; newQuantity; i++) {
+      newMenuItemIds.push(item_id);
+    }
+    console.log(newMenuItemIds);
+    setMenuItemIds(newMenuItemIds);
+  }
+
+  /**
+   * This function handles the opening of the Modal. It sets the menuItemIds state to the menuitem_ids of the order.
+   */
+  const handleOpen = () => {
+    setMenuItemIds(order.menuitem_ids);
+    setError("");
+    onOpen();
+  };
+
+  /**
+   * This function handles the submission of the form. It sets the menuItemIds state to the menuitem_ids of the order.
+   * @param {function} onClose - The function to close the Modal.
+   */
+  const handleSubmit = (onClose) => {
+    try {
+      let newOrder = {...order};
+      newOrder.menuitem_ids = menuItemIds;
+      newOrder.total = Object.keys(aggregatedCart).reduce((acc, item_id) => {
+        const menuItem = menuItems.find(item => item.menuItemId === parseFloat(item_id));
+        return acc + aggregatedCart[item_id] * menuItem.price;
+      }, 0.00).toFixed(2);
+
+      onOrderChange(newOrder);
+      setError("");
+      onClose();
+    } catch (e) {
+      setError(e);
+    } finally {
+
+    }
+  };
+
+  return (
+    &lt;>
+      {trigger(handleOpen)}
+      &lt;Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="top-center" size="3xl">
+        &lt;ModalContent>
+          {onClose => (
+            &lt;>
+              &lt;ModalHeader>Edit Order&lt;/ModalHeader>
+              &lt;ModalBody>
+                &lt;Table aria-label="Order items" isStriped>
+                  &lt;TableHeader>
+                    &lt;TableColumn>Name&lt;/TableColumn>
+                    &lt;TableColumn>Quantity&lt;/TableColumn>
+                    &lt;TableColumn>Unit Price&lt;/TableColumn>
+                    &lt;TableColumn>Total Price&lt;/TableColumn>
+                    &lt;TableColumn>Actions&lt;/TableColumn>
+                  &lt;/TableHeader>
+                  &lt;TableBody>
+                    {
+                      Object.keys(aggregatedCart).map((item_id) => {
+                        const item_id_num = parseFloat(item_id);
+                        const menuItem = menuItems.find(item => item.menuItemId === item_id_num);
+                        return (
+                          &lt;TableRow key={item_id}>
+                            &lt;TableCell>{menuItem.name}&lt;/TableCell>
+                            &lt;TableCell>
+                              &lt;Input type="number" value={aggregatedCart[item_id]} onValueChange={newQuantity => changeItemQuantity(item_id_num, newQuantity)} />
+                            &lt;/TableCell>
+                            &lt;TableCell>${menuItem.price}&lt;/TableCell>
+                            &lt;TableCell>${menuItem.price * aggregatedCart[item_id]}&lt;/TableCell>
+                            &lt;TableCell>
+                              &lt;ConfirmationDialog
+                                trigger={onOpen => (
+                                  &lt;Button color="danger" isIconOnly onClick={onOpen} size="sm" variant="light">&lt;FaTrashCan />&lt;/Button>
+                                )}
+                                onConfirm={() => changeItemQuantity(item_id_num, 0)}
+                              />
+                            &lt;/TableCell>
+                          &lt;/TableRow>
+                        )
+                      })
+                    }
+                    &lt;TableRow key="New Item">
+                      &lt;TableCell>
+                        &lt;Autocomplete placeholder="Add item" value="" onSelectionChange={id => changeItemQuantity(parseFloat(id), 1)}>
+                          {
+                            menuItems.filter(({menuItemId}) => !aggregatedCart[menuItemId]).map(menuItem => (
+                              &lt;AutocompleteItem key={menuItem.menuItemId} value={menuItem.menuItemId}>{menuItem.name}&lt;/AutocompleteItem>
+                            ))
+                          }
+                        &lt;/Autocomplete>
+                      &lt;/TableCell>
+                      &lt;TableCell>&lt;>&lt;/>&lt;/TableCell>
+                      &lt;TableCell>&lt;>&lt;/>&lt;/TableCell>
+                      &lt;TableCell>&lt;>&lt;/>&lt;/TableCell>
+                      &lt;TableCell>&lt;>&lt;/>&lt;/TableCell>
+                    &lt;/TableRow>
+                    &lt;TableRow key="Order Total">
+                      &lt;TableCell className="font-semibold">Order Total&lt;/TableCell>
+                      &lt;TableCell>&lt;>&lt;/>&lt;/TableCell>
+                      &lt;TableCell>&lt;>&lt;/>&lt;/TableCell>
+                      &lt;TableCell>${
+                        Object.keys(aggregatedCart).reduce((acc, item_id) => {
+                          const menuItem = menuItems.find(item => item.menuItemId === parseFloat(item_id));
+                          return acc + aggregatedCart[item_id] * menuItem.price;
+                        }, 0.00).toFixed(2)
+                      }&lt;/TableCell>
+                      &lt;TableCell>&lt;>&lt;/>&lt;/TableCell>
+                    &lt;/TableRow>
+                  &lt;/TableBody>
+                &lt;/Table>
+              &lt;/ModalBody>
+              &lt;ModalFooter>
+                {
+                  error === "" ? (
+                    &lt;>&lt;/>
+                  ) : (
+                    &lt;p className="error">{error}&lt;/p>
+                  )
+                }
+                &lt;Button onPress={onClose}>Cancel&lt;/Button>
+                &lt;Button color="primary" onPress={() => handleSubmit(onClose)}>Submit&lt;/Button>
+              &lt;/ModalFooter>
+            &lt;/>
+          )}
+        &lt;/ModalContent>
+      &lt;/Modal>
+    &lt;/>
+  )
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Customer.html">Customer</a></li><li><a href="InventoryItem.html">InventoryItem</a></li><li><a href="MenuItem.html">MenuItem</a></li><li><a href="SortProperties_SortProperties.html">SortProperties</a></li><li><a href="module.html#.exports">exports</a></li><li><a href="module.exports_module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#CartContextProvider">CartContextProvider</a></li><li><a href="global.html#CustomerContextProvider">CustomerContextProvider</a></li><li><a href="global.html#DateRangeProvider">DateRangeProvider</a></li><li><a href="global.html#GoogleTranslate">GoogleTranslate</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#InventoryContextProvider">InventoryContextProvider</a></li><li><a href="global.html#MenuContextProvider">MenuContextProvider</a></li><li><a href="global.html#OrderHistory">OrderHistory</a></li><li><a href="global.html#OrderPanel">OrderPanel</a></li><li><a href="global.html#TTSButton">TTSButton</a></li><li><a href="global.html#UserCredentials">UserCredentials</a></li><li><a href="global.html#UserManager">UserManager</a></li><li><a href="global.html#WeatherComponent">WeatherComponent</a></li><li><a href="global.html#compareFnFunctiontocomparetwoarrayitems.">compareFn Function to compare two array items.</a></li><li><a href="global.html#parseDatabaseEntry">parseDatabaseEntry</a></li><li><a href="global.html#parseJson">parseJson</a></li><li><a href="global.html#query">query</a></li><li><a href="global.html#translateText">translateText</a></li><li><a href="global.html#useApiFetch">useApiFetch</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Sun Apr 28 2024 12:56:03 GMT-0500 (Central Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

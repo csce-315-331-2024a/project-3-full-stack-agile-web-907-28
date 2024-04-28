@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/manager/InventoryItemEditor.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/manager/InventoryItemEditor.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import {
+  Button, DatePicker,
+  Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  useDisclosure
+} from "@nextui-org/react";
+import InventoryItem from "@/models/InventoryItem";
+import useValidatedState from "@/react-hooks/useValidatedState";
+import {useState} from "react";
+import {fromDate, toCalendarDate} from "@internationalized/date";
+
+
+/**
+ * A modal which allows for creation &amp; editing of inventory items.
+ * @param {(onOpen: () => void) => ReactNode} trigger - The trigger to open the Modal.
+ * @param {(InventoryItem) => void} onInventoryItemChange - The callback function for submitting the new/modified inventory item.
+ * @param {InventoryItem | null} inventoryItem - The inventory item to edit.
+ * @returns {JSX.Element}
+ * @constructor
+ */
+export default function InventoryItemEditor({trigger, onInventoryItemChange, inventoryItem = null}) {
+  const {isOpen, onOpen, onOpenChange} = useDisclosure();
+
+  const defaultName = inventoryItem == null ? "" : inventoryItem.name.toString();
+  const defaultQuantity = inventoryItem == null ? "" : inventoryItem.quantity.toString();
+  const defaultPurchaseDate = inventoryItem == null ? undefined : toCalendarDate(fromDate(inventoryItem.purchaseDate, "UTC"));
+  const defaultExpiryDate = inventoryItem == null ? undefined : toCalendarDate(fromDate(inventoryItem.expiryDate, "UTC"));
+  const defaultQuantityLimit = inventoryItem == null ? "0" : inventoryItem.quantityLimit.toString();
+
+  const isNumber = (value) => !isNaN(value) &amp;&amp; !isNaN(parseFloat(value));
+
+  const [name, setName, resetName, isNameValid, isNameChanged] = useValidatedState(defaultName, s => s.trim() !== "");
+  const [quantity, setQuantity, resetQuantity, isQuantityValid, isQuantityChanged] = useValidatedState(defaultQuantity, q => isNumber(q) &amp;&amp; parseFloat(q) > 0);
+  const [purchaseDate, setPurchaseDate, resetPurchaseDate, isPurchaseDateValid, isPurchaseDateChanged] = useValidatedState(defaultPurchaseDate, d => d !== undefined);
+  const [expiryDate, setExpiryDate, resetExpiryDate, isExpiryDateValid, isExpiryDateChanged] = useValidatedState(defaultExpiryDate, d => d !== undefined);
+  const [quantityLimit, setQuantityLimit, resetQuantityLimit, isQuantityLimitValid, isQuantityLimitChanged] = useValidatedState(defaultQuantityLimit, q => isNumber(q) &amp;&amp; parseFloat(q) >= 0);
+
+  const [error, setError] = useState("");
+
+  /**
+   * This function handles the opening of the Modal. It resets the name, quantity, purchaseDate, expiryDate, and quantityLimit states and opens the Modal.
+   */
+  const handleOpen = () => {
+    resetName();
+    resetQuantity();
+    resetPurchaseDate();
+    resetExpiryDate();
+    resetQuantityLimit();
+    onOpen();
+  }
+
+  /**
+   * This function handles the submission of the form. It sends a POST request to the /api/inventory/updateInventoryItem endpoint with the newInventoryItem.
+   * @param {function} onClose - The function to close the Modal.
+   */
+  const handleSubmit = (onClose) => {
+    try {
+      if (isNameValid &amp;&amp; isQuantityValid &amp;&amp; isPurchaseDateValid &amp;&amp; isExpiryDateValid &amp;&amp; isQuantityLimitValid) {
+        onInventoryItemChange(new InventoryItem(
+          inventoryItem == null ? -1 : inventoryItem.inventoryItemId,
+          name,
+          parseFloat(quantity),
+          purchaseDate.toDate(),
+          expiryDate.toDate(),
+          parseFloat(quantityLimit)
+        ));
+        onClose();
+      }
+      setError("");
+    } catch (e) {
+      setError(e);
+    } finally {
+      setName(name);
+      setQuantity(quantity);
+      setPurchaseDate(purchaseDate);
+      setExpiryDate(expiryDate);
+      setQuantityLimit(quantityLimit);
+    }
+  };
+
+  return (
+    &lt;>
+      {trigger(handleOpen)}
+      &lt;Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="top-center">
+        &lt;ModalContent>
+          {(onClose) => (
+            &lt;>
+              {
+                inventoryItem == null ? (
+                  &lt;ModalHeader>Create Inventory Item&lt;/ModalHeader>
+                ) : (
+                  &lt;ModalHeader>Edit Inventory Item&lt;/ModalHeader>
+                )
+              }
+              &lt;ModalBody>
+                &lt;Input
+                  isRequired
+                  label="Name"
+                  value={name}
+                  onValueChange={setName}
+                  isInvalid={!isNameValid &amp;&amp; isNameChanged}
+                />
+                &lt;Input
+                  isRequired
+                  label="Quantity"
+                  type="number"
+                  value={quantity}
+                  onValueChange={setQuantity}
+                  isInvalid={!isQuantityValid &amp;&amp; isQuantityChanged}
+                />
+                &lt;DatePicker
+                  isRequired
+                  label="Purchase Date"
+                  value={purchaseDate}
+                  onChange={setPurchaseDate}
+                  isInvalid={!isPurchaseDateValid &amp;&amp; isPurchaseDateChanged}
+                />
+                &lt;DatePicker
+                  isRequired
+                  label="Expiry Date"
+                  value={expiryDate}
+                  onChange={setExpiryDate}
+                  isInvalid={!isExpiryDateValid &amp;&amp; isExpiryDateChanged}
+                />
+                &lt;Input
+                  label="Quantity Limit"
+                  type="number"
+                  placeholder="0"
+                  value={quantityLimit}
+                  onValueChange={setQuantityLimit}
+                  isInvalid={!isQuantityLimitValid &amp;&amp; isQuantityLimitChanged}
+                />
+              &lt;/ModalBody>
+              &lt;ModalFooter>
+                {
+                  error === "" ? (
+                    &lt;>&lt;/>
+                  ) : (
+                    &lt;p className="error">{error}&lt;/p>
+                  )
+                }
+                &lt;Button onPress={onClose}>Cancel&lt;/Button>
+                &lt;Button color="primary" onPress={() => handleSubmit(onClose)}>Submit&lt;/Button>
+              &lt;/ModalFooter>
+            &lt;/>
+          )}
+        &lt;/ModalContent>
+      &lt;/Modal>
+    &lt;/>
+  )
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Customer.html">Customer</a></li><li><a href="InventoryItem.html">InventoryItem</a></li><li><a href="MenuItem.html">MenuItem</a></li><li><a href="SortProperties_SortProperties.html">SortProperties</a></li><li><a href="module.html#.exports">exports</a></li><li><a href="module.exports_module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#CartContextProvider">CartContextProvider</a></li><li><a href="global.html#CustomerContextProvider">CustomerContextProvider</a></li><li><a href="global.html#DateRangeProvider">DateRangeProvider</a></li><li><a href="global.html#GoogleTranslate">GoogleTranslate</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#InventoryContextProvider">InventoryContextProvider</a></li><li><a href="global.html#MenuContextProvider">MenuContextProvider</a></li><li><a href="global.html#OrderHistory">OrderHistory</a></li><li><a href="global.html#OrderPanel">OrderPanel</a></li><li><a href="global.html#TTSButton">TTSButton</a></li><li><a href="global.html#UserCredentials">UserCredentials</a></li><li><a href="global.html#UserManager">UserManager</a></li><li><a href="global.html#WeatherComponent">WeatherComponent</a></li><li><a href="global.html#compareFnFunctiontocomparetwoarrayitems.">compareFn Function to compare two array items.</a></li><li><a href="global.html#parseDatabaseEntry">parseDatabaseEntry</a></li><li><a href="global.html#parseJson">parseJson</a></li><li><a href="global.html#query">query</a></li><li><a href="global.html#translateText">translateText</a></li><li><a href="global.html#useApiFetch">useApiFetch</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Sun Apr 28 2024 12:56:03 GMT-0500 (Central Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/menu/MenuItem.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/menu/MenuItem.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import {
+    Card,
+    CardBody,
+    CardFooter,
+    Image
+} from "@nextui-org/react";
+import Burger from "../../../public/burger.jpg";
+import Basket from "../../../public/basket.png";
+import ChickenSandwich from "../../../public/chicken_sandwich.jpg";
+import Fries from "../../../public/fries.jpg";
+import Coke from "../../../public/coke.jpg";
+import Sprite from "../../../public/sprite.jpg";
+import GrilledCheese from "../../../public/grilled_cheese.jpg";
+import ChoclateShake from "../../../public/shake.jpg";
+import IceCream from "../../../public/ice_cream.jpg";
+import Suace from "../../../public/sauce.png";
+import OnionRings from "../../../public/onion_rings.jpg";
+
+/**
+ * This component is a menu item that displays the name, price, and image of the item.
+ * @param {Object} id - The id of the item.
+ * @param {Object} name - The name of the item.
+ * @param {Object} price - The price of the item.
+ * @param {Object} category - The category of the item.
+ * @param {Object} args - The rest of the arguments.
+ * @returns {JSX.Element} - The menu item component.
+ */
+export default function MenuItem({ id, name, price, category, ...args }) {
+    let imageSrc;
+
+    // Set the image source based on the category or id
+    // TODO: for the love of all that is holy, put this in the DB
+    if (category == 0) {
+        imageSrc = Burger.src;
+    } else if (category == 1) {
+        imageSrc = Basket.src;
+    } else if (category == 4) {
+        imageSrc = ChickenSandwich.src;
+    } else if (category == 2) {
+        imageSrc = Fries.src;
+    } else if (id == 10) {
+        imageSrc = Coke.src;
+    } else if (id == 11) {
+        imageSrc = Sprite.src;
+    } else if (id == 9) {
+        imageSrc = GrilledCheese.src;
+    } else if (id == 14) {
+        imageSrc = ChoclateShake.src;
+    } else if (id == 15) {
+        imageSrc = IceCream.src;
+    } else if (category == 3) {
+        imageSrc = Suace.src;
+    } else if (category == 9) {
+        imageSrc = OnionRings.src;
+    }
+
+    return (
+      &lt;Card key={id} {...args}>
+          &lt;Image
+            alt={name}
+            className="object-cover"
+            isZoomed
+            src={imageSrc}
+          />
+          &lt;CardFooter className="justify-between">
+              &lt;b>{name}&lt;/b>
+              &lt;p>${price}&lt;/p>
+          &lt;/CardFooter>
+      &lt;/Card>
+    )
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Customer.html">Customer</a></li><li><a href="InventoryItem.html">InventoryItem</a></li><li><a href="MenuItem.html">MenuItem</a></li><li><a href="SortProperties_SortProperties.html">SortProperties</a></li><li><a href="module.html#.exports">exports</a></li><li><a href="module.exports_module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#CartContextProvider">CartContextProvider</a></li><li><a href="global.html#CustomerContextProvider">CustomerContextProvider</a></li><li><a href="global.html#DateRangeProvider">DateRangeProvider</a></li><li><a href="global.html#GoogleTranslate">GoogleTranslate</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#InventoryContextProvider">InventoryContextProvider</a></li><li><a href="global.html#MenuContextProvider">MenuContextProvider</a></li><li><a href="global.html#OrderHistory">OrderHistory</a></li><li><a href="global.html#OrderPanel">OrderPanel</a></li><li><a href="global.html#TTSButton">TTSButton</a></li><li><a href="global.html#UserCredentials">UserCredentials</a></li><li><a href="global.html#UserManager">UserManager</a></li><li><a href="global.html#WeatherComponent">WeatherComponent</a></li><li><a href="global.html#compareFnFunctiontocomparetwoarrayitems.">compareFn Function to compare two array items.</a></li><li><a href="global.html#parseDatabaseEntry">parseDatabaseEntry</a></li><li><a href="global.html#parseJson">parseJson</a></li><li><a href="global.html#query">query</a></li><li><a href="global.html#translateText">translateText</a></li><li><a href="global.html#useApiFetch">useApiFetch</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Sun Apr 28 2024 12:56:03 GMT-0500 (Central Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
