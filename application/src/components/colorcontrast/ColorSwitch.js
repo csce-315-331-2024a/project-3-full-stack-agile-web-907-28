@@ -1,9 +1,10 @@
 import React, { useContext } from "react";
 import { Switch } from "@nextui-org/react";
-import { useContrastContext } from "@/contexts/ContrastContext";
+import ContrastContext from "@/contexts/ContrastContext";
+
 
 export default function ColorContrastSwitch() {
-  const { theme, updateTheme } = useContrastContext();
+  const { theme, updateTheme } = useContext(ContrastContext);
 
   // Function to handle theme change
   const handleThemeChange = () => {

@@ -5,6 +5,7 @@ import MenuItem from "@/components/menu/MenuItem";
 import {useContext, useEffect, useState} from "react";
 import MenuContext from "@/contexts/MenuContext";
 import CartContext from "@/contexts/CartContext";
+import ContrastContext from "@/contexts/ContrastContext";
 
 /**
  * This component is the menu view page for the cashier. It uses the nextui-org library for the tabs and cards.
@@ -14,10 +15,11 @@ import CartContext from "@/contexts/CartContext";
 export default function MenuView({ onItemClick }) {
   const {menuItems} = useContext(MenuContext);
   const {addItemToCart} = useContext(CartContext);
+  const {theme} = useContext(ContrastContext);
 
   return (
     <center>
-      <Tabs aria-label="menu sections" size="lg" color="primary">
+      <Tabs aria-label="menu sections" size="lg" color={theme.colors}>
         {
           menuCategories.map(category => (
             <Tab key={category.id} title={category.name} className="text-default" textValue={category.name}>
