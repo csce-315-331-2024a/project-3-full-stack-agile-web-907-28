@@ -51,4 +51,14 @@ describe('GoogleTranslate', () => {
       expect(document.createElement).not.toHaveBeenCalledWith('script');
     });
   });
+
+  it('should call cleanup function when unmounted', async () => {
+    const { unmount } = render(<GoogleTranslate />);
+
+    unmount();
+
+    expect(document.querySelector('#google-translate-script')).toBeFalsy();
+    expect(window.googleTranslateElement).toBeFalsy();
+  });
+
 });
