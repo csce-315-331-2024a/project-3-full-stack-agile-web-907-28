@@ -23,34 +23,6 @@ export default function App() {
         aria-label="Custom item styles"
         className="p-3"
       >
-        {/* <DropdownSection aria-label="Accessibility Options" showDivider>
-          <DropdownItem>
-            Text Size
-            <DropdownMenu>
-              <DropdownItem onClick={() => handleTextSizeChange("small")}>
-                Small
-              </DropdownItem>
-              <DropdownItem onClick={() => handleTextSizeChange("normal")}>
-                Normal
-              </DropdownItem>
-              <DropdownItem onClick={() => handleTextSizeChange("large")}>
-                Large
-              </DropdownItem>
-            </DropdownMenu>
-          </DropdownItem>
-          <DropdownItem>
-            Color Contrast
-            <DropdownMenu>
-              <DropdownItem onClick={() => handleColorContrastChange("normal")}>
-                Normal
-              </DropdownItem>
-              <DropdownItem onClick={() => handleColorContrastChange("high")}>
-                High Contrast
-              </DropdownItem>
-            </DropdownMenu>
-          </DropdownItem>
-        </DropdownSection> */}
-
         <DropdownSection aria-label="Preferences" showDivider>
       <DropdownItem
         isReadOnly

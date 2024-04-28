@@ -37,7 +37,7 @@ export default function SalesOverTime({...props}) {
   useEffect(() => {
     setSalesTotals(
       Object.keys(fetchResult).map(menuItemId => ({
-        name: menuItemId,
+        name: menuItems.find(item => item.menuItemId === parseFloat(menuItemId)).name,
         data: fetchResult[menuItemId].map(({placed_date, count}) => {
           return {
             x: new Date(placed_date),
@@ -51,7 +51,7 @@ export default function SalesOverTime({...props}) {
   useEffect(() => {
     setRevenueTotals(
       Object.keys(fetchResult).map(menuItemId => ({
-        name: menuItemId,
+        name: menuItems.find(item => item.menuItemId === parseFloat(menuItemId)).name,
         data: fetchResult[menuItemId].map(({placed_date, count}) => {
           return {
             x: new Date(placed_date),
@@ -101,7 +101,7 @@ export default function SalesOverTime({...props}) {
         <DateRangePicker aria-label="Chart date range" className="max-w-xs" value={dateRange} onChange={setDateRange} visibleMonths={3} />
       </CardHeader>
       <CardBody>
-        {salesTotals === [] ? (
+        {salesTotals.length === 0 ? (
           <Spinner />
         ) : (
           <Chart options={showRevenue ? revenueChartOptions : salesChartOptions} height={window.innerHeight - 210} type="line" series={showRevenue ? revenueTotals : salesTotals} />

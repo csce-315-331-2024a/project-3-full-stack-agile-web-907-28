@@ -7,6 +7,8 @@ import useSortedArray, {SortProperties} from "@/react-hooks/useSortedArray";
 import ObjectArraySortButton from "@/components/utils/ObjectArraySortButton";
 import ConfirmationDialog from "@/components/utils/ConfirmationDialog";
 import OrderEditor from "@/components/cashier/OrderEditor";
+import { useContext } from "react";
+import CustomerContext from "@/contexts/CustomerContext";
 
 const ORDERS_PER_PAGE = 20;
 
@@ -15,20 +17,20 @@ const ORDERS_PER_PAGE = 20;
  * @returns {JSX.Element} - The order history page.
  */
 const OrderHistory = () => {
-
+  const {customers, refreshCustomers} = useContext(CustomerContext);
   const [orders, refreshOrders] = useApiFetch('/api/orders/viewOrders', []);
   const [sortedOrders, sortProps, setSortProps] = useSortedArray(orders, SortProperties.byProperty("placed_time", "desc"));
   const [startIndex, setStartIndex] = useState(0);
   const [currentPageOrders, setCurrentPageOrders] = useState([]);
   const [errorMessage, setErrorMessage] = useState(''); // Add state for error message
 
-  // Function to check if the order is less than 10 minutes old
-  const isOrderPending = (placedTime) => {
-    const tenMinutesAgo = new Date(new Date() - 10 * 60000);
-    return new Date(placedTime) > tenMinutesAgo;
-  };
 
-  // Function to handle status change (you might need to implement actual change logic based on your backend)
+  /**
+   * This function handles the status change of an order. It sends a POST request to the /api/orders/changeStatus endpoint with the order_id and order_status.
+   * @param {number} orderId - The ID of the order.
+   * @param {string} newStatus - The new status of the order.
+   * @returns {Promise<void>} - A Promise that resolves when the request is successful.
+   */
   const handleStatusChange = async (orderId, newStatus) => {
     try {
       const response = await fetch(`/api/orders/changeStatus`, {
@@ -44,6 +46,11 @@ const OrderHistory = () => {
     }
   };
 
+  /**
+   * This function handles the edit of an order. It sends a POST request to the /api/orders/updateOrder endpoint with the newOrder.
+   * @param {Object} newOrder - The new order.
+   * @returns {Promise<void>} - A Promise that resolves when the request is successful.
+   */
   const handleEditOrder = async (newOrder) => {
     try {
       const response = await fetch('/api/orders/updateOrder', {
@@ -60,7 +67,11 @@ const OrderHistory = () => {
     }
   }
 
-  //HANDLE DELETE
+  /**
+   * This function handles the deletion of an order. It sends a DELETE request to the /api/orders/deleteOrder endpoint with the orderId.
+   * @param {number} orderId - The ID of the order.
+   * @returns {Promise<void>} - A Promise that resolves when the request is successful.
+   */
   const handleDelete = async (orderId) => {
     try {
       const response = await fetch(`/api/orders/deleteOrder?orderId=${orderId}`, {
@@ -81,6 +92,7 @@ const OrderHistory = () => {
     setCurrentPageOrders(sortedOrders
       .slice(startIndex, startIndex + ORDERS_PER_PAGE));
   }, [sortedOrders, startIndex, setCurrentPageOrders]);
+
 
   return (
     <div className="px-10" aria-label="Order History">
@@ -108,7 +120,7 @@ const OrderHistory = () => {
               onSortPropsChange={setSortProps}
               type="19"
             >
-              Customer ID
+              Customer Name
             </ObjectArraySortButton>
           </TableColumn>
           <TableColumn>
@@ -136,13 +148,12 @@ const OrderHistory = () => {
             </ObjectArraySortButton>
           </TableColumn>
           <TableColumn>Actions</TableColumn>
-          {/* Add more columns as needed */}
         </TableHeader>
         <TableBody aria-label="Order History">
           {currentPageOrders.map(order => (
             <TableRow key={order.order_id} aria-label="Order">
               <TableCell aria-label="Order ID">{order.order_id}</TableCell>
-              <TableCell aria-label="Customer ID">{order.customer_id}</TableCell>
+              <TableCell aria-label="Customer Name">{order.customer_name}</TableCell>
               <TableCell aria-label="Order Date">{new Date(order.placed_time).toString()}</TableCell>
               <TableCell>
               <div>

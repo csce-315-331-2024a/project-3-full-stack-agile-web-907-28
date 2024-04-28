@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/manager/InventoryManager.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/manager/InventoryManager.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import {useContext, useEffect, useState} from "react";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow, Tooltip
+} from "@nextui-org/react";
+import ListPagination from "@/components/utils/ListPagination";
+import InventoryItemEditor from "@/components/manager/InventoryItemEditor";
+import {FaArrowDown19, FaArrowDownAZ, FaArrowUp19, FaArrowUpAZ, FaPencil, FaTrashCan} from "react-icons/fa6";
+import {FaPlus} from "react-icons/fa";
+import InventoryItem from "@/models/InventoryItem";
+import axios from "axios";
+import ConfirmationDialog from "@/components/utils/ConfirmationDialog";
+import useSortedArray, {SortProperties} from "@/react-hooks/useSortedArray";
+import ObjectArraySortButton from "@/components/utils/ObjectArraySortButton";
+import InventoryContext from "@/contexts/InventoryContext";
+
+const INVENTORY_ITEMS_PER_PAGE = 15;
+
+
+/**
+ * Component which displays inventory items &amp; allows editing of both the list and each individual item.
+ * @returns {JSX.Element}
+ * @constructor
+ */
+export default function InventoryManager() {
+  const {inventoryItems, refreshInventoryItems} = useContext(InventoryContext);
+  const [startIndex, setStartIndex] = useState(0);
+  const [currentPageInventoryItems, setCurrentPageInventoryItems] = useState([]);
+  const [sortedInventoryItems, sortProps, setSortProps] = useSortedArray(inventoryItems, SortProperties.byProperty("inventoryItemId"));
+
+  // When the array is refreshed or resorted, go back to the first page.
+  useEffect(() => {
+    setStartIndex(0);
+  }, [sortedInventoryItems]);
+
+  // Only display the menu items on the current page.
+  useEffect(() => {
+    setCurrentPageInventoryItems(sortedInventoryItems
+      .slice(startIndex, startIndex + INVENTORY_ITEMS_PER_PAGE));
+  }, [sortedInventoryItems, startIndex, setCurrentPageInventoryItems]);
+
+  /**
+   * This function handles the creation of an inventory item. It sends a POST request to the /api/inventory/createInventoryItem endpoint with the inventoryItem.
+   * @param {Object} item - The inventory item to be created.
+   * @returns {Promise&lt;void>} - A Promise that resolves when the request is successful.
+   */
+  const handleCreate = (item) => (
+    axios.post("/api/inventory/createInventoryItem", { inventoryItem: item })
+      .then(res => {
+        if (200 &lt;= res.status &amp;&amp; res.status &lt; 300) {
+          return res.data;
+        } else {
+          throw res;
+        }
+      })
+      .then(data => {
+        console.log("Created inventory item:", InventoryItem.parseJson(data));
+        refreshInventoryItems();
+      })
+      .catch(e => {
+        console.error("Error creating inventory item:", e);
+      })
+  );
+
+  /**
+   * This function handles the editing of an inventory item. It sends a POST request to the /api/inventory/updateInventoryItem endpoint with the inventoryItem.
+   * @param {Object} item - The inventory item to be edited.
+   * @returns {Promise&lt;void>} - A Promise that resolves when the request is successful.
+   */
+  const handleEdit = (item) => (
+    axios.post("/api/inventory/updateInventoryItem", { inventoryItem: item })
+      .then(res => {
+        if (200 &lt;= res.status &amp;&amp; res.status &lt; 300) {
+          return res.data;
+        } else {
+          throw res;
+        }
+      })
+      .then(data => {
+        console.log("Updated inventory item:", data);
+        refreshInventoryItems();
+      })
+      .catch(e => {
+        console.error("Error updating inventory item:", e);
+      })
+  );
+
+  /**
+   * This function handles the deletion of an inventory item. It sends a DELETE request to the /api/inventory/deleteInventoryItem endpoint with the inventoryItemId.
+   * @param {Object} item - The inventory item to be deleted.
+   * @returns {Promise&lt;void>} - A Promise that resolves when the request is successful.
+   */
+  const handleDelete = (item) => (
+    axios.post("/api/inventory/deleteInventoryItem", { id: item.inventoryItemId })
+      .then(res => {
+        if (200 &lt;= res.status &amp;&amp; res.status &lt; 300) {
+          return res.data;
+        } else {
+          throw res;
+        }
+      })
+      .then(_ => {
+        console.log("Deleted inventory item:", item);
+        refreshInventoryItems();
+      })
+      .catch(e => {
+        console.error("Error deleting inventory item:", e);
+      })
+  );
+
+  return (
+    &lt;>
+      &lt;Card fullWidth="true" radius="none" shadow="none" className="px-9">
+        &lt;CardHeader className="justify-end">
+          &lt;InventoryItemEditor
+            trigger={onOpen => (
+              &lt;Button
+                color="primary"
+                onClick={onOpen}
+                startContent={&lt;FaPlus/>}
+              >
+                Create inventory item
+              &lt;/Button>
+            )}
+            onInventoryItemChange={handleCreate}
+          />
+        &lt;/CardHeader>
+        &lt;CardBody>
+          &lt;Table isStriped aria-label="Inventory management table">
+            &lt;TableHeader>
+              &lt;TableColumn>
+                &lt;ObjectArraySortButton
+                  sortKey={SortProperties.byProperty("inventoryItemId")}
+                  sortProps={sortProps}
+                  onSortPropsChange={setSortProps}
+                  type="19"
+                >
+                  ID
+                &lt;/ObjectArraySortButton>
+              &lt;/TableColumn>
+              &lt;TableColumn>
+                &lt;ObjectArraySortButton
+                  sortKey={SortProperties.byProperty("name")}
+                  sortProps={sortProps}
+                  onSortPropsChange={setSortProps}
+                  type="az"
+                >
+                  Name
+                &lt;/ObjectArraySortButton>
+              &lt;/TableColumn>
+              &lt;TableColumn>
+                &lt;ObjectArraySortButton
+                  sortKey={SortProperties.byProperty("quantity")}
+                  sortProps={sortProps}
+                  onSortPropsChange={setSortProps}
+                  type="19"
+                >
+                  Quantity
+                &lt;/ObjectArraySortButton>
+              &lt;/TableColumn>
+              &lt;TableColumn>
+                &lt;ObjectArraySortButton
+                  sortKey={SortProperties.byProperty("purchaseDate")}
+                  sortProps={sortProps}
+                  onSortPropsChange={setSortProps}
+                  type="plain"
+                >
+                  Purchase Date
+                &lt;/ObjectArraySortButton>
+              &lt;/TableColumn>
+              &lt;TableColumn>
+                &lt;ObjectArraySortButton
+                  sortKey={SortProperties.byProperty("expiryDate")}
+                  sortProps={sortProps}
+                  onSortPropsChange={setSortProps}
+                  type="plain"
+                >
+                  Expiry Date
+                &lt;/ObjectArraySortButton>
+              &lt;/TableColumn>
+              &lt;TableColumn>
+                &lt;ObjectArraySortButton
+                  sortKey={SortProperties.byProperty("quantityLimit")}
+                  sortProps={sortProps}
+                  onSortPropsChange={setSortProps}
+                  type="19"
+                >
+                  Quantity Limit
+                &lt;/ObjectArraySortButton>
+              &lt;/TableColumn>
+              &lt;TableColumn>Actions&lt;/TableColumn>
+            &lt;/TableHeader>
+            &lt;TableBody>
+              {currentPageInventoryItems.map(item => (
+                &lt;TableRow key={item.inventoryItemId}>
+                  &lt;TableCell>{item.inventoryItemId}&lt;/TableCell>
+                  &lt;TableCell>{item.name}&lt;/TableCell>
+                  &lt;TableCell>{item.quantity}&lt;/TableCell>
+                  &lt;TableCell>{item.purchaseDate.toDateString()}&lt;/TableCell>
+                  &lt;TableCell>{item.expiryDate.toDateString()}&lt;/TableCell>
+                  &lt;TableCell>{item.quantityLimit}&lt;/TableCell>
+                  &lt;TableCell>
+                    &lt;div className="relative flex items-center gap-2">
+                      &lt;InventoryItemEditor
+                        trigger={onOpen => (
+                          &lt;Button aria-label="Edit" isIconOnly onClick={onOpen} size="sm" variant="light">&lt;FaPencil/>&lt;/Button>
+                        )}
+                        onInventoryItemChange={handleEdit}
+                        inventoryItem={item}
+                        inventoryItems={inventoryItems}
+                      />
+                      &lt;ConfirmationDialog
+                        trigger = {(onOpen) => (
+                          &lt;Button aria-label="Delete" color="danger" isIconOnly size="sm" variant="light" onClick={onOpen}>&lt;FaTrashCan/>&lt;/Button>
+                        )}
+                        onConfirm={() => {
+                          handleDelete(item);
+                        }}
+                        body="Are you sure you want to delete this inventory item?"
+                      />
+                    &lt;/div>
+                  &lt;/TableCell>
+                &lt;/TableRow>
+              ))}
+            &lt;/TableBody>
+          &lt;/Table>
+        &lt;/CardBody>
+      &lt;/Card>
+      &lt;div className="p-4">
+        &lt;ListPagination
+          numItems={inventoryItems.length}
+          itemsPerPage={INVENTORY_ITEMS_PER_PAGE}
+          setStartIndex={setStartIndex}
+        />
+      &lt;/div>
+    &lt;/>
+  )
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Customer.html">Customer</a></li><li><a href="InventoryItem.html">InventoryItem</a></li><li><a href="MenuItem.html">MenuItem</a></li><li><a href="SortProperties_SortProperties.html">SortProperties</a></li><li><a href="module.html#.exports">exports</a></li><li><a href="module.exports_module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#CartContextProvider">CartContextProvider</a></li><li><a href="global.html#CustomerContextProvider">CustomerContextProvider</a></li><li><a href="global.html#DateRangeProvider">DateRangeProvider</a></li><li><a href="global.html#GoogleTranslate">GoogleTranslate</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#InventoryContextProvider">InventoryContextProvider</a></li><li><a href="global.html#MenuContextProvider">MenuContextProvider</a></li><li><a href="global.html#OrderHistory">OrderHistory</a></li><li><a href="global.html#OrderPanel">OrderPanel</a></li><li><a href="global.html#TTSButton">TTSButton</a></li><li><a href="global.html#UserCredentials">UserCredentials</a></li><li><a href="global.html#UserManager">UserManager</a></li><li><a href="global.html#WeatherComponent">WeatherComponent</a></li><li><a href="global.html#compareFnFunctiontocomparetwoarrayitems.">compareFn Function to compare two array items.</a></li><li><a href="global.html#parseDatabaseEntry">parseDatabaseEntry</a></li><li><a href="global.html#parseJson">parseJson</a></li><li><a href="global.html#query">query</a></li><li><a href="global.html#translateText">translateText</a></li><li><a href="global.html#useApiFetch">useApiFetch</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Sun Apr 28 2024 12:56:03 GMT-0500 (Central Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

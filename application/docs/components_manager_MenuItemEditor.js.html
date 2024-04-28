@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/manager/MenuItemEditor.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/manager/MenuItemEditor.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import {
+  Autocomplete, AutocompleteItem,
+  Button, Card, CardBody, CardHeader,
+  DatePicker,
+  Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader, Switch, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip,
+  useDisclosure
+} from "@nextui-org/react";
+import MenuItem from "@/models/MenuItem";
+import useValidatedState from "@/react-hooks/useValidatedState";
+import {useContext, useState} from "react";
+import IngredientEditor from "@/components/manager/IngredientEditor";
+import {FaPencil, FaTrashCan} from "react-icons/fa6";
+import menuCategories from "@/models/menuCategories";
+import ConfirmationDialog from "@/components/utils/ConfirmationDialog";
+import InventoryContext from "@/contexts/InventoryContext";
+import {fromDate, toCalendarDate} from "@internationalized/date";
+
+
+/**
+ * This function handles the creation &amp; editing of menu items.
+ * @param {(onOpen: () => void) => ReactNode} trigger - The trigger to open the Modal.
+ * @param {(MenuItem) => void} onMenuItemChange - The callback function for submitting the new/modified menu item.
+ * @param {MenuItem | null} menuItem - The menu item to edit.
+ * @returns {JSX.Element}
+ */
+export default function MenuItemEditor({trigger, onMenuItemChange, menuItem = null}) {
+  const {isOpen, onOpen, onOpenChange} = useDisclosure();
+  const {inventoryItems} = useContext(InventoryContext);
+
+  const defaultName = menuItem == null ? "" : menuItem.name.toString();
+  const defaultPrice = menuItem == null ? "" : menuItem.price.toString();
+  const defaultComponents = menuItem == null ? [] : menuItem.inventoryItemIds.map((id, idx) => {return {id: id, amount: menuItem.inventoryItemAmounts[idx]}});
+  const defaultCategoryId = menuItem == null ? "" : menuItem.categoryId.toString();
+  const defaultSeasonal = menuItem == null ? false : menuItem.seasonal;
+  const defaultStartDate = menuItem == null || !menuItem.seasonal ? undefined : toCalendarDate(fromDate(menuItem.startDate, "UTC"));
+  const defaultEndDate = menuItem == null || !menuItem.seasonal ? undefined : toCalendarDate(fromDate(menuItem.endDate, "UTC"));
+
+  const isNumber = (value) => !isNaN(value) &amp;&amp; !isNaN(parseFloat(value));
+
+  const [name, setName, resetName, isNameValid, isNameChanged] = useValidatedState(defaultName, s => s.trim() !== "--");
+  const [price, setPrice, resetPrice, isPriceValid, isPriceChanged] = useValidatedState(defaultPrice, p => isNumber(p) &amp;&amp; parseFloat(p) >= 0);
+  const [ingredients, setIngredients] = useState(defaultComponents);
+  const [categoryId, setCategoryId] = useState(defaultCategoryId);
+  const [seasonal, setSeasonal] = useState(defaultSeasonal);
+  const [startDate, setStartDate, resetStartDate, isStartDateValid, isStartDateChanged] = useValidatedState(defaultStartDate, d => d !== undefined);
+  const [endDate, setEndDate, resetEndDate, isEndDateValid, isEndDateChanged] = useValidatedState(defaultEndDate, d => d !== undefined);
+
+  const [error, setError] = useState("");
+
+  /**
+   * This function handles the opening of the Modal. It resets the name, price, ingredients, categoryId, seasonal, startDate, and endDate states and opens the Modal.
+   */
+  const handleOpen = () => {
+    resetName();
+    resetPrice();
+    setIngredients(defaultComponents);
+    setCategoryId(defaultCategoryId);
+    setSeasonal(defaultSeasonal);
+    resetStartDate();
+    resetEndDate();
+    onOpen();
+  }
+
+  /**
+   * This function handles the submission of the form. It sends a POST request to the /api/menu/createMenuItem endpoint with the menuItem.
+   * @param {function} onClose - The function to close the Modal.
+   */
+  const handleSubmit = (onClose) => {
+    try {
+      if (isNameValid &amp;&amp; isPriceValid &amp;&amp; (!seasonal || (isStartDateValid &amp;&amp; isEndDateValid))) {
+        onMenuItemChange(new MenuItem(
+          menuItem == null ? -1 : menuItem.menuItemId,
+          name,
+          parseFloat(price),
+          ingredients.map(({id}) => id),
+          ingredients.map(({amount}) => amount),
+          categoryId,
+          seasonal,
+          seasonal ? startDate.toDate() : new Date(),
+          seasonal ? endDate.toDate() : new Date()
+        ));
+        onClose();
+      }
+      setError("");
+    } catch (e) {
+      setError(e);
+    } finally {
+      setName(name);
+      setPrice(price);
+      setIngredients(ingredients);
+      setCategoryId(categoryId);
+      setSeasonal(seasonal);
+      setStartDate(startDate);
+      setEndDate(endDate);
+    }
+  };
+
+  return (
+    &lt;div>
+      {trigger(handleOpen)}
+      &lt;Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="top-center">
+        &lt;ModalContent>
+          {(onClose) => (
+            &lt;div>
+              {
+                menuItem == null ? (
+                  &lt;ModalHeader>Create Menu Item&lt;/ModalHeader>
+                ) : (
+                  &lt;ModalHeader>Edit Menu Item&lt;/ModalHeader>
+                )
+              }
+              &lt;ModalBody>
+                &lt;Input
+                  isRequired
+                  label="Name"
+                  value={name}
+                  onValueChange={setName}
+                  isInvalid={!isNameValid &amp;&amp; isNameChanged}
+                />
+                &lt;Input
+                  isRequired
+                  label="Price"
+                  type="number"
+                  placeholder="0.00"
+                  startContent={
+                    &lt;div className="pointer-events-none flex items-center">
+                      &lt;span className="body-default-400 body-small">$&lt;/span>
+                    &lt;/div>
+                  }
+                  value={price}
+                  onValueChange={setPrice}
+                  isInvalid={!isPriceValid &amp;&amp; isPriceChanged}
+                />
+                &lt;Autocomplete label="Category" selectedKey={categoryId} onSelectionChange={setCategoryId}>
+                  {menuCategories.map(category => (
+                    &lt;AutocompleteItem key={category.id}>
+                      {category.name}
+                    &lt;/AutocompleteItem>
+                  ))}
+                &lt;/Autocomplete>
+                &lt;Card>
+                  &lt;CardHeader className="justify-between">
+                    &lt;>Ingredients&lt;/>
+                    &lt;IngredientEditor
+                      trigger={onOpen => (
+                        &lt;Button color="primary" onClick={onOpen}>Add ingredient&lt;/Button>
+                      )}
+                      onIngredientChange={newIngredient => {
+                        const newIngredients = ingredients.slice();
+                        newIngredients.push(newIngredient);
+                        setIngredients(newIngredients);
+                        console.log(newIngredients);
+                        console.log(inventoryItems);
+                      }}
+                      inventoryItems={inventoryItems}
+                    />
+                  &lt;/CardHeader>
+                  &lt;CardBody>
+                    &lt;Table isStriped removeWrapper>
+                      &lt;TableHeader>
+                        &lt;TableColumn>Inventory Item Name&lt;/TableColumn>
+                        &lt;TableColumn>Amount&lt;/TableColumn>
+                        &lt;TableColumn>Actions&lt;/TableColumn>
+                      &lt;/TableHeader>
+                      &lt;TableBody>
+                        {ingredients.map((ingredient, idx) => (
+                          &lt;TableRow key={idx}>
+                            &lt;TableCell>{
+                              inventoryItems.some(item => item.inventoryItemId === parseInt(ingredient.id)) ? (
+                                inventoryItems.find(item => item.inventoryItemId === parseInt(ingredient.id)).name
+                              ) : (
+                                ingredient.id
+                              ).toString()
+                            }&lt;/TableCell>
+                            &lt;TableCell>{ingredient.amount}&lt;/TableCell>
+                            &lt;TableCell className="justify-between">
+                              &lt;div className="relative flex items-center gap-2">
+                                &lt;IngredientEditor
+                                  trigger={onOpen => (
+                                    &lt;Button isIconOnly onClick={onOpen} size="sm" variant="light">&lt;FaPencil />&lt;/Button>
+                                  )}
+                                  onIngredientChange={newIngredient => {
+                                    const newIngredients = ingredients.slice();
+                                    newIngredients[idx] = newIngredient;
+                                    setIngredients(newIngredients);
+                                  }}
+                                  ingredient={ingredient}
+                                  inventoryItems={inventoryItems}
+                                />
+                                &lt;ConfirmationDialog
+                                  trigger={onOpen => (
+                                    &lt;Button color="danger" isIconOnly onClick={onOpen} size="sm" variant="light">&lt;FaTrashCan />&lt;/Button>
+                                  )}
+                                  onConfirm={() => {
+                                    const newIngredients = ingredients.filter((_, i) => i !== idx);
+                                    setIngredients(newIngredients);
+                                  }}
+                                />
+                              &lt;/div>
+                            &lt;/TableCell>
+                          &lt;/TableRow>
+                        ))}
+                      &lt;/TableBody>
+                    &lt;/Table>
+                  &lt;/CardBody>
+                &lt;/Card>
+                &lt;Switch
+                  isSelected={seasonal}
+                  onValueChange={setSeasonal}
+                >
+                  Seasonal Item
+                &lt;/Switch>
+                {
+                  seasonal ? (
+                    &lt;>
+                      &lt;DatePicker
+                        isRequired
+                        label="Start Date"
+                        value={startDate}
+                        onChange={setStartDate}
+                      />
+                      &lt;DatePicker
+                        isRequired
+                        label="End Date"
+                        value={endDate}
+                        onChange={setEndDate}
+                      />
+                    &lt;/>
+                  ) : (
+                    &lt;>&lt;/>
+                  )
+                }
+              &lt;/ModalBody>
+              &lt;ModalFooter>
+                {
+                  error === "" ? (
+                    &lt;>&lt;/>
+                  ) : (
+                    &lt;p className="error">{error}&lt;/p>
+                  )
+                }
+                &lt;Button onPress={onClose}>Cancel&lt;/Button>
+                &lt;Button color="primary" onPress={() => handleSubmit(onClose)}>Submit&lt;/Button>
+              &lt;/ModalFooter>
+            &lt;/div>
+          )}
+        &lt;/ModalContent>
+      &lt;/Modal>
+    &lt;/div>
+  )
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Customer.html">Customer</a></li><li><a href="InventoryItem.html">InventoryItem</a></li><li><a href="MenuItem.html">MenuItem</a></li><li><a href="SortProperties_SortProperties.html">SortProperties</a></li><li><a href="module.html#.exports">exports</a></li><li><a href="module.exports_module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#CartContextProvider">CartContextProvider</a></li><li><a href="global.html#CustomerContextProvider">CustomerContextProvider</a></li><li><a href="global.html#DateRangeProvider">DateRangeProvider</a></li><li><a href="global.html#GoogleTranslate">GoogleTranslate</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#InventoryContextProvider">InventoryContextProvider</a></li><li><a href="global.html#MenuContextProvider">MenuContextProvider</a></li><li><a href="global.html#OrderHistory">OrderHistory</a></li><li><a href="global.html#OrderPanel">OrderPanel</a></li><li><a href="global.html#TTSButton">TTSButton</a></li><li><a href="global.html#UserCredentials">UserCredentials</a></li><li><a href="global.html#UserManager">UserManager</a></li><li><a href="global.html#WeatherComponent">WeatherComponent</a></li><li><a href="global.html#compareFnFunctiontocomparetwoarrayitems.">compareFn Function to compare two array items.</a></li><li><a href="global.html#parseDatabaseEntry">parseDatabaseEntry</a></li><li><a href="global.html#parseJson">parseJson</a></li><li><a href="global.html#query">query</a></li><li><a href="global.html#translateText">translateText</a></li><li><a href="global.html#useApiFetch">useApiFetch</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Sun Apr 28 2024 12:56:03 GMT-0500 (Central Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -7,7 +7,16 @@ import RestrictedAccess from "@/components/security/RestrictedAccess";
 import UserCredentials from "@/models/UserCredentials";
 import {DateRangeProvider} from "@/contexts/DateRangeContext";
 
+/**
+ * This function handles the creation of the inventory report page. It uses the DefaultLayout component and the DateRangeContextProvider to provide the date range to the children.
+ * @returns {JSX.Element}
+ */
 export default function InventoryReport() {
+  /**
+   * This function handles the authorization of the user. It checks if the user is authorized to access the inventory report.
+   * @param {UserCredentials} credential - The user's credentials.
+   * @returns {boolean} - The authorization status.
+   */
   function isCredentialAuthorized(credential) {
     return credential === UserCredentials.Admin || credential === UserCredentials.Manager;
   }

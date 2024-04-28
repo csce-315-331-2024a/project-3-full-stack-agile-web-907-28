@@ -9,6 +9,12 @@ import UserCredentials from "@/models/UserCredentials";
  * @returns {JSX.Element}
  */
 export default function OrderHistoryPage() {
+  
+  /**
+   * This function handles the authorization of the user. It checks if the user is authorized to access the order history page.
+   * @param {UserCredentials} credential - The user's credentials.
+   * @returns {boolean} - The authorization status.
+   */
   function isCredentialAuthorized(credential) {
     return credential === UserCredentials.Cashier || credential === UserCredentials.Admin || credential === UserCredentials.Manager;
   }

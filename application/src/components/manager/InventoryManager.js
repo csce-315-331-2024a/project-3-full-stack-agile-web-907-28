@@ -47,6 +47,11 @@ export default function InventoryManager() {
       .slice(startIndex, startIndex + INVENTORY_ITEMS_PER_PAGE));
   }, [sortedInventoryItems, startIndex, setCurrentPageInventoryItems]);
 
+  /**
+   * This function handles the creation of an inventory item. It sends a POST request to the /api/inventory/createInventoryItem endpoint with the inventoryItem.
+   * @param {Object} item - The inventory item to be created.
+   * @returns {Promise<void>} - A Promise that resolves when the request is successful.
+   */
   const handleCreate = (item) => (
     axios.post("/api/inventory/createInventoryItem", { inventoryItem: item })
       .then(res => {
@@ -64,6 +69,12 @@ export default function InventoryManager() {
         console.error("Error creating inventory item:", e);
       })
   );
+
+  /**
+   * This function handles the editing of an inventory item. It sends a POST request to the /api/inventory/updateInventoryItem endpoint with the inventoryItem.
+   * @param {Object} item - The inventory item to be edited.
+   * @returns {Promise<void>} - A Promise that resolves when the request is successful.
+   */
   const handleEdit = (item) => (
     axios.post("/api/inventory/updateInventoryItem", { inventoryItem: item })
       .then(res => {
@@ -81,6 +92,12 @@ export default function InventoryManager() {
         console.error("Error updating inventory item:", e);
       })
   );
+
+  /**
+   * This function handles the deletion of an inventory item. It sends a DELETE request to the /api/inventory/deleteInventoryItem endpoint with the inventoryItemId.
+   * @param {Object} item - The inventory item to be deleted.
+   * @returns {Promise<void>} - A Promise that resolves when the request is successful.
+   */
   const handleDelete = (item) => (
     axios.post("/api/inventory/deleteInventoryItem", { id: item.inventoryItemId })
       .then(res => {

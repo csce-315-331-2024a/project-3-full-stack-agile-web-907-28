@@ -1,16 +1,31 @@
-import {Button, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Input} from "@nextui-org/react";
+import {Button, Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Input, RadioGroup, Radio} from "@nextui-org/react";
 import styles from '../../styles/OrderPanel.module.css';
-import { useContext } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import CartContext from "@/contexts/CartContext";
 import {FaTrashCan} from "react-icons/fa6";
-
+import {useSession} from "next-auth/react";
+import getUserCredentials from "../security/getUserCredentials"
 /**
  * This component is the order panel for the cashier. It uses the nextui-org library for the table and buttons.
  * @param {function} onClose - The function to close the order panel.
  * @returns {JSX.Element} - The order panel.
  */
 const OrderPanel = ({ onClose }) => {
-  const {aggregatedCartItems, cartTotal, isCartOpen, isCartSubmitting, changeItemQuantity, removeItemFromCart, submitOrder, insufficientStock} = useContext(CartContext);
+  const {aggregatedCartItems, cartTotal, isCartOpen, isCartSubmitting, changeItemQuantity, removeItemFromCart, submitOrder, insufficientStock, customerName, setCustomerName, paymentType, setPaymentType} = useContext(CartContext);
+
+
+  //Get current user credentials, if it is customer then set the customerName
+  useEffect(() => {
+    if (isCartOpen) {
+      console.log("Checking if a customer exists");
+      const userCredentials = getUserCredentials();
+      if (userCredentials.role === "Customer") {
+        console.log("Customer exists");
+        setCustomerName(userCredentials.name);
+      }
+    }
+  }, [isCartOpen, setCustomerName]);
+
 
   return (
     isCartOpen ? (
@@ -48,6 +63,28 @@ const OrderPanel = ({ onClose }) => {
               ))}
             </TableBody>
           </Table>
+          <div>
+            <div className="pt-5">
+              <Input
+                label="Customer Name"
+                isRequired
+                type="text"
+                value={customerName}
+                placeholder={customerName || "Enter customer name"}
+                onChange={(e) => setCustomerName(e.target.value)}
+            />
+              <RadioGroup
+                label="Select Payment Method"
+                value={paymentType}
+                onChange={(e) => setPaymentType(e.target.value)}
+                className="pt-5"
+              >
+                <Radio value="cash">Cash</Radio>
+                <Radio value="credit">Credit</Radio>
+                <Radio value="debit">Debit</Radio>
+              </RadioGroup>
+            </div>
+          </div>
           <div className={styles.orderTotalSubmit}>
             <div className={styles.orderTotal}>Total Cost: ${cartTotal.toFixed(2)}</div>
             {
@@ -56,12 +93,14 @@ const OrderPanel = ({ onClose }) => {
                   Out of stock
                 </Button>
               ) : (
-                <Button disabled={isCartSubmitting} onClick={submitOrder}>
+                <Button disabled={isCartSubmitting || !customerName || !paymentType} onClick={submitOrder}>
                   {isCartSubmitting ? 'Submitting...' : 'Submit Order'}
                 </Button>
+
               )
             }
           </div>
+
         </div>
       </>
     ) : (

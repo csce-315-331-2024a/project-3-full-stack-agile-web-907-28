@@ -10,11 +10,20 @@ const WeatherComponent = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Function to capitalize the first letter of each word
+  /**
+   * This function handles the capitalization of the first letter of each word.
+   * @param {string} str - The string to capitalize.
+   * @returns {string} - The string with the first letter of each word capitalized.
+   */
   const capitalizeFirstLetter = (str) => {
     return str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   };
 
+  /**
+   * This function handles the conversion of the temperature to Fahrenheit.
+   * @param {string} str - The temperature to convert.
+   * @returns {number} - The temperature in Fahrenheit.
+   */
   const toFahrenheit = (str) => {
     return Math.round((parseInt(str) * 9 / 5)) + 32;
   }

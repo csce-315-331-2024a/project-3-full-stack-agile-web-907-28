@@ -9,6 +9,15 @@
  * @property {number} quantityLimit The minimum inventory quantity that needs to be in stock between refills
  */
 export default class InventoryItem {
+  /**
+   * This function handles the creation of an inventory item.
+   * @param {number} inventoryItemId - The ID of the inventory item.
+   * @param {string} name - The name of the inventory item.
+   * @param {number} quantity - The current stock of the inventory item.
+   * @param {Date} purchaseDate - The date the inventory item was purchased.
+   * @param {Date} expiryDate - The date the inventory item expires.
+   * @param {number} quantityLimit - The minimum inventory quantity that needs to be in stock between refills
+   */
   constructor(
     inventoryItemId,
     name,
@@ -24,6 +33,12 @@ export default class InventoryItem {
     this.expiryDate = expiryDate;
     this.quantityLimit = quantityLimit;
   }
+
+  /**
+   * This function handles the parsing of a JSON object into an inventory item.
+   * @param {Object} json - The JSON object to be parsed.
+   * @returns {InventoryItem} - The inventory item parsed from the JSON object.
+   */
   static parseJson(json) {
     return new InventoryItem(
       parseInt(json.inventoryItemId),
@@ -34,6 +49,12 @@ export default class InventoryItem {
       parseInt(json.quantityLimit)
     );
   }
+
+  /**
+   * This function handles the parsing of a database entry into an inventory item.
+   * @param {Object} row - The database entry to be parsed.
+   * @returns {InventoryItem} - The inventory item parsed from the database entry.
+   */
   static parseDatabaseEntry(row) {
     return InventoryItem.parseJson({
       inventoryItemId: row.inventoryitem_id,

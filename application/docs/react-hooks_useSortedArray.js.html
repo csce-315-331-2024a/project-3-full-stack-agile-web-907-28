@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: react-hooks/useSortedArray.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: react-hooks/useSortedArray.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import {useEffect, useState} from "react";
+
+
+/**
+ * Class representing the manner in which an array is sorted.
+ * @member key The sort criterion.
+ * @member order The sort order.
+ * @method compareFn Function to compare two array items.
+ */
+export class SortProperties {
+  /**
+   * Constructs the sort key using a comparison function.
+   * @param compareFn {((a: Object, b: Object) => number)} (optional) A comparison function returning:
+   * - A negative number, if a &lt; b,
+   * - A positive number, if a > b,
+   * - Zero, if a == b.
+   * @param key The unique identifier for the sort criterion.
+   * @param order {"asc" | "desc"} The sort order.
+   * @returns {SortProperties}
+   */
+  constructor(compareFn, key, order = "asc") {
+    this.key = key;
+    this.order = order;
+    const cmpSign = order === "asc" ? 1 : -1;
+    this.compareFn = (a, b) => cmpSign * compareFn(a, b);
+  }
+
+  /**
+   * Constructs a sort key which compares key values.
+   * @param keyFn {(value: Object) => Object} Function converting an array object to its key.
+   * @param id The unique identifier for the sort key.
+   * @param order {"asc" | "desc"} The sort order.
+   * @returns {SortProperties}
+   */
+  static byKeyFn(keyFn, id, order = "asc") {
+    return new SortProperties((a, b) => {
+      const a_val = keyFn(a);
+      const b_val = keyFn(b);
+      return (a_val &lt; b_val) ? -1 : ((a_val > b_val) ? 1 : 0)
+    }, id, order);
+  }
+
+  /**
+   * Constructs a sort key which compares object properties.
+   * @param propertyName {string} The name of the object property to compare.
+   * @param order {"asc" | "desc"} The sort order.
+   * @returns {SortProperties}
+   */
+  static byProperty(propertyName, order = "asc") {
+    return SortProperties.byKeyFn(x => x[propertyName], propertyName, order);
+  }
+}
+
+
+/**
+ * React hook to keep an array of objects sorted by one of the object properties.
+ * @param array {[Object]} The array.
+ * @param initialSortProperties {SortProperties} The initial sort properties.
+ * @returns {[*[],SortProperties,(value: (((prevState: SortProperties) => SortProperties) | SortProperties)) => void]} An array containing:
+ * - The sorted array,
+ * - The sort properties, and
+ * - A function to set the sort properties.
+ */
+export default function useSortedArray(array, initialSortProperties) {
+  const [sortedArray, setSortedArray] = useState([]);
+  const [sortProps, setSortProps] = useState(initialSortProperties);
+
+  useEffect(() => {
+    const newSortedArray = array.slice();
+    newSortedArray.sort(sortProps.compareFn);
+    setSortedArray(newSortedArray);
+  }, [array, sortProps]);
+
+  return [sortedArray, sortProps, setSortProps];
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Customer.html">Customer</a></li><li><a href="InventoryItem.html">InventoryItem</a></li><li><a href="MenuItem.html">MenuItem</a></li><li><a href="SortProperties_SortProperties.html">SortProperties</a></li><li><a href="module.html#.exports">exports</a></li><li><a href="module.exports_module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#CartContextProvider">CartContextProvider</a></li><li><a href="global.html#CustomerContextProvider">CustomerContextProvider</a></li><li><a href="global.html#DateRangeProvider">DateRangeProvider</a></li><li><a href="global.html#GoogleTranslate">GoogleTranslate</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#InventoryContextProvider">InventoryContextProvider</a></li><li><a href="global.html#MenuContextProvider">MenuContextProvider</a></li><li><a href="global.html#OrderHistory">OrderHistory</a></li><li><a href="global.html#OrderPanel">OrderPanel</a></li><li><a href="global.html#TTSButton">TTSButton</a></li><li><a href="global.html#UserCredentials">UserCredentials</a></li><li><a href="global.html#UserManager">UserManager</a></li><li><a href="global.html#WeatherComponent">WeatherComponent</a></li><li><a href="global.html#compareFnFunctiontocomparetwoarrayitems.">compareFn Function to compare two array items.</a></li><li><a href="global.html#parseDatabaseEntry">parseDatabaseEntry</a></li><li><a href="global.html#parseJson">parseJson</a></li><li><a href="global.html#query">query</a></li><li><a href="global.html#translateText">translateText</a></li><li><a href="global.html#useApiFetch">useApiFetch</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Sun Apr 28 2024 12:56:03 GMT-0500 (Central Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

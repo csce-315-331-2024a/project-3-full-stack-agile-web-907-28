@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { signIn, signOut, useSession } from "next-auth/react";
 import getUserCredentials from "@/components/security/getUserCredentials";
-
 import {
   Avatar,
   Dropdown,
   DropdownMenu,
   DropdownTrigger,
-  DropdownItem, DropdownSection,
+  DropdownItem,
+  DropdownSection,
+  Badge
 } from "@nextui-org/react"
 import { FaGoogle } from "react-icons/fa";
 import UserCredentials from "@/models/UserCredentials";
@@ -34,6 +35,8 @@ export const UserManager = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [ credentials, setCredentials ] = useState("");
+  const [notifications, setNotifications] = useState([]);
+  const [fulfilled, setFulfilled] = useState([]);
 
   // Redirect to credentials page if user is new
   useEffect(() => {
@@ -44,7 +47,7 @@ export const UserManager = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email: session.user.email, name: session.user.name, credentials: 'Customer' }), // Include email and name in the request body
+        body: JSON.stringify({ email: session.user.email, name: session.user.name, credentials: 'Customer' }),
       });
       router.push('/menu');
     }
@@ -63,10 +66,16 @@ export const UserManager = () => {
     sc();
   }, [status, setCredentials]);
 
+  /**
+   * This function handles the sign in of the user. It redirects to the sign in URL.
+   */
   const handleSignIn = async () => {
     await signIn("google", { callbackUrl: "/" });
   }
 
+  /**
+   * This function handles the sign out of the user. It redirects to the sign out URL.
+   */
   const handleSignOut = async () => {
     const signOutResponse = await signOut({ redirect: false, callbackUrl: "/login" });
     if (signOutResponse.url) {
@@ -82,29 +91,66 @@ export const UserManager = () => {
     Customer: [pages.Menu],
   };
 
+useEffect(() => {
+  if (session?.user?.name) {
+    fetch(`/api/notifications/getFulfilled?name=${session.user.name}`)
+      .then(res => {
+        if (!res.ok) {
+          throw new Error('Failed to fetch');
+        }
+        return res.json();
+      })
+      .then(data => {
+        if (!Array.isArray(data)) {
+          throw new Error('Data is not an array');
+        }
+        setNotifications(data.length);
+        setFulfilled(data);
+      })
+      .catch(error => {
+        console.error('Error fetching notifications:', error);
+        setNotifications(0);
+        setFulfilled([]);
+      });
+  }
+}, [session?.user?.name]);
+
+
+  console.log(fulfilled);
   // Return the user manager component
   return (
     <Dropdown>
       <DropdownTrigger>
-        {
-          session ? (
-            <Avatar
-              aria-label={`Signed in as ${session.user.name}`}
-              name={session.user.name}
-              as="button"
-              isBordered
-              showFallback
-              src={session.user.image}
-            />
-          ) : (
-            <Avatar
-              aria-label="Not signed in"
-              as="button"
-              isBordered
-              showFallback
-            />
-          )
-        }
+      {session ? (
+      notifications > 0 ? (
+        <Badge content={notifications} color="primary">
+          <Avatar
+            aria-label={`Signed in as ${session.user.name}`}
+            name={session.user.name}
+            as="button"
+            isBordered
+            showFallback
+            src={session.user.image}
+          />
+        </Badge>
+      ) : (
+        <Avatar
+          aria-label={`Signed in as ${session.user.name}`}
+          name={session.user.name}
+          as="button"
+          isBordered
+          showFallback
+          src={session.user.image}
+        />
+      )
+    ) : (
+      <Avatar
+        aria-label="Not signed in"
+        as="button"
+        isBordered
+        showFallback
+      />
+    )}
       </DropdownTrigger>
       {
         session ? (
@@ -123,6 +169,11 @@ export const UserManager = () => {
               </DropdownItem>
             ))}
             </DropdownSection>
+            {notifications > 0 && fulfilled.map((item) => (
+              <DropdownItem key={item.order_id}>
+                Your order for ${item.total} has been fulfilled.
+              </DropdownItem>
+            ))}
             <DropdownSection>
               <DropdownItem key="logout" color="danger" onClick={handleSignOut}>
                 Sign Out
