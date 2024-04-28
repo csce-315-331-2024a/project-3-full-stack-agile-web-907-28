@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: pages/api/reports/getSalesPairs.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: pages/api/reports/getSalesPairs.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import {query} from "@/utils/db";
+
+/**
+ * This function handles the retrieval of sales pairs. It uses the /api/reports/getSalesPairs endpoint to retrieve sales pairs.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Promise&lt;Object>} - The response object.
+ */
+export default async function handler(req, res) {
+  if (req.method !== "GET") {
+    res.setHeader("Allow", ["GET"]);
+    return res.status(405).json({ message: "Method Not Allowed" });
+  }
+
+  let { startDate, endDate } = req.query;
+  if (startDate) {
+    startDate = new Date(startDate);
+  }
+  if (endDate) {
+    endDate = new Date(endDate);
+  } else {
+    endDate = new Date();
+  }
+  if (!startDate) {
+    return res.status(400).json({ message: "Missing required parameters" });
+  }
+
+  const queryStr = `
+    WITH
+      TimeFilteredOrders AS (
+        SELECT
+          order_id,
+          menuItem_ids
+        FROM orders
+        WHERE
+          $1 &lt;= placed_time AND placed_time &lt;= $2
+      ),
+      UnnestedOrders AS (
+        SELECT
+          order_id,
+          unnest(menuItem_ids) AS menuItem_id
+        FROM TimeFilteredOrders
+      ),
+      Pairs AS (
+        SELECT
+          a.order_id,
+          a.menuItem_id as item1,
+          b.menuItem_id as item2
+        FROM
+          UnnestedOrders a
+        JOIN
+          UnnestedOrders b ON a.order_id = b.order_id AND a.menuItem_id &lt; b.menuItem_id
+      ),
+      PairCounts AS (
+        SELECT
+          item1,
+          item2,
+          COUNT(*) as frequency
+        FROM
+          Pairs
+        GROUP BY
+          item1,
+          item2
+      ),
+      PairNames AS (
+        SELECT
+          pc.item1,
+          pc.item2,
+          pc.frequency,
+          a.name as item1_name,
+          b.name as item2_name
+        FROM
+          PairCounts pc
+        JOIN
+          menuItem a ON pc.item1 = a.menuItem_id
+        JOIN
+          menuItem b ON pc.item2 = b.menuItem_id
+      )
+      SELECT
+        item1_name,
+        item2_name,
+        frequency
+      FROM
+        PairNames
+    ORDER BY frequency DESC;
+  `;
+  try {
+    const queryResult = await query(queryStr, [startDate.toISOString(), endDate.toISOString()]);
+
+    return res.status(200).json(queryResult.rows);
+  } catch (e) {
+    return res.status(500).json({ message: "Internal server error" });
+  }
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Customer.html">Customer</a></li><li><a href="InventoryItem.html">InventoryItem</a></li><li><a href="MenuItem.html">MenuItem</a></li><li><a href="SortProperties_SortProperties.html">SortProperties</a></li><li><a href="module.html#.exports">exports</a></li><li><a href="module.exports_module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#CartContextProvider">CartContextProvider</a></li><li><a href="global.html#CustomerContextProvider">CustomerContextProvider</a></li><li><a href="global.html#DateRangeProvider">DateRangeProvider</a></li><li><a href="global.html#GoogleTranslate">GoogleTranslate</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#InventoryContextProvider">InventoryContextProvider</a></li><li><a href="global.html#MenuContextProvider">MenuContextProvider</a></li><li><a href="global.html#OrderHistory">OrderHistory</a></li><li><a href="global.html#OrderPanel">OrderPanel</a></li><li><a href="global.html#TTSButton">TTSButton</a></li><li><a href="global.html#UserCredentials">UserCredentials</a></li><li><a href="global.html#UserManager">UserManager</a></li><li><a href="global.html#WeatherComponent">WeatherComponent</a></li><li><a href="global.html#compareFnFunctiontocomparetwoarrayitems.">compareFn Function to compare two array items.</a></li><li><a href="global.html#parseDatabaseEntry">parseDatabaseEntry</a></li><li><a href="global.html#parseJson">parseJson</a></li><li><a href="global.html#query">query</a></li><li><a href="global.html#translateText">translateText</a></li><li><a href="global.html#useApiFetch">useApiFetch</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Sun Apr 28 2024 12:56:03 GMT-0500 (Central Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

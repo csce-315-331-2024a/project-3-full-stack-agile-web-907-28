@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/reports/SalesOverTime.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/reports/SalesOverTime.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import {
+  Card, CardBody,
+  CardHeader,
+  DateRangePicker, Spinner, Tab, Tabs,
+} from "@nextui-org/react";
+import {useApiFetch} from "@/react-hooks/useApiFetch";
+import {useContext, useEffect, useState} from "react";
+import dynamic from 'next/dynamic';
+import {CalendarDate, fromDate, toCalendarDate} from "@internationalized/date";
+import {DateRangeContext} from "@/contexts/DateRangeContext";
+import MenuContext from "@/contexts/MenuContext";
+const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
+
+
+/**
+ * Line chart showing sales per menu item and/or category over time.
+ * @param props Props passed to Card.
+ * @returns {JSX.Element}
+ * @constructor
+ */
+export default function SalesOverTime({...props}) {
+  const {menuItems} = useContext(MenuContext);
+  const [dateRange, setDateRange] = useContext(DateRangeContext);
+  const [fetchUrl, setFetchUrl] = useState("");
+  const [fetchResult, refreshFetchResult] = useApiFetch(fetchUrl, []);
+  const [salesTotals, setSalesTotals] = useState([]);
+  const [showRevenue, setShowRevenue] = useState(false);
+  const [revenueTotals, setRevenueTotals] = useState([]);
+
+  useEffect(() => {
+    const sd = dateRange.start.toDate().toISOString().slice(0, 10);
+    const ed = dateRange.end.toDate().toISOString().slice(0, 10);
+    const timeScale = (dateRange.end.subtract({months: 3}) &lt; dateRange.start) ? "day" : "month";
+    setFetchUrl(`/api/reports/getSalesOverTime?startDate=${sd}&amp;endDate=${ed}&amp;timeScale=${timeScale}`);
+  }, [dateRange]);
+
+  useEffect(() => {
+    setSalesTotals(
+      Object.keys(fetchResult).map(menuItemId => ({
+        name: menuItemId,
+        data: fetchResult[menuItemId].map(({placed_date, count}) => {
+          return {
+            x: new Date(placed_date),
+            y: parseInt(count)
+          }
+        })
+      }))
+    );
+  }, [fetchResult]);
+
+  useEffect(() => {
+    setRevenueTotals(
+      Object.keys(fetchResult).map(menuItemId => ({
+        name: menuItemId,
+        data: fetchResult[menuItemId].map(({placed_date, count}) => {
+          return {
+            x: new Date(placed_date),
+            y: parseInt(count) * menuItems.find(item => item.menuItemId === parseFloat(menuItemId)).price
+          }
+        })
+      }))
+    );
+  }, [fetchResult, menuItems]);
+
+  const salesChartOptions = {
+    chart: {
+      type: "line"
+    },
+    stroke: {
+      curve: "smooth"
+    },
+    xaxis: {
+      type: "datetime"
+    },
+  };
+  const revenueChartOptions = {
+    chart: {
+      type: "line"
+    },
+    stroke: {
+      curve: "smooth"
+    },
+    xaxis: {
+      type: "datetime"
+    },
+    yaxis: {
+      labels: {
+        formatter: val => `$${val.toFixed(2)}`
+      }
+    }
+  };
+
+  return (
+    &lt;Card {...props}>
+      &lt;CardHeader className="justify-between">
+        &lt;p className="text-xl font-semibold">Sales Over Time&lt;/p>
+        &lt;Tabs color="primary" selectedKey={showRevenue ? "revenue" : "quantity"} onSelectionChange={key => setShowRevenue(key === "revenue")}>
+          &lt;Tab key="quantity" title="Quantity" />
+          &lt;Tab key="revenue" title="Revenue" />
+        &lt;/Tabs>
+        &lt;DateRangePicker aria-label="Chart date range" className="max-w-xs" value={dateRange} onChange={setDateRange} visibleMonths={3} />
+      &lt;/CardHeader>
+      &lt;CardBody>
+        {salesTotals.length === 0 ? (
+          &lt;Spinner />
+        ) : (
+          &lt;Chart options={showRevenue ? revenueChartOptions : salesChartOptions} height={window.innerHeight - 210} type="line" series={showRevenue ? revenueTotals : salesTotals} />
+        )}
+      &lt;/CardBody>
+    &lt;/Card>
+  )
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Customer.html">Customer</a></li><li><a href="InventoryItem.html">InventoryItem</a></li><li><a href="MenuItem.html">MenuItem</a></li><li><a href="SortProperties_SortProperties.html">SortProperties</a></li><li><a href="module.html#.exports">exports</a></li><li><a href="module.exports_module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#CartContextProvider">CartContextProvider</a></li><li><a href="global.html#CustomerContextProvider">CustomerContextProvider</a></li><li><a href="global.html#DateRangeProvider">DateRangeProvider</a></li><li><a href="global.html#GoogleTranslate">GoogleTranslate</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#InventoryContextProvider">InventoryContextProvider</a></li><li><a href="global.html#MenuContextProvider">MenuContextProvider</a></li><li><a href="global.html#OrderHistory">OrderHistory</a></li><li><a href="global.html#OrderPanel">OrderPanel</a></li><li><a href="global.html#TTSButton">TTSButton</a></li><li><a href="global.html#UserCredentials">UserCredentials</a></li><li><a href="global.html#UserManager">UserManager</a></li><li><a href="global.html#WeatherComponent">WeatherComponent</a></li><li><a href="global.html#compareFnFunctiontocomparetwoarrayitems.">compareFn Function to compare two array items.</a></li><li><a href="global.html#parseDatabaseEntry">parseDatabaseEntry</a></li><li><a href="global.html#parseJson">parseJson</a></li><li><a href="global.html#query">query</a></li><li><a href="global.html#translateText">translateText</a></li><li><a href="global.html#useApiFetch">useApiFetch</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Sun Apr 28 2024 12:56:03 GMT-0500 (Central Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

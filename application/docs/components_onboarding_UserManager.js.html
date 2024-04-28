@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/onboarding/UserManager.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/onboarding/UserManager.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import { signIn, signOut, useSession } from "next-auth/react";
+import getUserCredentials from "@/components/security/getUserCredentials";
+import {
+  Avatar,
+  Dropdown,
+  DropdownMenu,
+  DropdownTrigger,
+  DropdownItem,
+  DropdownSection,
+  Badge
+} from "@nextui-org/react"
+import { FaGoogle } from "react-icons/fa";
+import UserCredentials from "@/models/UserCredentials";
+
+
+const pages = {
+  ManageUsers: {displayName: "Manage Users", path: "/admin"},
+  SalesReport: {displayName: "Sales Report", path: "/sales-report"},
+  InventoryReport: {displayName: "Inventory Report", path: "/inventory-report"},
+  ManageInventory: {displayName: "Manage Inventory", path: "/inventory-management"},
+  ManageMenu: {displayName: "Manage Menu", path: "/menu-management"},
+  OrderHistory: {displayName: "Order History", path: "/order-history"},
+  Menu: {displayName: "Menu", path: "/menu"},
+}
+
+
+/**
+ * This component is the user manager that displays the user's profile information and sign out button.
+ * @returns {JSX.Element} - The user manager component.
+ */
+export const UserManager = () => {
+  // Get the user session
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const [ credentials, setCredentials ] = useState("");
+  const [notifications, setNotifications] = useState([]);
+  const [fulfilled, setFulfilled] = useState([]);
+
+  // Redirect to credentials page if user is new
+  useEffect(() => {
+    if (status === "authenticated" &amp;&amp; session?.user?.isNewUser) {
+      console.log("Creating user");
+      const response = fetch('/api/onboarding/createUser', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: session.user.email, name: session.user.name, credentials: 'Customer' }),
+      });
+      router.push('/menu');
+    }
+  }, [session, status, router]);
+
+  useEffect(() => {
+    const sc = async () => {
+      if (status === "loading") {
+        return;
+      } else if (status === "authenticated") {
+        setCredentials(await getUserCredentials());
+      } else {
+        setCredentials(UserCredentials.NoCred);
+      }
+    }
+    sc();
+  }, [status, setCredentials]);
+
+  /**
+   * This function handles the sign in of the user. It redirects to the sign in URL.
+   */
+  const handleSignIn = async () => {
+    await signIn("google", { callbackUrl: "/" });
+  }
+
+  /**
+   * This function handles the sign out of the user. It redirects to the sign out URL.
+   */
+  const handleSignOut = async () => {
+    const signOutResponse = await signOut({ redirect: false, callbackUrl: "/login" });
+    if (signOutResponse.url) {
+      // Redirect to the sign out URL
+      await router.push(signOutResponse.url);
+    }
+  };
+
+  const navigationItems = {
+    Admin: [pages.ManageUsers, pages.SalesReport, pages.InventoryReport, pages.ManageInventory, pages.ManageMenu, pages.OrderHistory, pages.Menu],
+    Manager: [pages.SalesReport, pages.InventoryReport, pages.ManageInventory, pages.ManageMenu, pages.OrderHistory, pages.Menu],
+    Cashier: [pages.OrderHistory, pages.Menu],
+    Customer: [pages.Menu],
+  };
+
+useEffect(() => {
+  if (session?.user?.name) {
+    fetch(`/api/notifications/getFulfilled?name=${session.user.name}`)
+      .then(res => {
+        if (!res.ok) {
+          throw new Error('Failed to fetch');
+        }
+        return res.json();
+      })
+      .then(data => {
+        if (!Array.isArray(data)) {
+          throw new Error('Data is not an array');
+        }
+        setNotifications(data.length);
+        setFulfilled(data);
+      })
+      .catch(error => {
+        console.error('Error fetching notifications:', error);
+        setNotifications(0);
+        setFulfilled([]);
+      });
+  }
+}, [session?.user?.name]);
+
+
+  console.log(fulfilled);
+  // Return the user manager component
+  return (
+    &lt;Dropdown>
+      &lt;DropdownTrigger>
+      {session ? (
+      notifications > 0 ? (
+        &lt;Badge content={notifications} color="primary">
+          &lt;Avatar
+            aria-label={`Signed in as ${session.user.name}`}
+            name={session.user.name}
+            as="button"
+            isBordered
+            showFallback
+            src={session.user.image}
+          />
+        &lt;/Badge>
+      ) : (
+        &lt;Avatar
+          aria-label={`Signed in as ${session.user.name}`}
+          name={session.user.name}
+          as="button"
+          isBordered
+          showFallback
+          src={session.user.image}
+        />
+      )
+    ) : (
+      &lt;Avatar
+        aria-label="Not signed in"
+        as="button"
+        isBordered
+        showFallback
+      />
+    )}
+      &lt;/DropdownTrigger>
+      {
+        session ? (
+          &lt;DropdownMenu aria-label="Profile Actions">
+            &lt;DropdownSection showDivider>
+            &lt;DropdownItem key="profile" className="gap-2" textValue={`Signed in as ${session.user.email} with role ${credentials}`}>
+              &lt;p className="font-semibold">Signed in as:&lt;/p>
+              &lt;p className="font-semibold">{session.user.email}&lt;/p>
+              &lt;p className="font-light">{credentials}&lt;/p>
+            &lt;/DropdownItem>
+            &lt;/DropdownSection>
+            &lt;DropdownSection name="Navigation" showDivider>
+            {navigationItems[credentials]?.map(({displayName, path}) => (
+              &lt;DropdownItem key={path} onClick={() => router.push(path)}>
+                {displayName}
+              &lt;/DropdownItem>
+            ))}
+            &lt;/DropdownSection>
+            {notifications > 0 &amp;&amp; fulfilled.map((item) => (
+              &lt;DropdownItem key={item.order_id}>
+                Your order for ${item.total} has been fulfilled.
+              &lt;/DropdownItem>
+            ))}
+            &lt;DropdownSection>
+              &lt;DropdownItem key="logout" color="danger" onClick={handleSignOut}>
+                Sign Out
+              &lt;/DropdownItem>
+            &lt;/DropdownSection>
+          &lt;/DropdownMenu>
+        ) : (
+          &lt;DropdownMenu aria-label="Please sign in">
+            &lt;DropdownSection showDivider>
+              &lt;DropdownItem key="profile" className="gap-2">
+                &lt;p className="font-semibold">Not signed in&lt;/p>
+              &lt;/DropdownItem>
+            &lt;/DropdownSection>
+            &lt;DropdownSection>
+              &lt;DropdownItem
+                color="success"
+                key="login"
+                onClick={handleSignIn}
+                startContent={&lt;FaGoogle />}
+              >
+                Sign in with Google
+              &lt;/DropdownItem>
+            &lt;/DropdownSection>
+          &lt;/DropdownMenu>
+        )
+      }
+    &lt;/Dropdown>
+  )
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Customer.html">Customer</a></li><li><a href="InventoryItem.html">InventoryItem</a></li><li><a href="MenuItem.html">MenuItem</a></li><li><a href="SortProperties_SortProperties.html">SortProperties</a></li><li><a href="module.html#.exports">exports</a></li><li><a href="module.exports_module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#CartContextProvider">CartContextProvider</a></li><li><a href="global.html#CustomerContextProvider">CustomerContextProvider</a></li><li><a href="global.html#DateRangeProvider">DateRangeProvider</a></li><li><a href="global.html#GoogleTranslate">GoogleTranslate</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#InventoryContextProvider">InventoryContextProvider</a></li><li><a href="global.html#MenuContextProvider">MenuContextProvider</a></li><li><a href="global.html#OrderHistory">OrderHistory</a></li><li><a href="global.html#OrderPanel">OrderPanel</a></li><li><a href="global.html#TTSButton">TTSButton</a></li><li><a href="global.html#UserCredentials">UserCredentials</a></li><li><a href="global.html#UserManager">UserManager</a></li><li><a href="global.html#WeatherComponent">WeatherComponent</a></li><li><a href="global.html#compareFnFunctiontocomparetwoarrayitems.">compareFn Function to compare two array items.</a></li><li><a href="global.html#parseDatabaseEntry">parseDatabaseEntry</a></li><li><a href="global.html#parseJson">parseJson</a></li><li><a href="global.html#query">query</a></li><li><a href="global.html#translateText">translateText</a></li><li><a href="global.html#useApiFetch">useApiFetch</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Sun Apr 28 2024 12:56:03 GMT-0500 (Central Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

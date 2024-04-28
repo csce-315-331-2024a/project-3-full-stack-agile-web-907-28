@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: models/InventoryItem.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: models/InventoryItem.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Model for inventory items.
+ * @class InventoryItem
+ * @property {number} inventoryItemId The ID of the inventory item.
+ * @property {string} name The name of the inventory item.
+ * @property {number} quantity The current stock of the inventory item.
+ * @property {Date} purchaseDate The date the inventory item was purchased.
+ * @property {Date} expiryDate The date the inventory item expires.
+ * @property {number} quantityLimit The minimum inventory quantity that needs to be in stock between refills
+ */
+export default class InventoryItem {
+  /**
+   * This function handles the creation of an inventory item.
+   * @param {number} inventoryItemId - The ID of the inventory item.
+   * @param {string} name - The name of the inventory item.
+   * @param {number} quantity - The current stock of the inventory item.
+   * @param {Date} purchaseDate - The date the inventory item was purchased.
+   * @param {Date} expiryDate - The date the inventory item expires.
+   * @param {number} quantityLimit - The minimum inventory quantity that needs to be in stock between refills
+   */
+  constructor(
+    inventoryItemId,
+    name,
+    quantity,
+    purchaseDate,
+    expiryDate,
+    quantityLimit = 0
+  ) {
+    this.inventoryItemId = inventoryItemId;
+    this.name = name;
+    this.quantity = quantity;
+    this.purchaseDate = purchaseDate;
+    this.expiryDate = expiryDate;
+    this.quantityLimit = quantityLimit;
+  }
+
+  /**
+   * This function handles the parsing of a JSON object into an inventory item.
+   * @param {Object} json - The JSON object to be parsed.
+   * @returns {InventoryItem} - The inventory item parsed from the JSON object.
+   */
+  static parseJson(json) {
+    return new InventoryItem(
+      parseInt(json.inventoryItemId),
+      json.name,
+      parseFloat(json.quantity),
+      new Date(json.purchaseDate),
+      new Date(json.expiryDate),
+      parseInt(json.quantityLimit)
+    );
+  }
+
+  /**
+   * This function handles the parsing of a database entry into an inventory item.
+   * @param {Object} row - The database entry to be parsed.
+   * @returns {InventoryItem} - The inventory item parsed from the database entry.
+   */
+  static parseDatabaseEntry(row) {
+    return InventoryItem.parseJson({
+      inventoryItemId: row.inventoryitem_id,
+      name: row.name,
+      quantity: row.quantity,
+      purchaseDate: row.purchase_date,
+      expiryDate: row.expiry_date,
+      quantityLimit: row.quantity_limit
+    });
+  }
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Customer.html">Customer</a></li><li><a href="InventoryItem.html">InventoryItem</a></li><li><a href="MenuItem.html">MenuItem</a></li><li><a href="SortProperties_SortProperties.html">SortProperties</a></li><li><a href="module.html#.exports">exports</a></li><li><a href="module.exports_module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#CartContextProvider">CartContextProvider</a></li><li><a href="global.html#CustomerContextProvider">CustomerContextProvider</a></li><li><a href="global.html#DateRangeProvider">DateRangeProvider</a></li><li><a href="global.html#GoogleTranslate">GoogleTranslate</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#InventoryContextProvider">InventoryContextProvider</a></li><li><a href="global.html#MenuContextProvider">MenuContextProvider</a></li><li><a href="global.html#OrderHistory">OrderHistory</a></li><li><a href="global.html#OrderPanel">OrderPanel</a></li><li><a href="global.html#TTSButton">TTSButton</a></li><li><a href="global.html#UserCredentials">UserCredentials</a></li><li><a href="global.html#UserManager">UserManager</a></li><li><a href="global.html#WeatherComponent">WeatherComponent</a></li><li><a href="global.html#compareFnFunctiontocomparetwoarrayitems.">compareFn Function to compare two array items.</a></li><li><a href="global.html#parseDatabaseEntry">parseDatabaseEntry</a></li><li><a href="global.html#parseJson">parseJson</a></li><li><a href="global.html#query">query</a></li><li><a href="global.html#translateText">translateText</a></li><li><a href="global.html#useApiFetch">useApiFetch</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Sun Apr 28 2024 12:56:03 GMT-0500 (Central Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
