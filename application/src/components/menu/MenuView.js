@@ -30,18 +30,21 @@ export default function MenuView({ onItemClick }) {
                 <CardBody>
                   <MenuItemGrid>
                     {
-                      menuItems.filter(item => item.categoryId === category.id).map(item => (
-                        <MenuItem
-                          key={item.menuItemId}
-                          id={item.menuItemId}
-                          name={item.name}
-                          price={item.price}
-                          category={item.categoryId}
-                          onClick={() => addItemToCart(item)}
-                          isPressable
-                          textValue={`${item.name}, $${item.price}`}
-                        />
-                      ))
+                      menuItems
+                        .filter(item => item.categoryId === category.id)
+                        .filter(item => (!item.seasonal) || (item.startDate <= new Date() && new Date() <= item.endDate))
+                        .map(item => (
+                          <MenuItem
+                            key={item.menuItemId}
+                            id={item.menuItemId}
+                            name={item.name}
+                            price={item.price}
+                            category={item.categoryId}
+                            onClick={() => addItemToCart(item)}
+                            isPressable
+                            textValue={`${item.name}, $${item.price}`}
+                          />
+                        ))
                     }
                   </MenuItemGrid>
                 </CardBody>

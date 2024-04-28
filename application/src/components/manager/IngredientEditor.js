@@ -17,10 +17,10 @@ import InventoryContext from "@/contexts/InventoryContext";
 
 /**
  * A modal which allows for creation & editing of individual components of menu items.
- * @param trigger {(onOpen: () => void) => ReactNode} Trigger to open the Modal.
- * @param onIngredientChange Callback function for submitting the new/modified menu item component.
- * @param inventoryItems {[InventoryItem]} (optional) Array of InventoryItems used to validate IDs.
- * @param ingredient {{id: number, amount: number} | null} (optional) The ingredient to edit.
+ * @param {(onOpen: () => void) => ReactNode} trigger - The trigger to open the Modal.
+ * @param {(MenuItem) => void} onIngredientChange - The callback function for submitting the new/modified menu item component.
+ * @param {[InventoryItem]} inventoryItems - The collection of InventoryItems used to validate IDs.
+ * @param {MenuItem | null} ingredient - The ingredient to edit.
  * @returns {JSX.Element}
  * @constructor
  */
@@ -36,11 +36,19 @@ export default function IngredientEditor({trigger, onIngredientChange, ingredien
   const [id, setId, resetId, isIdValid, isIdChanged] = useValidatedState(defaultId, n => isNumber(n) && parseInt(n) >= 0);
   const [amount, setAmount, resetAmount, isAmountValid, isAmountChanged] = useValidatedState(defaultAmount, n => isNumber(n) && parseFloat(n) >= 0);
 
+  /**
+   * This function handles the opening of the Modal. It resets the id and amount states and opens the Modal.
+   */
   const handleOpen = () => {
     resetId();
     resetAmount();
     onOpen();
   }
+
+  /**
+   * This function handles the submission of the form. It sends a POST request to the /api/orders/updateOrder endpoint with the newOrder.
+   * @param {function} onClose - The function to close the Modal.
+   */
   const handleSubmit = (onClose) => {
     try {
       if (isIdValid && isAmountValid) {

@@ -14,6 +14,18 @@
  * @constructor MenuItem
  */
 class MenuItem {
+  /**
+   * This function handles the creation of a menu item.
+   * @param {number} menuItemId - The ID of the menu item.
+   * @param {string} name - The name of the menu item.
+   * @param {number} price - The price of the menu item.
+   * @param {number[]} inventoryItemIds - The IDs of the inventory items.
+   * @param {number[]} inventoryItemAmounts - The amounts of the inventory items.
+   * @param {number} categoryId - The ID of the category.
+   * @param {boolean} seasonal - The seasonal status of the menu item.
+   * @param {Date} startDate - The start date of the menu item.
+   * @param {Date} endDate - The end date of the menu item.
+   */
     constructor(menuItemId, name, price, inventoryItemIds, inventoryItemAmounts, categoryId, seasonal, startDate, endDate) {
       this.menuItemId = menuItemId;
       this.name = name;
@@ -25,12 +37,18 @@ class MenuItem {
       this.startDate = startDate;
       this.endDate = endDate;
     }
+
+  /**
+   * This function handles the parsing of a JSON object into a menu item.
+   * @param {Object} json - The JSON object to be parsed.
+   * @returns {MenuItem} - The menu item parsed from the JSON object.
+   */
   static parseJson(json) {
     return new MenuItem(
       parseInt(json.menuItemId),
       json.name,
       parseFloat(json.price),
-      json.inventoryItemIds.map(parseInt),
+      json.inventoryItemIds.map(parseFloat),
       json.inventoryItemAmounts.map(parseFloat),
       parseInt(json.categoryId),
       json.seasonal,
@@ -38,6 +56,12 @@ class MenuItem {
       json.seasonal ? new Date(json.endDate) : new Date()
     );
   }
+
+  /**
+   * This function handles the parsing of a database entry into a menu item.
+   * @param {Object} row - The database entry to be parsed.
+   * @returns {MenuItem} - The menu item parsed from the database entry.
+   */
   static parseDatabaseEntry(row) {
     return MenuItem.parseJson({
       menuItemId: row.menuitem_id,

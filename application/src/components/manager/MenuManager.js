@@ -50,6 +50,11 @@ export default function MenuManager() {
       .slice(startIndex, startIndex + MENU_ITEMS_PER_PAGE));
   }, [sortedMenuItems, startIndex, setCurrentPageMenuItems]);
 
+  /**
+   * This function handles the creation of a menu item. It sends a POST request to the /api/menu/createMenuItem endpoint with the menuItem.
+   * @param {Object} item - The menu item to be created.
+   * @returns {Promise<void>} - A Promise that resolves when the request is successful.
+   */
   const handleCreate = (item) => (
     axios.post("/api/menu/createMenuItem", { menuItem: item })
       .then(res => {
@@ -67,6 +72,12 @@ export default function MenuManager() {
         console.error("Error creating menu item:", e);
       })
   );
+
+  /**
+   * This function handles the editing of a menu item. It sends a POST request to the /api/menu/updateMenuItem endpoint with the menuItem.
+   * @param {Object} item - The menu item to be edited.
+   * @returns {Promise<void>} - A Promise that resolves when the request is successful.
+   */
   const handleEdit = (item) => (
     axios.post("/api/menu/updateMenuItem", { menuItem: item })
       .then(res => {
@@ -84,6 +95,12 @@ export default function MenuManager() {
         console.error("Error updating menu item:", e);
       })
   );
+
+  /**
+   * This function handles the deletion of a menu item. It sends a DELETE request to the /api/menu/deleteMenuItem endpoint with the menuItemId.
+   * @param {Object} item - The menu item to be deleted.
+   * @returns {Promise<void>} - A Promise that resolves when the request is successful.
+   */
   const handleDelete = (item) => (
     axios.post("/api/menu/deleteMenuItem", { id: item.menuItemId })
       .then(res => {
@@ -121,7 +138,7 @@ export default function MenuManager() {
           />
         </CardHeader>
         <CardBody>
-          <Table isStriped>
+          <Table isStriped aria-label="Menu management table">
             <TableHeader>
               <TableColumn>
                 <ObjectArraySortButton

@@ -3,6 +3,10 @@ import { Dropdown, DropdownTrigger, DropdownMenu, DropdownSection, DropdownItem,
 import GoogleTranslate from "@/components/translation/translationComponent";
 import ColorContrastSwitch from "@/components/colorcontrast/ColorSwitch";
 
+/**
+ * This is a dropdown menu for accessibility settings.
+ * @returns {Dropdown}
+ */
 export default function App() {
 
   return (
@@ -23,6 +27,4 @@ export default function App() {
     </Dropdown>
   );
 }
-
-
 

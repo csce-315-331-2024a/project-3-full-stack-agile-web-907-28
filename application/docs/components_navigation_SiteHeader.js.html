@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/navigation/SiteHeader.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/navigation/SiteHeader.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import {
+  Navbar,
+  NavbarContent,
+  NavbarBrand,
+  Image, Avatar, Badge
+} from "@nextui-org/react";
+import NextLink from "next/link";
+import { UserManager } from "@/components/onboarding/UserManager";
+import WeatherComponent from "@/components/weather/weather";
+import App from "@/components/accessibility/dropdown";
+import {useContext} from "react";
+import CartContext from "@/contexts/CartContext";
+import {FaCartShopping} from "react-icons/fa6";
+import TTSButton from "../text_to_speech/textToSpeechComponent";
+import React, { useState, useEffect } from 'react';
+
+
+
+
+/**
+ * This component is the site header that contains the Rev logo and user management.
+ * @returns {JSX.Element} - The site header component.
+ */
+export default function SiteHeader() {
+  const {cartItems, openCart} = useContext(CartContext);
+
+  const [ttsEnabled, setTTSEnabled] = useState(false);
+  const toggleTTS = () => {
+    setTTSEnabled(prevState => !prevState);
+  };
+
+ 
+
+
+  return (
+    &lt;div>
+      &lt;Navbar className="red" maxWidth="xl" position="sticky" isBlurred="false">
+        {/* Rev's logo in top left corner */}
+        &lt;NavbarContent className="basis-1/5 sm:basis-full" justify="start">
+          &lt;li>
+            &lt;NavbarBrand className="gap-3 max-w-fit">
+              &lt;NextLink className="flex justify-start items-center gap-1" href="/">
+                &lt;Image
+                  fill="none"
+                  height={100}
+                  width={180}
+                  alt="Rev's Logo"
+                  src="/logo_transparent.png"
+                />
+              &lt;/NextLink>
+            &lt;/NavbarBrand>
+          &lt;/li>
+        &lt;/NavbarContent>
+        &lt;NavbarContent justify="center">
+          &lt;li>
+            &lt;WeatherComponent />
+          &lt;/li>
+        &lt;/NavbarContent>
+        &lt;NavbarContent justify="end">
+          &lt;li>
+          &lt;TTSButton ttsEnabled={ttsEnabled} onToggle={toggleTTS} />
+          &lt;/li>
+          &lt;li>
+            &lt;App />
+          &lt;/li>
+          {cartItems.length > 0 ? (
+            &lt;li>
+                &lt;Avatar
+                  as="button"
+                  aria-label="Open cart"
+                  isBordered
+                  showFallback
+                  fallback={&lt;FaCartShopping className="text-2xl" />}
+                  onClick={openCart}
+                />
+            &lt;/li>
+          ) : (
+            &lt;li>&lt;/li>
+          )}
+          &lt;li>
+            &lt;UserManager />
+          &lt;/li>
+        &lt;/NavbarContent>
+      &lt;/Navbar>
+    &lt;/div>
+  );
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Customer.html">Customer</a></li><li><a href="InventoryItem.html">InventoryItem</a></li><li><a href="MenuItem.html">MenuItem</a></li><li><a href="SortProperties_SortProperties.html">SortProperties</a></li><li><a href="module.html#.exports">exports</a></li><li><a href="module.exports_module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#CartContextProvider">CartContextProvider</a></li><li><a href="global.html#CustomerContextProvider">CustomerContextProvider</a></li><li><a href="global.html#DateRangeProvider">DateRangeProvider</a></li><li><a href="global.html#GoogleTranslate">GoogleTranslate</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#InventoryContextProvider">InventoryContextProvider</a></li><li><a href="global.html#MenuContextProvider">MenuContextProvider</a></li><li><a href="global.html#OrderHistory">OrderHistory</a></li><li><a href="global.html#OrderPanel">OrderPanel</a></li><li><a href="global.html#TTSButton">TTSButton</a></li><li><a href="global.html#UserCredentials">UserCredentials</a></li><li><a href="global.html#UserManager">UserManager</a></li><li><a href="global.html#WeatherComponent">WeatherComponent</a></li><li><a href="global.html#compareFnFunctiontocomparetwoarrayitems.">compareFn Function to compare two array items.</a></li><li><a href="global.html#parseDatabaseEntry">parseDatabaseEntry</a></li><li><a href="global.html#parseJson">parseJson</a></li><li><a href="global.html#query">query</a></li><li><a href="global.html#translateText">translateText</a></li><li><a href="global.html#useApiFetch">useApiFetch</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Sun Apr 28 2024 12:56:03 GMT-0500 (Central Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

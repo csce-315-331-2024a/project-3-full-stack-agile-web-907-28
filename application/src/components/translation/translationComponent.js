@@ -1,10 +1,15 @@
 import React, { useEffect } from 'react';
 
+/**
+ * This function handles the creation of the Google Translate button. It uses the Google Translate API to translate the text.
+ * @returns {JSX.Element}
+ */
 const GoogleTranslate = () => {
   useEffect(() => {
     // Function to initialize Google Translate
     const googleTranslateElementInit = () => {
-      if (!window.googleTranslateElement) {
+      // Ensure window.google.translate is defined before using it
+      if (window.google && window.google.translate && !window.googleTranslateElement) {
         window.googleTranslateElement = new window.google.translate.TranslateElement({ pageLanguage: 'en' }, 'google_translate_element');
       }
     };

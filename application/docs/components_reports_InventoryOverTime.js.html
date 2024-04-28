@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/reports/InventoryOverTime.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/reports/InventoryOverTime.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, {useState, useEffect, useContext} from 'react';
+import dynamic from 'next/dynamic';
+import {Card, CardBody, CardHeader, DateRangePicker, Spinner} from "@nextui-org/react";
+import {DateRangeContext} from "@/contexts/DateRangeContext";
+import {useApiFetch} from "@/react-hooks/useApiFetch";
+const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
+
+/**
+ * Bar chart showing inventory usage over time
+ * @param {*} props 
+ * @returns {React.Component}
+ */
+export default function InventoryOverTime({...props}) {
+  const [dateRange, setDateRange] = useContext(DateRangeContext);
+  const [fetchUrl, setFetchUrl] = useState("");
+  const [series, refreshSeries] = useApiFetch(fetchUrl, {data: []},
+    (data) => ({
+        data: data.map(item => ({
+          x: item.name,
+          y: [item.total_amount_used]
+        }))
+    })
+  );
+
+  useEffect(() => {
+    const sd = dateRange.start.toDate().toISOString().slice(0, 10);
+    const ed = dateRange.end.toDate().toISOString().slice(0, 10);
+    setFetchUrl(`/api/inventory_dashboard/getOverTime?startDate=${sd}&amp;endDate=${ed}`);
+  }, [dateRange]);
+
+  const options = {
+    chart: {
+      id: "basic-bar",
+    },
+    plotOptions: {
+      bar: {
+        distributed: true, // This will give each bar a different color
+        borderRadius: 4 // Rounds the top corners of the bars
+      }
+    },
+    colors: ['#33b2df', '#546E7A', '#d4526e', '#13d8aa', '#A5978B', '#2b908f', '#f9a3a4', '#90ee7e', 
+             '#f48024', '#69d2e7'], // Add more colors if you have more data points
+    dataLabels: {
+      enabled: false
+    },
+    xaxis: {
+      categories: series.data.map(item => item.x),
+      title: {
+        text: 'Inventory Items',
+        style: {
+          color: '#333'
+        },
+        offsetX: 0,
+        offsetY: -10,
+      },
+      labels: {
+        style: {
+          colors: '#000',
+          fontSize: '14px'
+        }
+      }
+    },
+    yaxis: {
+      title: {
+        text: 'Total Amount Used',
+        style: {
+          color: '#333'
+        },
+        offsetX: 0,
+        offsetY: -10,
+      },
+      labels: {
+        style: {
+          colors: '#000', // Darker text color for y-axis values
+          fontSize: '14px' // Optional: Adjust font size if needed
+        }
+      }
+    },
+    tooltip: {
+      y: {
+        formatter: function (val) {
+          return val + " units"; // Custom formatter for tooltip value
+        }
+      }
+    },
+    legend: {
+      show: false
+    }
+  };
+
+
+  return (
+    &lt;Card {...props}>
+      &lt;CardHeader className="justify-between">
+        &lt;p className="text-xl font-semibold">Inventory Over Time&lt;/p>
+        &lt;div>
+          &lt;DateRangePicker aria-label="Chart date range" className="max-w-xs" value={dateRange} onChange={setDateRange} visibleMonths={3} />
+        &lt;/div>
+      &lt;/CardHeader>
+      &lt;CardBody>
+        {series.data.length === 0 ? (
+          &lt;Spinner />
+        ) : (
+          &lt;Chart options={options} height={window.innerHeight - 210} series={[series]} type="bar" />
+        )}
+      &lt;/CardBody>
+    &lt;/Card>
+  );
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Customer.html">Customer</a></li><li><a href="InventoryItem.html">InventoryItem</a></li><li><a href="MenuItem.html">MenuItem</a></li><li><a href="SortProperties_SortProperties.html">SortProperties</a></li><li><a href="module.html#.exports">exports</a></li><li><a href="module.exports_module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#CartContextProvider">CartContextProvider</a></li><li><a href="global.html#CustomerContextProvider">CustomerContextProvider</a></li><li><a href="global.html#DateRangeProvider">DateRangeProvider</a></li><li><a href="global.html#GoogleTranslate">GoogleTranslate</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#InventoryContextProvider">InventoryContextProvider</a></li><li><a href="global.html#MenuContextProvider">MenuContextProvider</a></li><li><a href="global.html#OrderHistory">OrderHistory</a></li><li><a href="global.html#OrderPanel">OrderPanel</a></li><li><a href="global.html#TTSButton">TTSButton</a></li><li><a href="global.html#UserCredentials">UserCredentials</a></li><li><a href="global.html#UserManager">UserManager</a></li><li><a href="global.html#WeatherComponent">WeatherComponent</a></li><li><a href="global.html#compareFnFunctiontocomparetwoarrayitems.">compareFn Function to compare two array items.</a></li><li><a href="global.html#parseDatabaseEntry">parseDatabaseEntry</a></li><li><a href="global.html#parseJson">parseJson</a></li><li><a href="global.html#query">query</a></li><li><a href="global.html#translateText">translateText</a></li><li><a href="global.html#useApiFetch">useApiFetch</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Sun Apr 28 2024 12:56:03 GMT-0500 (Central Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

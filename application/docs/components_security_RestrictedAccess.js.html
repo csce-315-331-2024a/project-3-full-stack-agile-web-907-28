@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/security/RestrictedAccess.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/security/RestrictedAccess.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import {useEffect, useState} from "react";
+import {useRouter} from "next/router";
+import {Spinner} from "@nextui-org/react";
+
+import getUserCredentials from "@/components/security/getUserCredentials"
+import {useSession} from "next-auth/react";
+import UserCredentials from "@/models/UserCredentials";
+
+/**
+ * Wrapper element for something that should only be able to be accessed by certain users.
+ * @param isCredentialAuthorized Function accepting user credentials (string) and returning whether the user is authorized (boolean).
+ * @param redirectURL {string | null} Where to redirect unauthorized users. If null, don't redirect unauthorized users.
+ * @param errorRedirect {string | null} Where to redirect users when authentication fails. If null, don't redirect users when authentication fails.
+ * @param children Child elements
+ * @returns {JSX.Element} Div containing child elements
+ * @constructor
+ */
+export default function RestrictedAccess({ isCredentialAuthorized, redirectURL = "/", errorRedirect = "/", children }) {
+  const [ is_allowed, setIsAllowed ] = useState(false);
+  const [ is_ready, setIsReady ] = useState(false);
+  const router = useRouter();
+  const { status } = useSession();
+
+  useEffect(() => {
+    async function redirectIfNotAuthorized() {
+      if (status === "loading") {
+        return;
+      }
+      try {
+        const creds = (status === "authenticated") ? await getUserCredentials() : UserCredentials.NoCred;
+        if (isCredentialAuthorized(creds)) {
+          setIsAllowed(true);
+        } else {
+          if (redirectURL != null) {
+            console.log("User not authorized, redirecting to", redirectURL);
+            router.push(redirectURL);
+          }
+        }
+      } catch (e) {
+        if (errorRedirect != null) {
+          console.log("API error checking user authorization, redirecting to", errorRedirect);
+          router.push(errorRedirect);
+        }
+      } finally {
+        setIsReady(true);
+      }
+    }
+    redirectIfNotAuthorized();
+  }, [isCredentialAuthorized, errorRedirect, redirectURL, router, setIsAllowed, setIsReady, status]);
+
+  return is_ready ? (
+    is_allowed ? (
+      &lt;div>
+        {children}
+      &lt;/div>
+    ) : (
+      &lt;center>&lt;p className="bg-danger">You are not authorized to view this content.&lt;/p>&lt;/center>
+    )
+  ) : (
+    &lt;Spinner />
+  )
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Customer.html">Customer</a></li><li><a href="InventoryItem.html">InventoryItem</a></li><li><a href="MenuItem.html">MenuItem</a></li><li><a href="SortProperties_SortProperties.html">SortProperties</a></li><li><a href="module.html#.exports">exports</a></li><li><a href="module.exports_module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#CartContextProvider">CartContextProvider</a></li><li><a href="global.html#CustomerContextProvider">CustomerContextProvider</a></li><li><a href="global.html#DateRangeProvider">DateRangeProvider</a></li><li><a href="global.html#GoogleTranslate">GoogleTranslate</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#InventoryContextProvider">InventoryContextProvider</a></li><li><a href="global.html#MenuContextProvider">MenuContextProvider</a></li><li><a href="global.html#OrderHistory">OrderHistory</a></li><li><a href="global.html#OrderPanel">OrderPanel</a></li><li><a href="global.html#TTSButton">TTSButton</a></li><li><a href="global.html#UserCredentials">UserCredentials</a></li><li><a href="global.html#UserManager">UserManager</a></li><li><a href="global.html#WeatherComponent">WeatherComponent</a></li><li><a href="global.html#compareFnFunctiontocomparetwoarrayitems.">compareFn Function to compare two array items.</a></li><li><a href="global.html#parseDatabaseEntry">parseDatabaseEntry</a></li><li><a href="global.html#parseJson">parseJson</a></li><li><a href="global.html#query">query</a></li><li><a href="global.html#translateText">translateText</a></li><li><a href="global.html#useApiFetch">useApiFetch</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Sun Apr 28 2024 12:56:03 GMT-0500 (Central Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

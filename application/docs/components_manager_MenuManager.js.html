@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/manager/MenuManager.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/manager/MenuManager.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import MenuItemEditor from "@/components/manager/MenuItemEditor";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Table,
+  TableBody, TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow, Tooltip
+} from "@nextui-org/react";
+import ListPagination from "@/components/utils/ListPagination";
+import {FaPlus} from "react-icons/fa";
+import {useContext, useEffect, useState} from "react";
+import {FaPencil, FaTrashCan} from "react-icons/fa6";
+
+import menuCategories from "@/models/menuCategories";
+import axios from "axios";
+import ConfirmationDialog from "@/components/utils/ConfirmationDialog";
+import MenuItem from "@/models/MenuItem";
+import useSortedArray, {SortProperties} from "@/react-hooks/useSortedArray";
+import ObjectArraySortButton from "@/components/utils/ObjectArraySortButton";
+import MenuContext from "@/contexts/MenuContext";
+import InventoryContext from "@/contexts/InventoryContext";
+
+const MENU_ITEMS_PER_PAGE = 15;
+
+
+/**
+ * Component which displays menu items &amp; allows editing of both the list and each individual item.
+ * @returns {JSX.Element}
+ * @constructor
+ */
+export default function MenuManager() {
+  const {menuItems, refreshMenuItems} = useContext(MenuContext);
+  const {inventoryItems} = useContext(InventoryContext);
+  const [startIndex, setStartIndex] = useState(0);
+  const [currentPageMenuItems, setCurrentPageMenuItems] = useState([]);
+  const [sortedMenuItems, sortProps, setSortProps] = useSortedArray(menuItems, SortProperties.byProperty("menuItemId"));
+
+  // When the array is refreshed or resorted, go back to the first page.
+  useEffect(() => {
+    setStartIndex(0);
+  }, [sortedMenuItems]);
+
+  // Only display the menu items on the current page.
+  useEffect(() => {
+    setCurrentPageMenuItems(sortedMenuItems
+      .slice(startIndex, startIndex + MENU_ITEMS_PER_PAGE));
+  }, [sortedMenuItems, startIndex, setCurrentPageMenuItems]);
+
+  /**
+   * This function handles the creation of a menu item. It sends a POST request to the /api/menu/createMenuItem endpoint with the menuItem.
+   * @param {Object} item - The menu item to be created.
+   * @returns {Promise&lt;void>} - A Promise that resolves when the request is successful.
+   */
+  const handleCreate = (item) => (
+    axios.post("/api/menu/createMenuItem", { menuItem: item })
+      .then(res => {
+        if (200 &lt;= res.status &amp;&amp; res.status &lt; 300) {
+          return res.data;
+        } else {
+          throw res;
+        }
+      })
+      .then(data => {
+        console.log("Created menu item:", MenuItem.parseJson(data));
+        refreshMenuItems();
+      })
+      .catch(e => {
+        console.error("Error creating menu item:", e);
+      })
+  );
+
+  /**
+   * This function handles the editing of a menu item. It sends a POST request to the /api/menu/updateMenuItem endpoint with the menuItem.
+   * @param {Object} item - The menu item to be edited.
+   * @returns {Promise&lt;void>} - A Promise that resolves when the request is successful.
+   */
+  const handleEdit = (item) => (
+    axios.post("/api/menu/updateMenuItem", { menuItem: item })
+      .then(res => {
+        if (200 &lt;= res.status &amp;&amp; res.status &lt; 300) {
+          return res.data;
+        } else {
+          throw res;
+        }
+      })
+      .then(data => {
+        console.log("Updated menu item:", MenuItem.parseJson(data));
+        refreshMenuItems();
+      })
+      .catch(e => {
+        console.error("Error updating menu item:", e);
+      })
+  );
+
+  /**
+   * This function handles the deletion of a menu item. It sends a DELETE request to the /api/menu/deleteMenuItem endpoint with the menuItemId.
+   * @param {Object} item - The menu item to be deleted.
+   * @returns {Promise&lt;void>} - A Promise that resolves when the request is successful.
+   */
+  const handleDelete = (item) => (
+    axios.post("/api/menu/deleteMenuItem", { id: item.menuItemId })
+      .then(res => {
+        if (200 &lt;= res.status &amp;&amp; res.status &lt; 300) {
+          return res.data;
+        } else {
+          throw res;
+        }
+      })
+      .then(_ => {
+        console.log("Deleted menu item:", item);
+        refreshMenuItems();
+      })
+      .catch(e => {
+        console.error("Error deleting menu item:", e);
+      })
+  );
+
+  return (
+    &lt;>
+      &lt;Card fullWidth="true" radius="none" shadow="none" className="px-9">
+        &lt;CardHeader className="justify-end">
+          &lt;MenuItemEditor
+            trigger={onOpen => (
+              &lt;Button
+                color="primary"
+                onClick={onOpen}
+                startContent={&lt;FaPlus/>}
+              >
+                Create menu item
+              &lt;/Button>
+            )}
+            onMenuItemChange={handleCreate}
+            inventoryItems={inventoryItems}
+          />
+        &lt;/CardHeader>
+        &lt;CardBody>
+          &lt;Table isStriped aria-label="Menu management table">
+            &lt;TableHeader>
+              &lt;TableColumn>
+                &lt;ObjectArraySortButton
+                  sortKey={SortProperties.byProperty("menuItemId")}
+                  sortProps={sortProps}
+                  onSortPropsChange={setSortProps}
+                  type="19"
+                >
+                  ID
+                &lt;/ObjectArraySortButton>
+              &lt;/TableColumn>
+              &lt;TableColumn>
+                &lt;ObjectArraySortButton
+                  sortKey={SortProperties.byProperty("name")}
+                  sortProps={sortProps}
+                  onSortPropsChange={setSortProps}
+                  type="az"
+                >
+                  Name
+                &lt;/ObjectArraySortButton>
+              &lt;/TableColumn>
+              &lt;TableColumn>
+                &lt;ObjectArraySortButton
+                  sortKey={SortProperties.byProperty("price")}
+                  sortProps={sortProps}
+                  onSortPropsChange={setSortProps}
+                  type="19"
+                >
+                  Price
+                &lt;/ObjectArraySortButton>
+              &lt;/TableColumn>
+              &lt;TableColumn>
+                &lt;ObjectArraySortButton
+                  sortKey={SortProperties.byProperty("categoryId")}
+                  sortProps={sortProps}
+                  onSortPropsChange={setSortProps}
+                  type="plain"
+                >
+                  Category
+                &lt;/ObjectArraySortButton>
+              &lt;/TableColumn>
+              &lt;TableColumn>Seasonal Dates&lt;/TableColumn>
+              &lt;TableColumn>Actions&lt;/TableColumn>
+            &lt;/TableHeader>
+            &lt;TableBody>
+              {currentPageMenuItems.map(menuItem => (
+                &lt;TableRow key={menuItem.menuItemId}>
+                  &lt;TableCell>{menuItem.menuItemId}&lt;/TableCell>
+                  &lt;TableCell>{menuItem.name}&lt;/TableCell>
+                  &lt;TableCell>{"$" + menuItem.price.toFixed(2)}&lt;/TableCell>
+                  &lt;TableCell>{
+                    menuCategories.some(({id}) => id === menuItem.categoryId) ? (
+                      menuCategories.find(({id}) => id === menuItem.categoryId).name
+                    ) : (
+                      menuItem.categoryId
+                    )
+                  }&lt;/TableCell>
+                  {
+                    menuItem.seasonal ? (
+                      &lt;TableCell>{menuItem.startDate.toDateString()} - {menuItem.endDate.toDateString()}&lt;/TableCell>
+                    ) : (
+                      &lt;TableCell>N/A&lt;/TableCell>
+                    )
+                  }
+                  &lt;TableCell>
+                    &lt;div className="relative flex items-center gap-2">
+                      &lt;MenuItemEditor
+                        trigger={onOpen => (
+                          &lt;Button aria-label="Edit" isIconOnly onClick={onOpen} size="sm" variant="light">&lt;FaPencil/>&lt;/Button>
+                        )}
+                        onMenuItemChange={handleEdit}
+                        menuItem={menuItem}
+                        inventoryItems={inventoryItems}
+                      />
+                      &lt;ConfirmationDialog
+                        trigger={onOpen => (
+                          &lt;Button aria-label="Delete" color="danger" isIconOnly onClick={onOpen} size="sm" variant="light">&lt;FaTrashCan/>&lt;/Button>
+                        )}
+                        onConfirm={() => {
+                          handleDelete(menuItem)
+                        }}
+                        body="Are you sure you want to delete this menu item?"
+                      />
+                    &lt;/div>
+                  &lt;/TableCell>
+                &lt;/TableRow>
+              ))}
+            &lt;/TableBody>
+          &lt;/Table>
+        &lt;/CardBody>
+      &lt;/Card>
+      &lt;div className="p-4">
+        &lt;ListPagination
+          numItems={menuItems.length}
+          itemsPerPage={MENU_ITEMS_PER_PAGE}
+          setStartIndex={setStartIndex}
+        />
+      &lt;/div>
+    &lt;/>
+)
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Customer.html">Customer</a></li><li><a href="InventoryItem.html">InventoryItem</a></li><li><a href="MenuItem.html">MenuItem</a></li><li><a href="SortProperties_SortProperties.html">SortProperties</a></li><li><a href="module.html#.exports">exports</a></li><li><a href="module.exports_module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#CartContextProvider">CartContextProvider</a></li><li><a href="global.html#CustomerContextProvider">CustomerContextProvider</a></li><li><a href="global.html#DateRangeProvider">DateRangeProvider</a></li><li><a href="global.html#GoogleTranslate">GoogleTranslate</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#InventoryContextProvider">InventoryContextProvider</a></li><li><a href="global.html#MenuContextProvider">MenuContextProvider</a></li><li><a href="global.html#OrderHistory">OrderHistory</a></li><li><a href="global.html#OrderPanel">OrderPanel</a></li><li><a href="global.html#TTSButton">TTSButton</a></li><li><a href="global.html#UserCredentials">UserCredentials</a></li><li><a href="global.html#UserManager">UserManager</a></li><li><a href="global.html#WeatherComponent">WeatherComponent</a></li><li><a href="global.html#compareFnFunctiontocomparetwoarrayitems.">compareFn Function to compare two array items.</a></li><li><a href="global.html#parseDatabaseEntry">parseDatabaseEntry</a></li><li><a href="global.html#parseJson">parseJson</a></li><li><a href="global.html#query">query</a></li><li><a href="global.html#translateText">translateText</a></li><li><a href="global.html#useApiFetch">useApiFetch</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Sun Apr 28 2024 12:56:03 GMT-0500 (Central Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

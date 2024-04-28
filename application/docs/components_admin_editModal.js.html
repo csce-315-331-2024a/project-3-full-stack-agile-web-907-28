@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/admin/editModal.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/admin/editModal.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useEffect, useState } from 'react';
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter, ModalContent, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Input } from "@nextui-org/react";
+import axios from 'axios';
+
+/**
+ * This component is a modal for editing a user. It uses the nextui-org library for the modal and dropdown.
+ * @param {Array} selectedUsers - The users to be edited.
+ * @param {boolean} isOpen - Whether the modal is open or not.
+ * @param {function} onClose - The function to close the modal.
+ * @returns {JSX.Element} - The modal component.
+ */
+export default function EditModal({selectedUsers, isOpen, onClose, onEditComplete}) {
+    const [currentUserIndex, setCurrentUserIndex] = useState(0);
+    const [selectedCredentials, setSelectedCredentials] = useState("");
+    const [newEmail, setNewEmail] = useState("");
+    const [newName, setNewName] = useState("");
+    const [isModified, setIsModified] = useState(false);
+
+    useEffect(() => {
+        if (selectedUsers.length > 0) {
+            const currentUser = selectedUsers[currentUserIndex];
+            setNewEmail(currentUser.email);
+            setNewName(currentUser.name);
+            setSelectedCredentials(currentUser.credentials);
+            setIsModified(false); // Reset modification state when switching users
+        }
+    }, [currentUserIndex, selectedUsers]);
+
+    /**
+     * This function handles the change of a field in the form. It sets the isModified state to true and updates the state of the field.
+     * @param {string} field - The field to be changed.
+     * @param {string} value - The new value of the field.
+     */
+    const handleFieldChange = (field, value) => {
+        setIsModified(true); // Mark as modified
+        if (field === 'email') {
+            setNewEmail(value);
+        } else if (field === 'name') {
+            setNewName(value);
+        } else if (field === 'credentials') {
+            setSelectedCredentials(value[Object.keys(value)[0]]);
+        }
+    };
+
+    /**
+     * This function handles the submission of the form. It sends a POST request to the /api/admin/editUser endpoint with the email, name, and credentials of the new user.
+     * @returns {Promise&lt;void>} - A Promise that resolves when the request is successful.
+     */
+    const handleSubmit = async () => {
+        console.log("Submitting user", selectedUsers[currentUserIndex].email, "with new email", newEmail, "and new name", newName, "and new credentials", selectedCredentials);
+        // Construct the body using the current state
+        const body = {
+            email: selectedUsers[currentUserIndex].email,
+            newName: newName,
+            newEmail: newEmail,
+            newCredentials: selectedCredentials
+        };
+
+        try {
+            const response = await axios.post('/api/admin/editUser', body);
+            console.log('Update response:', response.data);
+            onEditComplete(); // Optionally close the modal on success
+            onClose(); // Optionally close the modal on success
+        } catch (error) {
+            console.error('Failed to update user:', error.response?.data || error.message);
+        }
+    };
+
+    return (
+        &lt;Modal isOpen={isOpen} onClose={onClose}>
+          &lt;ModalContent>
+            &lt;>
+                &lt;ModalHeader>Edit User&lt;/ModalHeader>
+                &lt;ModalBody>
+                  {selectedUsers.length > 0 &amp;&amp; (
+                    &lt;>
+                      &lt;Input
+                        type="body"
+                        value={newEmail}
+                        onChange={(e) => handleFieldChange('email', e.target.value)}
+                        placeholder="Email"
+                        label="Email"
+                      />
+                      &lt;Input
+                        type="body"
+                        value={newName}
+                        onChange={(e) => handleFieldChange('name', e.target.value)}
+                        placeholder="Name"
+                        label="Name"
+                      />
+                      &lt;Dropdown>
+                        &lt;DropdownTrigger>
+                            &lt;Button variant="bordered" color="primary" size="md">
+                              Credentials: {selectedCredentials}
+                            &lt;/Button>
+                        &lt;/DropdownTrigger>
+                        &lt;DropdownMenu 
+                            aria-label="Credentials selection"
+                            variant="flat"
+                            selectionMode="single"
+                            selectedKeys={[selectedCredentials]}
+                            onSelectionChange={(key) => handleFieldChange('credentials', key)}
+                        >
+                            &lt;DropdownItem key="Admin">Admin&lt;/DropdownItem>
+                            &lt;DropdownItem key="Manager">Manager&lt;/DropdownItem>
+                            &lt;DropdownItem key="Cashier">Cashier&lt;/DropdownItem>
+                            &lt;DropdownItem key="Customer">Customer&lt;/DropdownItem>
+                        &lt;/DropdownMenu>
+                      &lt;/Dropdown>
+                    &lt;/>
+                  )}
+                &lt;/ModalBody>
+                &lt;ModalFooter>
+                  {isModified &amp;&amp; (
+                    &lt;Button auto flat color="success" onClick={handleSubmit}>
+                      Submit
+                    &lt;/Button>
+                  )}
+                  &lt;Button flat auto color="error" onClick={onClose}>
+                    Close
+                  &lt;/Button>
+                  &lt;Button flat auto onClick={() => setCurrentUserIndex(prevIndex => Math.max(prevIndex - 1, 0))} disabled={currentUserIndex === 0}>
+                    Previous
+                  &lt;/Button>
+                  &lt;Button flat auto onClick={() => setCurrentUserIndex(prevIndex => Math.min(prevIndex + 1, selectedUsers.length - 1))} disabled={currentUserIndex === selectedUsers.length - 1}>
+                    Next
+                  &lt;/Button>
+                &lt;/ModalFooter>
+            &lt;/>
+          &lt;/ModalContent>
+        &lt;/Modal>
+    );
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Customer.html">Customer</a></li><li><a href="InventoryItem.html">InventoryItem</a></li><li><a href="MenuItem.html">MenuItem</a></li><li><a href="SortProperties_SortProperties.html">SortProperties</a></li><li><a href="module.html#.exports">exports</a></li><li><a href="module.exports_module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#CartContextProvider">CartContextProvider</a></li><li><a href="global.html#CustomerContextProvider">CustomerContextProvider</a></li><li><a href="global.html#DateRangeProvider">DateRangeProvider</a></li><li><a href="global.html#GoogleTranslate">GoogleTranslate</a></li><li><a href="global.html#Home">Home</a></li><li><a href="global.html#InventoryContextProvider">InventoryContextProvider</a></li><li><a href="global.html#MenuContextProvider">MenuContextProvider</a></li><li><a href="global.html#OrderHistory">OrderHistory</a></li><li><a href="global.html#OrderPanel">OrderPanel</a></li><li><a href="global.html#TTSButton">TTSButton</a></li><li><a href="global.html#UserCredentials">UserCredentials</a></li><li><a href="global.html#UserManager">UserManager</a></li><li><a href="global.html#WeatherComponent">WeatherComponent</a></li><li><a href="global.html#compareFnFunctiontocomparetwoarrayitems.">compareFn Function to compare two array items.</a></li><li><a href="global.html#parseDatabaseEntry">parseDatabaseEntry</a></li><li><a href="global.html#parseJson">parseJson</a></li><li><a href="global.html#query">query</a></li><li><a href="global.html#translateText">translateText</a></li><li><a href="global.html#useApiFetch">useApiFetch</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Sun Apr 28 2024 12:56:03 GMT-0500 (Central Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -9,7 +9,7 @@ import axios from 'axios';
  * @param {function} onClose - The function to close the modal.
  * @returns {JSX.Element} - The modal component.
  */
-export default function EditModal({selectedUsers, isOpen, onClose}) {
+export default function EditModal({selectedUsers, isOpen, onClose, onEditComplete}) {
     const [currentUserIndex, setCurrentUserIndex] = useState(0);
     const [selectedCredentials, setSelectedCredentials] = useState("");
     const [newEmail, setNewEmail] = useState("");
@@ -26,6 +26,11 @@ export default function EditModal({selectedUsers, isOpen, onClose}) {
         }
     }, [currentUserIndex, selectedUsers]);
 
+    /**
+     * This function handles the change of a field in the form. It sets the isModified state to true and updates the state of the field.
+     * @param {string} field - The field to be changed.
+     * @param {string} value - The new value of the field.
+     */
     const handleFieldChange = (field, value) => {
         setIsModified(true); // Mark as modified
         if (field === 'email') {
@@ -37,6 +42,10 @@ export default function EditModal({selectedUsers, isOpen, onClose}) {
         }
     };
 
+    /**
+     * This function handles the submission of the form. It sends a POST request to the /api/admin/editUser endpoint with the email, name, and credentials of the new user.
+     * @returns {Promise<void>} - A Promise that resolves when the request is successful.
+     */
     const handleSubmit = async () => {
         console.log("Submitting user", selectedUsers[currentUserIndex].email, "with new email", newEmail, "and new name", newName, "and new credentials", selectedCredentials);
         // Construct the body using the current state
@@ -50,6 +59,7 @@ export default function EditModal({selectedUsers, isOpen, onClose}) {
         try {
             const response = await axios.post('/api/admin/editUser', body);
             console.log('Update response:', response.data);
+            onEditComplete(); // Optionally close the modal on success
             onClose(); // Optionally close the modal on success
         } catch (error) {
             console.error('Failed to update user:', error.response?.data || error.message);

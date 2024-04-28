@@ -16,9 +16,9 @@ import {fromDate, toCalendarDate} from "@internationalized/date";
 
 /**
  * A modal which allows for creation & editing of inventory items.
- * @param trigger {(onOpen: () => void) => ReactNode} Trigger to open the Modal.
- * @param onInventoryItemChange Callback function for submitting the new/modified inventory item.
- * @param inventoryItem {InventoryItem | null} (optional) The inventory item to edit.
+ * @param {(onOpen: () => void) => ReactNode} trigger - The trigger to open the Modal.
+ * @param {(InventoryItem) => void} onInventoryItemChange - The callback function for submitting the new/modified inventory item.
+ * @param {InventoryItem | null} inventoryItem - The inventory item to edit.
  * @returns {JSX.Element}
  * @constructor
  */
@@ -34,13 +34,16 @@ export default function InventoryItemEditor({trigger, onInventoryItemChange, inv
   const isNumber = (value) => !isNaN(value) && !isNaN(parseFloat(value));
 
   const [name, setName, resetName, isNameValid, isNameChanged] = useValidatedState(defaultName, s => s.trim() !== "");
-  const [quantity, setQuantity, resetQuantity, isQuantityValid, isQuantityChanged] = useValidatedState(defaultQuantity, isNumber);
+  const [quantity, setQuantity, resetQuantity, isQuantityValid, isQuantityChanged] = useValidatedState(defaultQuantity, q => isNumber(q) && parseFloat(q) > 0);
   const [purchaseDate, setPurchaseDate, resetPurchaseDate, isPurchaseDateValid, isPurchaseDateChanged] = useValidatedState(defaultPurchaseDate, d => d !== undefined);
   const [expiryDate, setExpiryDate, resetExpiryDate, isExpiryDateValid, isExpiryDateChanged] = useValidatedState(defaultExpiryDate, d => d !== undefined);
-  const [quantityLimit, setQuantityLimit, resetQuantityLimit, isQuantityLimitValid, isQuantityLimitChanged] = useValidatedState(defaultQuantityLimit, isNumber);
+  const [quantityLimit, setQuantityLimit, resetQuantityLimit, isQuantityLimitValid, isQuantityLimitChanged] = useValidatedState(defaultQuantityLimit, q => isNumber(q) && parseFloat(q) >= 0);
 
   const [error, setError] = useState("");
 
+  /**
+   * This function handles the opening of the Modal. It resets the name, quantity, purchaseDate, expiryDate, and quantityLimit states and opens the Modal.
+   */
   const handleOpen = () => {
     resetName();
     resetQuantity();
@@ -49,6 +52,11 @@ export default function InventoryItemEditor({trigger, onInventoryItemChange, inv
     resetQuantityLimit();
     onOpen();
   }
+
+  /**
+   * This function handles the submission of the form. It sends a POST request to the /api/inventory/updateInventoryItem endpoint with the newInventoryItem.
+   * @param {function} onClose - The function to close the Modal.
+   */
   const handleSubmit = (onClose) => {
     try {
       if (isNameValid && isQuantityValid && isPurchaseDateValid && isExpiryDateValid && isQuantityLimitValid) {
@@ -108,14 +116,14 @@ export default function InventoryItemEditor({trigger, onInventoryItemChange, inv
                   isRequired
                   label="Purchase Date"
                   value={purchaseDate}
-                  onValueChange={setPurchaseDate}
+                  onChange={setPurchaseDate}
                   isInvalid={!isPurchaseDateValid && isPurchaseDateChanged}
                 />
                 <DatePicker
                   isRequired
                   label="Expiry Date"
                   value={expiryDate}
-                  onValueChange={setExpiryDate}
+                  onChange={setExpiryDate}
                   isInvalid={!isExpiryDateValid && isExpiryDateChanged}
                 />
                 <Input

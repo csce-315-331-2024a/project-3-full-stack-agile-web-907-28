@@ -8,11 +8,15 @@ import axios from 'axios';
  * @param {function} onClose - The function to close the modal.
  * @returns {JSX.Element} - The modal component.
  */
-export default function CreateUserModal({ isOpen, onClose }) {
+export default function CreateUserModal({ isOpen, onClose, onCreateComplete }) {
     const [email, setEmail] = useState("");
     const [name, setName] = useState("");
     const [credentials, setCredentials] = useState("");
 
+    /**
+     * This function handles the submission of the form. It sends a POST request to the /api/admin/createUser endpoint with the email, name, and credentials of the new user.
+     * @returns {Promise<void>} - A Promise that resolves when the request is successful.
+     */
     const handleSubmit = async () => {
         const body = { email, name, credentials: credentials[Object.keys(credentials)[0]] };
 
@@ -20,6 +24,7 @@ export default function CreateUserModal({ isOpen, onClose }) {
             const response = await axios.post('/api/admin/createUser', body);
             console.log('User creation response:', response.data);
             // Consider closing the modal or showing a success message
+            onCreateComplete();
             onClose(); // Close the modal on success
         } catch (error) {
             console.error('Failed to create user:', error.response?.data || error.message);

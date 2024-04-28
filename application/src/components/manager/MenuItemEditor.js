@@ -22,13 +22,11 @@ import {fromDate, toCalendarDate} from "@internationalized/date";
 
 
 /**
- * A modal which allows for creation & editing of menu items.
- * @param trigger {(onOpen: () => void) => ReactNode} Trigger to open the Modal.
- * @param onMenuItemChange Callback function for submitting the new/modified menu item.
- * @param menuItem {MenuItem | null} (optional) The menu item to edit.
- * @param inventoryItems {[InventoryItem]} (optional) The collection of InventoryItems used to map IDs to names.
+ * This function handles the creation & editing of menu items.
+ * @param {(onOpen: () => void) => ReactNode} trigger - The trigger to open the Modal.
+ * @param {(MenuItem) => void} onMenuItemChange - The callback function for submitting the new/modified menu item.
+ * @param {MenuItem | null} menuItem - The menu item to edit.
  * @returns {JSX.Element}
- * @constructor
  */
 export default function MenuItemEditor({trigger, onMenuItemChange, menuItem = null}) {
   const {isOpen, onOpen, onOpenChange} = useDisclosure();
@@ -54,6 +52,9 @@ export default function MenuItemEditor({trigger, onMenuItemChange, menuItem = nu
 
   const [error, setError] = useState("");
 
+  /**
+   * This function handles the opening of the Modal. It resets the name, price, ingredients, categoryId, seasonal, startDate, and endDate states and opens the Modal.
+   */
   const handleOpen = () => {
     resetName();
     resetPrice();
@@ -64,6 +65,11 @@ export default function MenuItemEditor({trigger, onMenuItemChange, menuItem = nu
     resetEndDate();
     onOpen();
   }
+
+  /**
+   * This function handles the submission of the form. It sends a POST request to the /api/menu/createMenuItem endpoint with the menuItem.
+   * @param {function} onClose - The function to close the Modal.
+   */
   const handleSubmit = (onClose) => {
     try {
       if (isNameValid && isPriceValid && (!seasonal || (isStartDateValid && isEndDateValid))) {
@@ -148,6 +154,8 @@ export default function MenuItemEditor({trigger, onMenuItemChange, menuItem = nu
                         const newIngredients = ingredients.slice();
                         newIngredients.push(newIngredient);
                         setIngredients(newIngredients);
+                        console.log(newIngredients);
+                        console.log(inventoryItems);
                       }}
                       inventoryItems={inventoryItems}
                     />
@@ -163,8 +171,8 @@ export default function MenuItemEditor({trigger, onMenuItemChange, menuItem = nu
                         {ingredients.map((ingredient, idx) => (
                           <TableRow key={idx}>
                             <TableCell>{
-                              inventoryItems.some(item => item.inventoryItemId === ingredient.id) ? (
-                                inventoryItems.find(item => item.inventoryItemId === ingredient.id).name
+                              inventoryItems.some(item => item.inventoryItemId === parseInt(ingredient.id)) ? (
+                                inventoryItems.find(item => item.inventoryItemId === parseInt(ingredient.id)).name
                               ) : (
                                 ingredient.id
                               ).toString()
@@ -214,15 +222,13 @@ export default function MenuItemEditor({trigger, onMenuItemChange, menuItem = nu
                         isRequired
                         label="Start Date"
                         value={startDate}
-                        onValueChange={setStartDate}
-                        isInvalid={!isStartDateValid && isStartDateChanged}
+                        onChange={setStartDate}
                       />
                       <DatePicker
                         isRequired
                         label="End Date"
                         value={endDate}
-                        onValueChange={setEndDate}
-                        isInvalid={!isEndDateValid && isEndDateChanged}
+                        onChange={setEndDate}
                       />
                     </>
                   ) : (

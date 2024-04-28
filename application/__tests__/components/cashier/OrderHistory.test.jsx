@@ -29,28 +29,3 @@ it('renders without crashing', async () => {
   expect(screen.getByRole('grid')).toBeInTheDocument();
 });
 
-// it('handles order deletion successfully', async () => {
-//   fetch.mockResolvedValueOnce({
-//     ok: true,
-//     json: async () => ([
-//       { order_id: 1, item: 'Coffee' },
-//       { order_id: 2, item: 'Tea' }
-//     ]),
-//   });
-
-//   render(<OrderHistory />);
-
-//   // Wait for the initial data to load and check for the presence of the delete button
-//   await waitFor(() => expect(screen.getByTestId('delete-1')).toBeInTheDocument());
-
-//   // Simulate clicking the delete button for the order with id 1
-//   userEvent.click(screen.getByTestId('delete-1'));
-
-//   // Check the fetch call
-//   await waitFor(() => expect(fetch).toHaveBeenCalledTimes(2));
-//   expect(fetch).toHaveBeenCalledWith(`/api/orders/deleteOrder?orderId=1`, {
-//     method: 'DELETE',
-//   });
-// });
-
-// //Fail the delete on purpose
