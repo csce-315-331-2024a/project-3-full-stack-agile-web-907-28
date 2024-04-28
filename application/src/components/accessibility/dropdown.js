@@ -4,8 +4,6 @@ import GoogleTranslate from "@/components/translation/translationComponent";
 import ColorContrastSwitch from "@/components/colorcontrast/ColorSwitch";
 
 export default function App() {
-  const [textSize, setTextSize] = useState("normal");
-  const [colorContrast, setColorContrast] = useState("normal");
 
   return (
     <Dropdown arrow="small" radius="sm" className="p-0 border-small border-divider bg-background">
