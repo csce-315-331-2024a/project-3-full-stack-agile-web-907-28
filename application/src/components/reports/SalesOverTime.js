@@ -37,7 +37,7 @@ export default function SalesOverTime({...props}) {
   useEffect(() => {
     setSalesTotals(
       Object.keys(fetchResult).map(menuItemId => ({
-        name: menuItemId,
+        name: menuItems.find(item => item.menuItemId === parseFloat(menuItemId)).name,
         data: fetchResult[menuItemId].map(({placed_date, count}) => {
           return {
             x: new Date(placed_date),
@@ -51,7 +51,7 @@ export default function SalesOverTime({...props}) {
   useEffect(() => {
     setRevenueTotals(
       Object.keys(fetchResult).map(menuItemId => ({
-        name: menuItemId,
+        name: menuItems.find(item => item.menuItemId === parseFloat(menuItemId)).name,
         data: fetchResult[menuItemId].map(({placed_date, count}) => {
           return {
             x: new Date(placed_date),
