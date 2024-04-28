@@ -8,11 +8,9 @@ export function ContrastContextProvider({ children }) {
   useEffect(() => {
     const fetchButtonPosition = async () => {
       try {
-        // Assuming there's some logic to determine the button position
-        const buttonPosition = await determineButtonPosition();
         
         // Use the button position to set the theme
-        if (buttonPosition === 'switched') {
+        if (ColorContrastSwitch == toggleContrast) {
           setTheme('contrast');
         } else {
           setTheme('red');
@@ -33,4 +31,5 @@ export function ContrastContextProvider({ children }) {
 }
 
 export default ContrastContext;
+
 
