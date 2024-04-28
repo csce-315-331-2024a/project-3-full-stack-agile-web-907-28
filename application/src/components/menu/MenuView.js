@@ -17,9 +17,12 @@ export default function MenuView({ onItemClick }) {
   const {addItemToCart} = useContext(CartContext);
   const {theme} = useContext(ContrastContext);
 
+  //See if theme is changing
+  console.log("theme in menu", theme);
+
   return (
     <center>
-      <Tabs aria-label="menu sections" size="lg" color={theme.colors}>
+      <Tabs aria-label="menu sections" size="lg" color="primary">
         {
           menuCategories.map(category => (
             <Tab key={category.id} title={category.name} className="text-default" textValue={category.name}>

@@ -9,7 +9,8 @@ export default function ColorContrastSwitch() {
   // Function to handle theme change
   const handleThemeChange = () => {
     // Toggle between 'red' and 'contrast' themes
-    const newTheme = theme === "red" ? "contrast" : "red";
+    const newTheme = theme === "light" ? "dark" : "light";
+    console.log("newTheme", newTheme);
     updateTheme(newTheme);
   };
 
