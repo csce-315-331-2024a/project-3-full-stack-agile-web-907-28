@@ -12,14 +12,16 @@ export default function DefaultLayout({
 	children,
 }) {
 	return (
-		<MenuContextProvider>
-			<CartContextProvider>
-				<div className="relative flex flex-col h-screen">
-					<Head/>
-					<SiteHeader/>
-					{children}
-				</div>
-			</CartContextProvider>
-		</MenuContextProvider>
+		<ContrastContextProvider>
+			<MenuContextProvider>
+				<CartContextProvider>
+					<div className="relative flex flex-col h-screen">
+						<Head/>
+						<SiteHeader/>
+						{children}
+					</div>
+				</CartContextProvider>
+			</MenuContextProvider>
+		</ContrastContextProvider>
 	);
 }
