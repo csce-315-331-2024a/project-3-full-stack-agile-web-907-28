@@ -47,6 +47,13 @@ module.exports = {
           foreground: "#FFFFFF",
           secondary: "#998542",
         }
+      },
+      contrast: {
+        extend: "dark",
+        colors: {
+          background: "#000000",
+          foreground: "#87CEEB",
+        }
       }
     }
   })],

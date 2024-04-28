@@ -17,6 +17,7 @@ import React, { useState, useEffect } from 'react';
 
 
 
+
 /**
  * This component is the site header that contains the Rev logo and user management.
  * @returns {JSX.Element} - The site header component.

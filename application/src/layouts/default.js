@@ -2,6 +2,7 @@ import Head from "./head";
 import SiteHeader from "@/components/navigation/SiteHeader";
 import {CartContextProvider} from "@/contexts/CartContext";
 import {MenuContextProvider} from "@/contexts/MenuContext";
+import {ContrastContextProvider} from "@/contexts/ContrastContext";
 import {InventoryContextProvider} from "@/contexts/InventoryContext";
 import {CustomerContextProvider} from "@/contexts/CustomerContext";
 
@@ -14,6 +15,7 @@ export default function DefaultLayout({
 	children,
 }) {
 	return (
+  <ContrastContextProvider>
 		<CustomerContextProvider>
 			<MenuContextProvider>
 				<InventoryContextProvider>
@@ -27,5 +29,6 @@ export default function DefaultLayout({
 				</InventoryContextProvider>
 			</MenuContextProvider>
 		</CustomerContextProvider>
+  </ContrastContextProvider>
 	);
 }
