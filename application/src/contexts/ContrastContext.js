@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react';
 
 const ContrastContext = createContext();
 
@@ -8,9 +8,8 @@ export function ContrastContextProvider({ children }) {
   useEffect(() => {
     const fetchButtonPosition = async () => {
       try {
-        
         // Use the button position to set the theme
-        if (ColorContrastSwitch == toggleContrast) {
+        if (ColorContrastSwitch === toggleContrast) {
           setTheme('contrast');
         } else {
           setTheme('red');
@@ -23,13 +22,23 @@ export function ContrastContextProvider({ children }) {
     fetchButtonPosition();
   }, []);
 
+  // Function to update theme
+  const updateTheme = (newTheme) => {
+    setTheme(newTheme);
+  };
+
   return (
-    <ContrastContext.Provider value={{ theme }}>
+    <ContrastContext.Provider value={{ theme, updateTheme }}>
       {children}
     </ContrastContext.Provider>
   );
 }
 
+export function useContrastContext() {
+  return useContext(ContrastContext);
+}
+
 export default ContrastContext;
+
 
 
