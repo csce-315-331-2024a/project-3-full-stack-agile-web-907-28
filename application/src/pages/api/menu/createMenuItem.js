@@ -26,8 +26,8 @@ export default async function handler(req, res) {
     return res.status(500).json({ message: "Internal server error" });
   }
 
-  const queryString = "INSERT INTO menuitem (menuitem_id, name, price, inventoryitem_ids, inventoryitem_amounts, category_id, seasonal, seasonal_start, seasonal_end) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8) RETURNING *;";
-  const queryParams = [menuItem.name, menuItem.price, menuItem.inventoryItemIds, menuItem.inventoryItemAmounts, menuItem.categoryId, menuItem.seasonal, menuItem.startDate, menuItem.endDate];
+  const queryString = "INSERT INTO menuitem (menuitem_id, name, price, inventoryitem_ids, inventoryitem_amounts, category_id, seasonal, seasonal_start, seasonal_end, image_source) VALUES (DEFAULT, $1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *;";
+  const queryParams = [menuItem.name, menuItem.price, menuItem.inventoryItemIds, menuItem.inventoryItemAmounts, menuItem.categoryId, menuItem.seasonal, menuItem.startDate, menuItem.endDate, menuItem.imageSrc];
   try {
     const queryResult = await query(queryString, queryParams);
     return res.status(200).json(MenuItem.parseDatabaseEntry(queryResult.rows[0]));
