@@ -8,7 +8,7 @@ import InventoryItem from "@/models/InventoryItem";
  */
 export default async function handler(req, res) {
   try {
-    const { rows } = await query("SELECT * FROM inventoryitem;");
+    const { rows } = await query("SELECT * FROM inventoryitem ORDER BY inventoryitem_id ASC;");
     const inventoryItems = rows.map(InventoryItem.parseDatabaseEntry);
     return res.status(200).json(inventoryItems);
   } catch (e) {

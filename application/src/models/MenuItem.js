@@ -25,8 +25,9 @@ class MenuItem {
    * @param {boolean} seasonal - The seasonal status of the menu item.
    * @param {Date} startDate - The start date of the menu item.
    * @param {Date} endDate - The end date of the menu item.
+   * @param {string} imageSrc - The name of the image file used as the item's thumbnail.
    */
-    constructor(menuItemId, name, price, inventoryItemIds, inventoryItemAmounts, categoryId, seasonal, startDate, endDate) {
+    constructor(menuItemId, name, price, inventoryItemIds, inventoryItemAmounts, categoryId, seasonal, startDate, endDate, imageSrc) {
       this.menuItemId = menuItemId;
       this.name = name;
       this.price = price;
@@ -36,6 +37,7 @@ class MenuItem {
       this.seasonal = seasonal;
       this.startDate = startDate;
       this.endDate = endDate;
+      this.imageSrc = imageSrc;
     }
 
   /**
@@ -53,7 +55,8 @@ class MenuItem {
       parseInt(json.categoryId),
       json.seasonal,
       json.seasonal ? new Date(json.startDate) : new Date(),
-      json.seasonal ? new Date(json.endDate) : new Date()
+      json.seasonal ? new Date(json.endDate) : new Date(),
+      json.imageSrc
     );
   }
 
@@ -73,6 +76,7 @@ class MenuItem {
       seasonal: row.seasonal,
       startDate: row.seasonal_start,
       endDate: row.seasonal_end,
+      imageSrc: row.image_source
     });
   }
   }

@@ -39,6 +39,7 @@ export default function MenuItemEditor({trigger, onMenuItemChange, menuItem = nu
   const defaultSeasonal = menuItem == null ? false : menuItem.seasonal;
   const defaultStartDate = menuItem == null || !menuItem.seasonal ? undefined : toCalendarDate(fromDate(menuItem.startDate, "UTC"));
   const defaultEndDate = menuItem == null || !menuItem.seasonal ? undefined : toCalendarDate(fromDate(menuItem.endDate, "UTC"));
+  const defaultImageSrc = menuItem == null ? "" : menuItem.imageSrc;
 
   const isNumber = (value) => !isNaN(value) && !isNaN(parseFloat(value));
 
@@ -49,6 +50,7 @@ export default function MenuItemEditor({trigger, onMenuItemChange, menuItem = nu
   const [seasonal, setSeasonal] = useState(defaultSeasonal);
   const [startDate, setStartDate, resetStartDate, isStartDateValid, isStartDateChanged] = useValidatedState(defaultStartDate, d => d !== undefined);
   const [endDate, setEndDate, resetEndDate, isEndDateValid, isEndDateChanged] = useValidatedState(defaultEndDate, d => d !== undefined);
+  const [imageSrc, setImageSrc, resetImageSrc, isImageSrcValid, isImageSrcChanged] = useValidatedState(defaultImageSrc, s => s !== "");
 
   const [error, setError] = useState("");
 
@@ -63,6 +65,7 @@ export default function MenuItemEditor({trigger, onMenuItemChange, menuItem = nu
     setSeasonal(defaultSeasonal);
     resetStartDate();
     resetEndDate();
+    resetImageSrc();
     onOpen();
   }
 
@@ -72,7 +75,7 @@ export default function MenuItemEditor({trigger, onMenuItemChange, menuItem = nu
    */
   const handleSubmit = (onClose) => {
     try {
-      if (isNameValid && isPriceValid && (!seasonal || (isStartDateValid && isEndDateValid))) {
+      if (isNameValid && isPriceValid && (!seasonal || (isStartDateValid && isEndDateValid)) && isImageSrcValid) {
         onMenuItemChange(new MenuItem(
           menuItem == null ? -1 : menuItem.menuItemId,
           name,
@@ -82,7 +85,8 @@ export default function MenuItemEditor({trigger, onMenuItemChange, menuItem = nu
           categoryId,
           seasonal,
           seasonal ? startDate.toDate() : new Date(),
-          seasonal ? endDate.toDate() : new Date()
+          seasonal ? endDate.toDate() : new Date(),
+          imageSrc
         ));
         onClose();
       }
@@ -97,6 +101,7 @@ export default function MenuItemEditor({trigger, onMenuItemChange, menuItem = nu
       setSeasonal(seasonal);
       setStartDate(startDate);
       setEndDate(endDate);
+      setImageSrc(imageSrc);
     }
   };
 
@@ -136,13 +141,54 @@ export default function MenuItemEditor({trigger, onMenuItemChange, menuItem = nu
                   onValueChange={setPrice}
                   isInvalid={!isPriceValid && isPriceChanged}
                 />
-                <Autocomplete label="Category" selectedKey={categoryId} onSelectionChange={setCategoryId}>
+                <Autocomplete
+                  label="Category"
+                  selectedKey={categoryId}
+                  onSelectionChange={(newCategoryId) => {
+                    setCategoryId(newCategoryId);
+                    if (imageSrc === "") {
+                      switch (newCategoryId) {
+                        case '0':
+                          setImageSrc("burger.jpg");
+                          break;
+                        case '1':
+                          setImageSrc("basket.png");
+                          break;
+                        case '2':
+                          setImageSrc("fries.jpg");
+                          break;
+                        case '3':
+                          setImageSrc("onion_rings.jpg");
+                          break;
+                        case '4':
+                          setImageSrc("chicken_sandwich.jpg");
+                          break;
+                        case '5':
+                          setImageSrc("grilled_cheese.jpg");
+                          break;
+                        case '6':
+                          setImageSrc("coke.jpg");
+                          break;
+                        case '7':
+                          setImageSrc("shake.jpg");
+                          break;
+                      }
+                    }
+                  }}
+                >
                   {menuCategories.map(category => (
                     <AutocompleteItem key={category.id}>
                       {category.name}
                     </AutocompleteItem>
                   ))}
                 </Autocomplete>
+                <Input
+                  isRequired
+                  label="Image Source"
+                  value={imageSrc}
+                  onValueChange={setImageSrc}
+                  isInvalid={!isImageSrcValid && isImageSrcChanged}
+                />
                 <Card>
                   <CardHeader className="justify-between">
                     <>Ingredients</>
