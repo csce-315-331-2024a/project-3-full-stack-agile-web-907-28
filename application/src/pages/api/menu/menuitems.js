@@ -8,7 +8,7 @@ import MenuItem from '../../../models/MenuItem';
  */
 export default async function handler(req, res) {
   try {
-    const { rows } = await query('SELECT * FROM menuitem;');
+    const { rows } = await query('SELECT * FROM menuitem ORDER BY menuitem_id ASC;');
     const menuItems = rows.map(MenuItem.parseDatabaseEntry);
     res.status(200).json(menuItems);
   } catch (e) {

@@ -39,6 +39,7 @@ export default function MenuView({ onItemClick }) {
                             id={item.menuItemId}
                             name={item.name}
                             price={item.price}
+                            imageSrc={"/" + item.imageSrc}
                             category={item.categoryId}
                             onClick={() => addItemToCart(item)}
                             isPressable
